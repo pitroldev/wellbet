@@ -11,7 +11,7 @@
   "scripts": {
     "setup": "pnpm install && pnpm dev:up && pnpm db:migrate",
     "build": "turbo run build",
-    "dev": "turbo run dev --filter=!@charya/mobile",
+    "dev": "turbo run dev --filter=!@charya/mobile --filter=!@charya/playground",
     "dev:api": "pnpm --filter @charya/api dev",
     "dev:admin": "pnpm --filter @charya/admin dev",
     "dev:mobile": "pnpm --filter @charya/mobile start",

@@ -5,7 +5,7 @@
   "description": "Charya Bet — console de revisão humana (Next.js 16 App Router, container standalone, anti-lock-in).",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
