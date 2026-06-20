@@ -1,0 +1,13 @@
+# Toolchain pinada e reprodutível (substitui nvm/asdf).
+# Corepack saiu do Node 25+, então o pnpm é gerenciado aqui + campo packageManager.
+[tools]
+node = "24"
+pnpm = "11.7.0"
+
+[env]
+# Carrega .env do repo no shell de dev (não commitar .env real).
+_.file = ".env"
+
+[settings]
+# Falha se a versão instalada não bater com a pinada.
+exact_match = true

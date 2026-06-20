@@ -1,0 +1,40 @@
+# envs/staging/terraform.tfvars.example
+# Copie para terraform.tfvars (GIT-IGNORADO) e preencha. NUNCA commitar valores
+# reais. Secrets (tokens, keys) preferencialmente via TF_VAR_* no CI, não aqui.
+
+# ── GCP ──────────────────────────────────────────────────────────────────
+gcp_project_id = "charya-staging"
+gcp_region     = "southamerica-east1"
+
+# Imagens são preenchidas pelo CD (digest imutável). Placeholder p/ tofu plan local:
+api_image   = "southamerica-east1-docker.pkg.dev/charya-staging/charya/api@sha256:REPLACE"
+admin_image = "southamerica-east1-docker.pkg.dev/charya-staging/charya/admin@sha256:REPLACE"
+
+api_service_account_email   = "charya-api-staging@charya-staging.iam.gserviceaccount.com"
+admin_service_account_email = "charya-admin-staging@charya-staging.iam.gserviceaccount.com"
+
+# ── Secret Manager (IDs dos secrets; valores ficam no Secret Manager) ─────
+database_url_secret_id  = "charya-database-url-staging"
+auth_secret_id          = "charya-better-auth-secret-staging"
+r2_access_key_secret_id = "charya-r2-access-key-id-staging"
+r2_secret_key_secret_id = "charya-r2-secret-access-key-staging"
+
+# ── Cloudflare ────────────────────────────────────────────────────────────
+cloudflare_account_id = "REPLACE_ACCOUNT_ID"
+cloudflare_zone_id    = "REPLACE_ZONE_ID"
+# Preferir export TF_VAR_cloudflare_api_token=... no shell/CI:
+# cloudflare_api_token = "REPLACE"
+
+# ── R2 (token S3 p/ aplicar CORS/lifecycle via provider aws) ──────────────
+# Preferir TF_VAR_r2_access_key_id / TF_VAR_r2_secret_access_key:
+# r2_access_key_id     = "REPLACE"
+# r2_secret_access_key = "REPLACE"
+
+# ── Neon ──────────────────────────────────────────────────────────────────
+# neon_api_key = "REPLACE"   # preferir TF_VAR_neon_api_key
+
+# ── App ────────────────────────────────────────────────────────────────────
+app_cors_origins = [
+  "https://admin.staging.charya.bet",
+  # origin do app Expo em dev/preview, se aplicável
+]

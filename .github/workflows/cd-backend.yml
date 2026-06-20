@@ -1,0 +1,131 @@
+name: CD — Backend (api)
+
+# §8.2: container → mesmo fluxo. Imagem Docker multi-stage da api é construída
+# UMA vez, empurrada ao registry, e a MESMA imagem imutável é promovida de
+# staging para prod (nunca rebuild). Migrações Drizzle rodam como step explícito
+# antes de rotear tráfego (nunca auto-migrate em runtime).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/api/**"
+      - "packages/**"
+      - ".github/workflows/cd-backend.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: cd-backend
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write # OIDC para autenticar no Google Cloud / Artifact Registry sem chave estática.
+
+env:
+  SERVICE: charya-api
+  REGION: ${{ vars.GCP_REGION }}
+  IMAGE_REPO: ${{ vars.ARTIFACT_REGISTRY }}/charya-api
+
+jobs:
+  # 1) Build + push da imagem imutável (taggeada pelo SHA do commit).
+  build:
+    name: Build & push image
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+        with:
+          install: true
+      - name: Compute immutable image ref
+        id: meta
+        run: echo "image=${IMAGE_REPO}:${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+      - name: Auth to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOY_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+      - name: Build & push (multi-stage Dockerfile)
+        run: |
+          docker build \
+            --file apps/api/Dockerfile \
+            --tag "${{ steps.meta.outputs.image }}" \
+            .
+          docker push "${{ steps.meta.outputs.image }}"
+        # TODO(api): criar apps/api/Dockerfile multi-stage
+        # (deps → build tsc/nest → runtime Node 24 slim, non-root, distroless-ish).
+
+  # 2) Deploy STAGING automático.
+  deploy-staging:
+    name: Deploy staging
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOY_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Deploy image to Cloud Run (staging)
+        run: |
+          gcloud run deploy "${SERVICE}-staging" \
+            --image "${{ needs.build.outputs.image }}" \
+            --region "${REGION}" \
+            --no-traffic --tag candidate \
+            --quiet
+      # 3) Migrações Drizzle como STEP explícito, antes de rotear tráfego.
+      - name: Run Drizzle migrations (staging)
+        run: |
+          gcloud run jobs deploy "${SERVICE}-migrate-staging" \
+            --image "${{ needs.build.outputs.image }}" \
+            --region "${REGION}" \
+            --command pnpm --args "--filter,api,db:migrate" \
+            --quiet
+          gcloud run jobs execute "${SERVICE}-migrate-staging" --region "${REGION}" --wait
+        # TODO(api): script db:migrate = `drizzle-kit migrate`
+        # (migrações versionadas em apps/api/src/infra/db/migrations).
+      - name: Route traffic to new revision (staging)
+        run: |
+          gcloud run services update-traffic "${SERVICE}-staging" \
+            --region "${REGION}" --to-latest --quiet
+      # 4) Smoke test.
+      - name: Smoke test (staging)
+        run: |
+          URL="$(gcloud run services describe "${SERVICE}-staging" --region "${REGION}" --format='value(status.url)')"
+          curl --fail --retry 5 --retry-delay 5 "${URL}/health"
+        # TODO(api): endpoint /health (readiness real: db + storage + fila).
+
+  # 5) Deploy PROD: aprovação MANUAL via GitHub Environment.
+  #    Mesma imagem imutável promovida (não rebuild).
+  deploy-prod:
+    name: Deploy prod (aprovação manual)
+    needs: [build, deploy-staging]
+    runs-on: ubuntu-latest
+    environment: production # exige reviewers no Environment → gate manual.
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOY_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Run Drizzle migrations (prod)
+        run: |
+          gcloud run jobs deploy "${SERVICE}-migrate-prod" \
+            --image "${{ needs.build.outputs.image }}" \
+            --region "${REGION}" \
+            --command pnpm --args "--filter,api,db:migrate" \
+            --quiet
+          gcloud run jobs execute "${SERVICE}-migrate-prod" --region "${REGION}" --wait
+      - name: Promote SAME image to prod
+        run: |
+          gcloud run deploy "${SERVICE}-prod" \
+            --image "${{ needs.build.outputs.image }}" \
+            --region "${REGION}" \
+            --quiet
+      # Rollback = re-deploy da revisão anterior do Cloud Run (1 comando).

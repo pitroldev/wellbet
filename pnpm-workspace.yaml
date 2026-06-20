@@ -1,0 +1,50 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Build scripts aprovados (pnpm 11 bloqueia postinstall por padrão — segurança).
+# true = roda o build do pacote; false = bloqueia (telemetria etc.).
+allowBuilds:
+  "@scarf/scarf": false # telemetria de analytics — não precisa rodar nada
+  esbuild: true # binário de bundling (Vitest/tsx)
+  lefthook: true # instala os git hooks
+  protobufjs: true # usado pelo exporter OTLP
+  sharp: true # otimização de imagem do next/image (admin)
+  unrs-resolver: true # resolver nativo do oxlint/eslint
+
+# Catálogo central de versões compartilhadas (pnpm catalogs).
+# Apps/pacotes referenciam com "catalog:" para manter uma versão única.
+# Versões alinhadas ao baseline jun/2026 do doc de Arquitetura Técnica.
+catalog:
+  # Linguagem / core
+  typescript: ^5.9.3
+  zod: ^4.4.3
+  # React (precisa casar com o React do React Native 0.85 → 19.2)
+  react: 19.2.0
+  react-dom: 19.2.0
+  # Estado de servidor (compartilhado admin + mobile)
+  "@tanstack/react-query": ^5.101.0
+  # Tooling
+  turbo: ^2.9.0
+  vitest: ^4.1.0
+  prettier: ^3.8.0
+  eslint: ^9.34.0
+  typescript-eslint: ^8.61.0
+  oxlint: ^1.0.0
+  lefthook: ^2.1.0
+  knip: ^6.0.0
+  syncpack: ^15.0.0
+  "@changesets/cli": ^2.31.0
+  "@commitlint/cli": ^21.0.0
+  "@commitlint/config-conventional": ^21.0.0
+  "@t3-oss/env-core": ^0.13.0
+
+minimumReleaseAgeExclude:
+  - react-hook-form@7.80.0
+
+# Supply-chain (pnpm 11): atraso mínimo para aceitar versões recém-publicadas.
+# Desativado no bootstrap porque fixamos versões de ponta (várias publicadas
+# nas últimas 24h), o que o gate rejeitaria. A proteção real do dia a dia é o
+# pnpm-lock.yaml commitado (instala versões exatas) + revisão de updates via
+# Renovate. Reative (ex.: 1440 = 1 dia) quando o conjunto de deps estabilizar.
+# minimumReleaseAge: 1440

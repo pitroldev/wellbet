@@ -1,0 +1,81 @@
+/*
+ * Tailwind v4 — entrada única de CSS.
+ * Em v4 a configuração de tema é CSS-first: importamos o Tailwind e declaramos
+ * os tokens via `@theme`, sem `tailwind.config.js`.
+ */
+@import "tailwindcss";
+
+/*
+ * Tokens de design compartilhados (@charya/ui-tokens).
+ * O pacote expõe um preset Tailwind e (TODO) um arquivo de CSS variables.
+ * Enquanto o entrypoint de CSS do pacote não estabiliza, declaramos abaixo o
+ * conjunto base de variáveis que o admin consome. Substituir por
+ *   @import "@charya/ui-tokens/tokens.css";
+ * quando o pacote publicar o CSS de tokens.
+ */
+@source "../src";
+@source "../app";
+
+@theme {
+  /* Cores base — mapeadas para CSS vars resolvidas em :root/.dark abaixo. */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Cores semânticas de veredito (checklist do revisor — MVP). */
+  --color-verdict-approved: var(--verdict-approved);
+  --color-verdict-pending: var(--verdict-pending);
+  --color-verdict-rejected: var(--verdict-rejected);
+
+  --radius-md: 0.5rem;
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+
+  /* Verde / âmbar / vermelho para APROVADO / PENDENTE / REPROVADO. */
+  --verdict-approved: oklch(0.72 0.19 145);
+  --verdict-pending: oklch(0.79 0.16 80);
+  --verdict-rejected: oklch(0.63 0.24 27);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.556 0 0);
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}

@@ -1,0 +1,27 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "jsx": "preserve",
+    "allowJs": true,
+    "noEmit": true,
+    "incremental": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/app/*": ["./app/*"]
+    }
+  },
+  // Project References (§1): deps @charya/* do package.json (contracts, env,
+  // schemas, ui-tokens).
+  "references": [
+    { "path": "../../packages/contracts" },
+    { "path": "../../packages/env" },
+    { "path": "../../packages/schemas" },
+    { "path": "../../packages/ui-tokens" }
+  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", ".next", "dist"]
+}

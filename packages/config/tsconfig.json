@@ -1,0 +1,15 @@
+{
+  // A base canônica do monorepo é a raiz: ../../tsconfig.base.json.
+  // Este pacote não emite build (só fornece presets .js/.json), então só
+  // type-check dos próprios arquivos de config.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // Os presets são JS planos; permitir checá-los com allowJs sem emitir.
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["src/**/*.js", "*.mjs", "*.json"],
+  "exclude": ["node_modules"]
+}

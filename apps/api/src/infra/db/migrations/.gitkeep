@@ -1,0 +1,3 @@
+# Migrações geradas por `drizzle-kit generate`.
+# Aplicadas SOMENTE como step explícito de deploy (job antes de rotear tráfego).
+# Nunca auto-migrate em runtime (ver §2 e §8.2 do doc de Arquitetura).

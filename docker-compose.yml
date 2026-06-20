@@ -1,0 +1,145 @@
+# Charya — Stack de desenvolvimento local (§8.5: paridade dev↔prod).
+#
+# Objetivo: rodar localmente os MESMOS serviços gerenciados que existem em prod,
+# para que o que passa na sua máquina passe no Cloud Run / Cloud SQL / R2.
+#   - postgres → equivale ao Cloud SQL (Postgres 16).
+#   - minio    → S3-compatível, equivale ao Cloudflare R2 (storage de evidências).
+#   - jaeger   → coletor OTLP local: recebe os traces do OpenTelemetry da api
+#                (OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318) e mostra na UI.
+#   - api      → opcional (comentada): roda a própria api containerizada contra
+#                os serviços acima, validando o Dockerfile multi-stage antes do CI.
+#
+# As variáveis abaixo BATEM com apps/api/.env.example (DATABASE_URL, STORAGE_*).
+# Suba tudo com:  docker compose up -d   (ou: pnpm dev:up)
+# Consoles:  MinIO http://localhost:9001 (minioadmin/minioadmin) · Jaeger http://localhost:16686
+#
+# Nada aqui é para produção: credenciais default só servem ao dev local.
+
+name: charya
+
+services:
+  # --- Banco (paridade com Cloud SQL / Postgres 16) -------------------------
+  # DATABASE_URL=postgres://charya:charya@localhost:5432/charya
+  postgres:
+    image: postgres:16-alpine
+    container_name: charya-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: charya
+      POSTGRES_PASSWORD: charya
+      POSTGRES_DB: charya
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # pg_isready garante que o banco aceita conexões antes de a api subir.
+      test: ["CMD-SHELL", "pg_isready -U charya -d charya"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # --- Storage S3-compatível (paridade com Cloudflare R2) -------------------
+  # STORAGE_ENDPOINT=http://localhost:9000  (API S3)
+  # Console web em :9001. Credenciais = STORAGE_ACCESS_KEY_ID / SECRET.
+  minio:
+    image: minio/minio:latest
+    container_name: charya-minio
+    restart: unless-stopped
+    command: server /data --console-address ':9001'
+    environment:
+      # Casam com STORAGE_ACCESS_KEY_ID / STORAGE_SECRET_ACCESS_KEY do .env.example.
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000" # API S3 (STORAGE_ENDPOINT)
+      - "9001:9001" # Console web
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # --- Bootstrap do bucket (cria STORAGE_BUCKET ao subir) -------------------
+  # Job efêmero: espera o MinIO, cria o bucket charya-evidence (idempotente) e
+  # encerra. Mantém STORAGE_BUCKET coerente entre dev e o .env.example.
+  createbuckets:
+    image: minio/mc:latest
+    container_name: charya-createbuckets
+    depends_on:
+      minio:
+        condition: service_healthy
+    # STORAGE_BUCKET default = charya-evidence (ver apps/api/.env.example).
+    environment:
+      STORAGE_BUCKET: ${STORAGE_BUCKET:-charya-evidence}
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minioadmin minioadmin;
+      mc mb --ignore-existing local/$${STORAGE_BUCKET};
+      mc anonymous set download local/$${STORAGE_BUCKET};
+      echo 'Bucket pronto: '$${STORAGE_BUCKET};
+      exit 0;
+      "
+    restart: "no"
+
+  # --- Observabilidade local (coletor OTLP + UI de traces) ------------------
+  # Recebe os traces do OpenTelemetry da api. Configure a api com:
+  #   OTEL_ENABLED=true
+  #   OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
+  # UI dos traces: http://localhost:16686
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: charya-jaeger
+    restart: unless-stopped
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686" # UI web
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP (usado pela api)
+
+  # --- API (OPCIONAL) -------------------------------------------------------
+  # Descomente para rodar a api containerizada contra postgres+minio acima,
+  # exercitando o Dockerfile multi-stage (apps/api/Dockerfile) localmente, do
+  # mesmo jeito que o CD-backend faz em prod. Por padrão fica comentada para
+  # que `pnpm dev` (api fora do container) seja o fluxo rápido do dia a dia.
+  #
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/api/Dockerfile
+  #   container_name: charya-api
+  #   restart: unless-stopped
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     createbuckets:
+  #       condition: service_completed_successfully
+  #   ports:
+  #     - '3000:3000'
+  #   environment:
+  #     NODE_ENV: development
+  #     PORT: '3000'
+  #     # Dentro da rede do compose os hosts são os nomes dos serviços, não localhost.
+  #     DATABASE_URL: postgres://charya:charya@postgres:5432/charya
+  #     STORAGE_ENDPOINT: http://minio:9000
+  #     STORAGE_REGION: auto
+  #     STORAGE_BUCKET: ${STORAGE_BUCKET:-charya-evidence}
+  #     STORAGE_ACCESS_KEY_ID: minioadmin
+  #     STORAGE_SECRET_ACCESS_KEY: minioadmin
+  #     BETTER_AUTH_SECRET: dev-only-change-me
+  #     BETTER_AUTH_URL: http://localhost:3000
+  #   healthcheck:
+  #     test: ['CMD', 'node', '-e', "fetch('http://localhost:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 20s
+
+volumes:
+  postgres-data:
+  minio-data:

@@ -1,0 +1,32 @@
+{
+  "name": "@charya/ui-tokens",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Design tokens compartilhados da Charya (cores, espaçamento, tipografia, motion) — consumidos pelo admin (Tailwind v4) e pelo mobile (NativeWind).",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./tailwind": {
+      "types": "./dist/tailwind-preset.d.ts",
+      "default": "./dist/tailwind-preset.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

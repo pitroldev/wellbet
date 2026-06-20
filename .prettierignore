@@ -1,0 +1,18 @@
+# Build outputs (node_modules já é ignorado pelo Prettier por padrão)
+**/dist/
+**/build/
+**/.next/
+**/.expo/
+**/.turbo/
+**/coverage/
+**/out/
+
+# Código gerado (não editar à mão)
+packages/contracts/src/generated/
+
+# Lockfiles e artefatos
+pnpm-lock.yaml
+*.tsbuildinfo
+
+# Infra (Terraform/OpenTofu não tem parser no Prettier)
+**/.terraform/

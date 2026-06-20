@@ -1,0 +1,169 @@
+name: CI
+
+# §8.1: roda em todo PR E no evento merge_group (merge queue) — sem o
+# merge_group, um PR verde ainda pode quebrar a main quando a fila integra
+# vários PRs. Os mesmos checks devem passar nos dois eventos.
+on:
+  pull_request:
+    branches: [main]
+  merge_group:
+    branches: [main]
+
+concurrency:
+  # Cancela runs antigos do mesmo PR; NÃO cancela na merge queue (cada SHA da
+  # fila precisa do seu próprio check verde).
+  group: ci-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  # Cache remoto do Turborepo (Vercel Remote Cache grátis ou self-hosted S3/R2).
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  # Base do `affected` = main (ou o ref da merge queue).
+  TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
+
+jobs:
+  # Pré-passo rápido: oxlint barra o óbvio antes de gastar tempo no resto.
+  oxlint:
+    name: oxlint (pré-passo rápido)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: jdx/mise-action@v2
+        with:
+          install: true
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+      - name: oxlint
+        run: pnpm exec oxlint
+
+  # Lint/typecheck/test/build SÓ dos pacotes afetados, via Turborepo.
+  # Jobs por app são expressos como tarefas do turbo; o pipeline já restringe
+  # ao afetado, então um único job orquestra api/admin/mobile/infra.
+  affected:
+    name: turbo (lint · typecheck · test · build) — afetados
+    runs-on: ubuntu-latest
+    needs: oxlint
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: jdx/mise-action@v2
+        with:
+          install: true
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+      - name: Turbo affected — lint typecheck test build
+        run: pnpm exec turbo run lint typecheck test build --affected
+
+  # SPEC-DRIFT (§5): a api é a fonte da verdade do contrato. Aqui buildamos a
+  # api, emitimos o openapi.json, regeneramos o cliente @charya/contracts e
+  # falhamos se algo mudou (`git diff --exit-code`). Assim ninguém commita um
+  # cliente desalinhado do spec — o contrato fica sempre coerente no PR.
+  spec-drift:
+    name: SPEC-DRIFT (OpenAPI ↔ @charya/contracts)
+    runs-on: ubuntu-latest
+    needs: oxlint
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: jdx/mise-action@v2
+        with:
+          install: true
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+      - name: Build api
+        run: pnpm --filter @charya/api build
+      - name: Emit openapi.json (fonte da verdade = a api)
+        run: pnpm --filter @charya/api openapi:emit
+      - name: Regenera o cliente tipado a partir do spec
+        run: pnpm --filter @charya/contracts generate
+      - name: Falha se houver drift (spec ou cliente gerado fora de sincronia)
+        run: |
+          if ! git diff --exit-code -- apps/api/openapi.json packages/contracts/src/generated; then
+            echo "::error::Drift de contrato detectado. Rode 'pnpm --filter @charya/api openapi:emit && pnpm --filter @charya/contracts generate' e commite o resultado."
+            exit 1
+          fi
+
+  # expo-doctor (§5): valida saúde do projeto Expo (deps nativas, versões
+  # compatíveis com o SDK, config). Roda só quando o mobile/packages mudam.
+  expo-doctor:
+    name: expo-doctor (mobile)
+    runs-on: ubuntu-latest
+    needs: oxlint
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: jdx/mise-action@v2
+        with:
+          install: true
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+      - name: expo-doctor
+        run: pnpm --filter @charya/mobile exec expo-doctor
+
+  # docker build dry (§8.1): builda a imagem multi-stage da api SEM push, só
+  # para garantir que o Dockerfile continua válido antes de chegar no CD.
+  docker-build:
+    name: docker build dry (api)
+    runs-on: ubuntu-latest
+    needs: oxlint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build da imagem da api (sem push)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          push: false
+          load: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # tofu (§8.4): no PR, validamos formatação e sintaxe do IaC. O plan completo
+  # (com comentário no PR) é responsabilidade do workflow cd-infra.yml — aqui
+  # ficamos no fmt/validate barato para barrar erro óbvio cedo.
+  tofu:
+    name: tofu fmt + validate (infra)
+    runs-on: ubuntu-latest
+    needs: oxlint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: "1.10.0"
+      - name: tofu fmt -check
+        working-directory: infra/terraform
+        run: tofu fmt -check -recursive
+      - name: tofu init + validate (staging)
+        working-directory: infra/terraform/envs/staging
+        run: |
+          tofu init -backend=false -input=false
+          tofu validate
+
+  # Gate único para a branch protection / merge queue exigir.
+  ci-ok:
+    name: CI ok
+    runs-on: ubuntu-latest
+    needs: [oxlint, affected, spec-drift, expo-doctor, docker-build, tofu]
+    if: always()
+    steps:
+      - name: Verifica resultados
+        run: |
+          if [ "${{ needs.oxlint.result }}" != "success" ] \
+            || [ "${{ needs.affected.result }}" != "success" ] \
+            || [ "${{ needs.spec-drift.result }}" != "success" ] \
+            || [ "${{ needs.expo-doctor.result }}" != "success" ] \
+            || [ "${{ needs.docker-build.result }}" != "success" ] \
+            || [ "${{ needs.tofu.result }}" != "success" ]; then
+            echo "CI falhou"; exit 1
+          fi
+          echo "CI ok"

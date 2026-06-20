@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "// solução (§1)": "tsconfig raiz tipo 'solution': não compila nada (files: []), apenas amarra o grafo de Project References do monorepo. `tsc -b` na raiz constrói tudo na ordem topológica correta (pacotes compostos antes dos apps que os consomem).",
+  "files": [],
+  "references": [
+    { "path": "./packages/schemas" },
+    { "path": "./packages/env" },
+    { "path": "./packages/contracts" },
+    { "path": "./packages/ui-tokens" },
+    { "path": "./apps/api" },
+    { "path": "./apps/admin" },
+    { "path": "./apps/mobile" }
+  ]
+}

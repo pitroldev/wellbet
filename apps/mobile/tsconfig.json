@@ -1,0 +1,23 @@
+{
+  "extends": ["../../tsconfig.base.json", "expo/tsconfig.base"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "types": ["jest", "nativewind/types"],
+    // Expo/RN exige bundler-style resolution e libs DOM-ish via lib.dom do RN.
+    "moduleResolution": "Bundler",
+    "noEmit": true
+  },
+  // Project References (§1): deps @charya/* do package.json (contracts,
+  // schemas, ui-tokens). mobile NÃO depende de @charya/env.
+  "references": [
+    { "path": "../../packages/contracts" },
+    { "path": "../../packages/schemas" },
+    { "path": "../../packages/ui-tokens" }
+  ],
+  "include": ["**/*.ts", "**/*.tsx", "nativewind-env.d.ts", ".expo/types/**/*.ts", "expo-env.d.ts"],
+  "exclude": ["node_modules", ".expo", "dist", "build", "coverage"]
+}

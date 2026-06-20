@@ -1,0 +1,92 @@
+/*
+ * Tailwind v4 — entrada única de CSS da landing.
+ * Em v4 a configuração de tema é CSS-first: importamos o Tailwind e declaramos
+ * os tokens via `@theme`, sem `tailwind.config.js`.
+ */
+@import "tailwindcss";
+
+/*
+ * Tokens de design compartilhados (@charya/ui-tokens).
+ * Os valores abaixo são espelho fiel de packages/ui-tokens/src/colors.ts —
+ * paleta SÓBRIA e terrosa (verde-eucalipto, areia/âmbar, grafite quente),
+ * deliberadamente longe de neon/cassino de bet (regra do dossiê §6).
+ *
+ * Substituir por `@import "@charya/ui-tokens/tokens.css";` quando o pacote
+ * publicar o entrypoint de CSS de tokens.
+ */
+@source "../src";
+@source "../app";
+
+@theme {
+  /* Neutros quentes (grafite amornado) — texto, superfícies, bordas. */
+  --color-neutral-50: #faf9f7;
+  --color-neutral-100: #f3f1ed;
+  --color-neutral-200: #e7e3db;
+  --color-neutral-300: #d3ccc0;
+  --color-neutral-400: #a9a094;
+  --color-neutral-500: #7d7568;
+  --color-neutral-600: #5f584d;
+  --color-neutral-700: #4a443b;
+  --color-neutral-800: #322e28;
+  --color-neutral-900: #1f1c18;
+  --color-neutral-950: #121009;
+
+  /* Verde-eucalipto — cor primária da marca (saúde/progresso real). */
+  --color-brand-50: #f0f7f4;
+  --color-brand-100: #dbece4;
+  --color-brand-200: #b9d9cb;
+  --color-brand-300: #8cbfa9;
+  --color-brand-400: #5c9f84;
+  --color-brand-500: #3d8268;
+  --color-brand-600: #2d6852;
+  --color-brand-700: #265344;
+  --color-brand-800: #214338;
+  --color-brand-900: #1d3830;
+  --color-brand-950: #0e1f1a;
+
+  /* Areia/âmbar terroso — acento de destaque (CTA, conquista). */
+  --color-accent-50: #fbf7ef;
+  --color-accent-100: #f5ebd6;
+  --color-accent-200: #ead4ac;
+  --color-accent-300: #ddb777;
+  --color-accent-400: #d29c4f;
+  --color-accent-500: #c5853a;
+  --color-accent-600: #a96a2f;
+  --color-accent-700: #8a4f2a;
+  --color-accent-800: #714028;
+  --color-accent-900: #5f3624;
+  --color-accent-950: #361b10;
+
+  /* Semânticos. */
+  --color-background: #faf9f7;
+  --color-foreground: #1f1c18;
+  --color-muted: #f3f1ed;
+  --color-muted-foreground: #5f584d;
+  --color-border: #e7e3db;
+
+  /* Tipografia (espelho de typography.ts). */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", "Roboto", sans-serif;
+  --font-numeric: "InterVariable", ui-monospace, "SFMono-Regular", "Roboto Mono", monospace;
+
+  /* Raios (espelho de spacing.ts). */
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

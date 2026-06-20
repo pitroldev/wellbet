@@ -1,0 +1,98 @@
+name: CD — Admin (Next.js standalone)
+
+# §8.2: admin é container (Next.js 16, output: 'standalone'), mesmo fluxo do
+# backend — imagem imutável construída uma vez, promovida staging → prod.
+# Admin não tem migrações próprias (compartilha o banco via api).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/admin/**"
+      - "packages/**"
+      - ".github/workflows/cd-admin.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: cd-admin
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  SERVICE: charya-admin
+  REGION: ${{ vars.GCP_REGION }}
+  IMAGE_REPO: ${{ vars.ARTIFACT_REGISTRY }}/charya-admin
+
+jobs:
+  build:
+    name: Build & push image
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+        with:
+          install: true
+      - name: Compute immutable image ref
+        id: meta
+        run: echo "image=${IMAGE_REPO}:${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+      - name: Auth to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOY_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+      - name: Build & push (Next standalone, multi-stage)
+        run: |
+          docker build \
+            --file apps/admin/Dockerfile \
+            --tag "${{ steps.meta.outputs.image }}" \
+            .
+          docker push "${{ steps.meta.outputs.image }}"
+        # TODO(admin): apps/admin/Dockerfile multi-stage usando output:'standalone'
+        # (copia .next/standalone + .next/static + public → runtime Node 24 slim).
+        # TODO(admin): variáveis NEXT_PUBLIC_* são build-time → passar como --build-arg.
+
+  deploy-staging:
+    name: Deploy staging
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOY_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Deploy image to Cloud Run (staging)
+        run: |
+          gcloud run deploy "${SERVICE}-staging" \
+            --image "${{ needs.build.outputs.image }}" \
+            --region "${REGION}" --quiet
+      - name: Smoke test (staging)
+        run: |
+          URL="$(gcloud run services describe "${SERVICE}-staging" --region "${REGION}" --format='value(status.url)')"
+          curl --fail --retry 5 --retry-delay 5 "${URL}/api/health"
+        # TODO(admin): route /api/health (App Router route handler).
+
+  deploy-prod:
+    name: Deploy prod (aprovação manual)
+    needs: [build, deploy-staging]
+    runs-on: ubuntu-latest
+    environment: production # gate manual via reviewers do Environment.
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOY_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Promote SAME image to prod
+        run: |
+          gcloud run deploy "${SERVICE}-prod" \
+            --image "${{ needs.build.outputs.image }}" \
+            --region "${REGION}" --quiet

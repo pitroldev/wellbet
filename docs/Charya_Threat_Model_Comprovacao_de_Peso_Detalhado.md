@@ -15,7 +15,7 @@ O Charya Bet enfrenta um problema de **adversário economicamente motivado**: o 
 
 O padrão econômico mais importante: **a maioria dos vetores de alta probabilidade tem baixa sofisticação**. Offset de calibração, troca de balança, lastro no baseline, roupa pesada no baseline vs. seminu no final, esvaziar bexiga/intestino, super-hidratação e carga de sal/carbo no baseline, retry farming, goal-gaming do swing fisiológico, GPS spoofing, manipulação do relógio, adesivo de dígitos no visor, "falar" o token em vez de mostrá-lo, replay de tela filmada — tudo isso é **alta probabilidade e baixíssimo custo para o fraudador**. São esses que quebram a banca em escala, não o deepfake premiado. A consequência estratégica é clara: o MVP deve **matar o "low-hanging fruit" primeiro**, porque é onde está o EV (valor esperado) negativo para a casa. Os ataques sofisticados (GenAI, máscara 3D de silicone, deepfake em tempo real, KYC farm) são caros, lentos e raros — e a Fase 2/3 os encarece ainda mais.
 
-A filosofia de defesa do Charya — **não eliminar 100% da fraude, mas torná-la cara, trabalhosa e economicamente inviável na média** — é a correta e deve ser operacionalizada como um princípio de design: cada mitigação tem que **aumentar o custo, o tempo, a perícia ou o risco de detecção** do fraudador acima do payout esperado. Concretamente isso significa atacar a **economia do swing**: o vetor de longe mais perigoso, e que combina vários da lista (baseline inflado por super-hidratação/sal/carbo + roupa pesada + bexiga cheia no início, contra desidratação aguda + jejum + seminu no final), permite "perder" 4-8 kg de água e conteúdo intestinal **sem emagrecer um grama de gordura**, de forma fisiologicamente real e quase indetectável por vídeo. Defender isso exige underwriting comportamental (engine Charya), não computer vision. O segundo eixo crítico é o **desacoplamento do token do peso**: token dinâmico só prova que *alguém* estava ao vivo, não que *aquela balança* mostra *o peso daquele corpo* — o ataque "titular canta o token, proxy se pesa fora de quadro" e o "token correto + peso de outra sessão" exigem amarração temporal e espacial rígida (token deve aparecer *no mesmo frame* do visor e do rosto, em vídeo contínuo verificado).
+A filosofia de defesa do Charya — **não eliminar 100% da fraude, mas torná-la cara, trabalhosa e economicamente inviável na média** — é a correta e deve ser operacionalizada como um princípio de design: cada mitigação tem que **aumentar o custo, o tempo, a perícia ou o risco de detecção** do fraudador acima do payout esperado. Concretamente isso significa atacar a **economia do swing**: o vetor de longe mais perigoso, e que combina vários da lista (baseline inflado por super-hidratação/sal/carbo + roupa pesada + bexiga cheia no início, contra desidratação aguda + jejum + seminu no final), permite "perder" 4-8 kg de água e conteúdo intestinal **sem emagrecer um grama de gordura**, de forma fisiologicamente real e quase indetectável por vídeo. Defender isso exige underwriting comportamental (engine Charya), não computer vision. O segundo eixo crítico é o **desacoplamento do token do peso**: token dinâmico só prova que _alguém_ estava ao vivo, não que _aquela balança_ mostra _o peso daquele corpo_ — o ataque "titular canta o token, proxy se pesa fora de quadro" e o "token correto + peso de outra sessão" exigem amarração temporal e espacial rígida (token deve aparecer _no mesmo frame_ do visor e do rosto, em vídeo contínuo verificado).
 
 A defesa, portanto, é **em profundidade e em camadas correlacionadas**: (1) regras automáticas baratas que filtram a massa de fraude trivial e impõem fricção (baseline supervisionado, janela aleatória de pesagem, protocolo de roupa/hidratação, token co-localizado com o peso); (2) IA/computer vision que encarece a falsificação de mídia (detecção de tela filmada, body estimation, análise de edição/metadata, OCR robusto a parallax/arredondamento); (3) revisão humana focada e blindada contra engenharia social, reservada a payout alto e flags — sabendo que o **insider na camada 3 e o suporte como vetor de social engineering** são eles próprios ameaças de alto impacto. O resto deste relatório prioriza essas mitigações pelo critério de impacto-por-custo, ancorando cada uma nas Fases 1/MVP, 2 e 3 já planejadas.
 
@@ -57,38 +57,38 @@ Legenda de risco: 🟢 baixo · 🟡 médio · 🔴 alto.
 
 Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderada para priorizar ataques de **baixa sofisticação** (fáceis de executar e danosos vêm primeiro). Top 30 de 101 vetores; as métricas de cada vetor também aparecem inline em sua seção.
 
-| # | Vetor | Categoria | Prob. | Impacto | Sofist. | Prioridade |
-|---|-------|-----------|:-----:|:-------:|:-------:|:----------:|
-| 1 | Offset de calibração de fábrica (TARE/UNIT) | Manipulação física da balança e do visor | 🔴 alta | 🔴 alto | baixa | 27 |
-| 2 | Troca de balança entre pesagens | Manipulação física da balança e do visor | 🔴 alta | 🔴 alto | baixa | 27 |
-| 3 | Lastro oculto no corpo/roupa no baseline | Truques corporais e de peso aparente no momento da pesagem | 🔴 alta | 🔴 alto | baixa | 27 |
-| 4 | Compartilhamento de conta familiar | Fraude de identidade, proxy e conluio (pesar outra pessoa) | 🔴 alta | 🔴 alto | baixa | 27 |
-| 5 | Replay de tela filmada (segunda tela) | Manipulação de vídeo e mídia (replay, edição, deepfake/GenAI) | 🔴 alta | 🔴 alto | baixa | 27 |
-| 6 | Replay attack puro (token desatualizado) | Manipulação de vídeo e mídia (replay, edição, deepfake/GenAI) | 🔴 alta | 🔴 alto | baixa | 27 |
-| 7 | Injeção de peso falso no Apple Health / Health Connect | Spoofing digital | 🔴 alta | 🔴 alto | baixa | 27 |
-| 8 | Adesivo/overlay físico de dígitos no visor | Derrota de OCR, token dinâmico, gesto e liveness | 🔴 alta | 🔴 alto | baixa | 27 |
-| 9 | Falar o token em vez de mostrar (desacoplar do peso) | Derrota de OCR, token dinâmico, gesto e liveness | 🔴 alta | 🔴 alto | baixa | 27 |
-| 10 | Timing diurnal/menstrual/intestinal das pesagens | Abuso de processo, metas, baseline e políticas | 🔴 alta | 🔴 alto | baixa | 27 |
-| 11 | Retry farming (reenvio até passar) | Abuso de processo, metas, baseline e políticas | 🔴 alta | 🔴 alto | baixa | 27 |
-| 12 | Mostrador analógico ajustado / pré-carga do ponteiro | Manipulação física da balança e do visor | 🟡 média | 🔴 alto | baixa | 18 |
-| 13 | Roupa/calçado pesado no baseline vs. seminu no final | Truques corporais e de peso aparente no momento da pesagem | 🔴 alta | 🟡 médio | baixa | 18 |
-| 14 | Apoio oculto em parede/móvel fora de quadro | Truques corporais e de peso aparente no momento da pesagem | 🔴 alta | 🔴 alto | média | 18 |
-| 15 | Mão pressionada em bancada/pia/corrimão | Truques corporais e de peso aparente no momento da pesagem | 🔴 alta | 🔴 alto | média | 18 |
-| 16 | Esvaziamento de bexiga/intestino + jejum matinal | Truques corporais e de peso aparente no momento da pesagem | 🔴 alta | 🟡 médio | baixa | 18 |
-| 17 | Baseline inflado por super-hidratação e carga de sal/carbo | Truques corporais e de peso aparente no momento da pesagem | 🔴 alta | 🔴 alto | média | 18 |
-| 18 | Dublê magro de aparência semelhante no final | Fraude de identidade, proxy e conluio (pesar outra pessoa) | 🔴 alta | 🔴 alto | média | 18 |
-| 19 | Token cantado pelo titular + peso de proxy fora de quadro | Fraude de identidade, proxy e conluio (pesar outra pessoa) | 🔴 alta | 🔴 alto | média | 18 |
-| 20 | Reuso/edição de dois vídeos reais com condição inflada | Manipulação de vídeo e mídia (replay, edição, deepfake/GenAI) | 🔴 alta | 🔴 alto | média | 18 |
-| 21 | Foto impressa / segundo display no lugar do visor | Manipulação de vídeo e mídia (replay, edição, deepfake/GenAI) | 🟡 média | 🔴 alto | baixa | 18 |
-| 22 | GPS spoofing da geolocalização | Spoofing digital | 🔴 alta | 🟡 médio | baixa | 18 |
-| 23 | Manipulação do relógio do device | Spoofing digital | 🔴 alta | 🟡 médio | baixa | 18 |
-| 24 | Segundo device disfarçado de visor da balança | Derrota de OCR, token dinâmico, gesto e liveness | 🟡 média | 🔴 alto | baixa | 18 |
-| 25 | Degradação proposital da imagem do visor | Derrota de OCR, token dinâmico, gesto e liveness | 🔴 alta | 🟡 médio | baixa | 18 |
-| 26 | Goal-gaming: meta/prazo calibrados ao swing fisiológico | Abuso de processo, metas, baseline e políticas | 🔴 alta | 🔴 alto | média | 18 |
-| 27 | Arbitragem entre balanças descalibradas | Abuso de processo, metas, baseline e políticas | 🔴 alta | 🔴 alto | média | 18 |
-| 28 | Abandono-e-recriação para re-roll do baseline | Abuso de processo, metas, baseline e políticas | 🟡 média | 🔴 alto | baixa | 18 |
-| 29 | Engenharia social no suporte humano (camada 3) | Abuso de processo, metas, baseline e políticas | 🔴 alta | 🔴 alto | média | 18 |
-| 30 | Exploração de ambiguidade de regras | Abuso de processo, metas, baseline e políticas | 🔴 alta | 🟡 médio | baixa | 18 |
+| #   | Vetor                                                      | Categoria                                                     |  Prob.   | Impacto  | Sofist. | Prioridade |
+| --- | ---------------------------------------------------------- | ------------------------------------------------------------- | :------: | :------: | :-----: | :--------: |
+| 1   | Offset de calibração de fábrica (TARE/UNIT)                | Manipulação física da balança e do visor                      | 🔴 alta  | 🔴 alto  |  baixa  |     27     |
+| 2   | Troca de balança entre pesagens                            | Manipulação física da balança e do visor                      | 🔴 alta  | 🔴 alto  |  baixa  |     27     |
+| 3   | Lastro oculto no corpo/roupa no baseline                   | Truques corporais e de peso aparente no momento da pesagem    | 🔴 alta  | 🔴 alto  |  baixa  |     27     |
+| 4   | Compartilhamento de conta familiar                         | Fraude de identidade, proxy e conluio (pesar outra pessoa)    | 🔴 alta  | 🔴 alto  |  baixa  |     27     |
+| 5   | Replay de tela filmada (segunda tela)                      | Manipulação de vídeo e mídia (replay, edição, deepfake/GenAI) | 🔴 alta  | 🔴 alto  |  baixa  |     27     |
+| 6   | Replay attack puro (token desatualizado)                   | Manipulação de vídeo e mídia (replay, edição, deepfake/GenAI) | 🔴 alta  | 🔴 alto  |  baixa  |     27     |
+| 7   | Injeção de peso falso no Apple Health / Health Connect     | Spoofing digital                                              | 🔴 alta  | 🔴 alto  |  baixa  |     27     |
+| 8   | Adesivo/overlay físico de dígitos no visor                 | Derrota de OCR, token dinâmico, gesto e liveness              | 🔴 alta  | 🔴 alto  |  baixa  |     27     |
+| 9   | Falar o token em vez de mostrar (desacoplar do peso)       | Derrota de OCR, token dinâmico, gesto e liveness              | 🔴 alta  | 🔴 alto  |  baixa  |     27     |
+| 10  | Timing diurnal/menstrual/intestinal das pesagens           | Abuso de processo, metas, baseline e políticas                | 🔴 alta  | 🔴 alto  |  baixa  |     27     |
+| 11  | Retry farming (reenvio até passar)                         | Abuso de processo, metas, baseline e políticas                | 🔴 alta  | 🔴 alto  |  baixa  |     27     |
+| 12  | Mostrador analógico ajustado / pré-carga do ponteiro       | Manipulação física da balança e do visor                      | 🟡 média | 🔴 alto  |  baixa  |     18     |
+| 13  | Roupa/calçado pesado no baseline vs. seminu no final       | Truques corporais e de peso aparente no momento da pesagem    | 🔴 alta  | 🟡 médio |  baixa  |     18     |
+| 14  | Apoio oculto em parede/móvel fora de quadro                | Truques corporais e de peso aparente no momento da pesagem    | 🔴 alta  | 🔴 alto  |  média  |     18     |
+| 15  | Mão pressionada em bancada/pia/corrimão                    | Truques corporais e de peso aparente no momento da pesagem    | 🔴 alta  | 🔴 alto  |  média  |     18     |
+| 16  | Esvaziamento de bexiga/intestino + jejum matinal           | Truques corporais e de peso aparente no momento da pesagem    | 🔴 alta  | 🟡 médio |  baixa  |     18     |
+| 17  | Baseline inflado por super-hidratação e carga de sal/carbo | Truques corporais e de peso aparente no momento da pesagem    | 🔴 alta  | 🔴 alto  |  média  |     18     |
+| 18  | Dublê magro de aparência semelhante no final               | Fraude de identidade, proxy e conluio (pesar outra pessoa)    | 🔴 alta  | 🔴 alto  |  média  |     18     |
+| 19  | Token cantado pelo titular + peso de proxy fora de quadro  | Fraude de identidade, proxy e conluio (pesar outra pessoa)    | 🔴 alta  | 🔴 alto  |  média  |     18     |
+| 20  | Reuso/edição de dois vídeos reais com condição inflada     | Manipulação de vídeo e mídia (replay, edição, deepfake/GenAI) | 🔴 alta  | 🔴 alto  |  média  |     18     |
+| 21  | Foto impressa / segundo display no lugar do visor          | Manipulação de vídeo e mídia (replay, edição, deepfake/GenAI) | 🟡 média | 🔴 alto  |  baixa  |     18     |
+| 22  | GPS spoofing da geolocalização                             | Spoofing digital                                              | 🔴 alta  | 🟡 médio |  baixa  |     18     |
+| 23  | Manipulação do relógio do device                           | Spoofing digital                                              | 🔴 alta  | 🟡 médio |  baixa  |     18     |
+| 24  | Segundo device disfarçado de visor da balança              | Derrota de OCR, token dinâmico, gesto e liveness              | 🟡 média | 🔴 alto  |  baixa  |     18     |
+| 25  | Degradação proposital da imagem do visor                   | Derrota de OCR, token dinâmico, gesto e liveness              | 🔴 alta  | 🟡 médio |  baixa  |     18     |
+| 26  | Goal-gaming: meta/prazo calibrados ao swing fisiológico    | Abuso de processo, metas, baseline e políticas                | 🔴 alta  | 🔴 alto  |  média  |     18     |
+| 27  | Arbitragem entre balanças descalibradas                    | Abuso de processo, metas, baseline e políticas                | 🔴 alta  | 🔴 alto  |  média  |     18     |
+| 28  | Abandono-e-recriação para re-roll do baseline              | Abuso de processo, metas, baseline e políticas                | 🟡 média | 🔴 alto  |  baixa  |     18     |
+| 29  | Engenharia social no suporte humano (camada 3)             | Abuso de processo, metas, baseline e políticas                | 🔴 alta  | 🔴 alto  |  média  |     18     |
+| 30  | Exploração de ambiguidade de regras                        | Abuso de processo, metas, baseline e políticas                | 🔴 alta  | 🟡 médio |  baixa  |     18     |
 
 > A prioridade combina dano e facilidade: um ataque 🔴/🔴 de sofisticação **baixa** pontua mais alto que um 🔴/🔴 de sofisticação **alta**, porque é o que mais aparece na prática e exige defesa primeiro.
 
@@ -98,7 +98,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 
 ## 1. Manipulação física da balança e do visor
 
-*14 vetores nesta categoria.*
+_14 vetores nesta categoria._
 
 ### Offset de calibração de fábrica (TARE/UNIT)
 
@@ -109,6 +109,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Peso inicial fisiologicamente implausível para a estatura/biotipo aparente no vídeo (homem que parece 95 kg exibindo 112 kg).
 - Salto de perda concentrado entre baseline e check-in intermediário, com platô depois (típico de offset removido cedo).
 - Inconsistência entre o peso declarado e a circunferência/volume corporal estimável no vídeo.
@@ -116,6 +117,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Diferença entre peso da balança e peso reportado por wearable/IMC plausível.
 
 **Mitigações:**
+
 - Engine de plausibilidade fisiológica: limite duro de perda semanal (ex.: >1,5% do peso corporal/semana dispara revisão) e curva de perda esperada por perfil; baseline no topo da faixa plausível recebe peso extra no score de risco.
 - Exigir pesagem de baseline com objeto de referência conhecido no mesmo vídeo (ex.: subir com um galão de água lacrado de 5 kg / fardo de 6 garrafas; o app valida o delta esperado). Offset de calibração distorce o objeto de referência e o corpo de forma proporcional, denunciando o ganho.
 - Body estimation (Fase 2): estimar massa por silhueta/volume e cruzar com o peso lido; divergência > tolerância vira flag.
@@ -132,12 +134,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Balança analógica em si já é sinal de risco (sem telemetria, sem reprodutibilidade).
 - Ponteiro não retornando exatamente a zero quando a balança está vazia (se capturado).
 - Leituras "redondas" demais ou platôs incompatíveis com balança de mola (que tem ruído/oscilação natural).
 - Ausência da oscilação típica do ponteiro ao subir.
 
 **Mitigações:**
+
 - Política dura: rejeitar balança analógica/mola para comprovação de peso; exigir balança digital com visor numérico. UX do app educa e bloqueia submissões analógicas via classificador de imagem (Fase 2 detecta tipo de balança).
 - Exigir captura obrigatória da balança vazia marcando 0,0 imediatamente antes de subir, no mesmo vídeo contínuo (o token aparece sobre o visor zerado).
 - Objeto de referência de massa conhecida no mesmo vídeo para validar a escala do instrumento.
@@ -152,12 +156,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Calibração honesta deveria ser estável ao longo de meses; mudança de ganho/offset entre baseline e final é anômala se o firmware reportar parâmetros de calibração.
 - Telemetria "perfeita" (visor e BLE batem exatamente) combinada com perda implausível.
 - Histórico de check-ins sem ruído/variação intra-dia natural.
 - Objeto de referência lendo errado proporcionalmente ao corpo.
 
 **Mitigações:**
+
 - Atestação de calibração: na integração Fase 3, ler e versionar os parâmetros de calibração (ganho/offset) do dispositivo a cada pesagem; qualquer alteração entre baseline e final dispara revisão e pode invalidar a sequência.
 - Lacrar a calibração: na primeira pareação com a Charya, registrar o fingerprint de calibração e exigir que permaneça estável; mudança = reset do baseline.
 - Exigir objeto de referência de massa conhecida no vídeo da pesagem com balança smart (ganho/offset distorce o objeto, denunciando).
@@ -174,6 +180,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** baixa · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Ausência de assinatura/atestação válida do dispositivo.
 - Identificadores BLE (MAC, características, firmware version) que não batem com o modelo homologado ou que se repetem entre contas distintas.
 - Telemetria sem o ruído/jitter físico esperado de células de carga reais (sinal "limpo demais").
@@ -181,6 +188,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Reuso do mesmo dispositivo (fingerprint) por múltiplas contas.
 
 **Mitigações:**
+
 - Exigir atestação criptográfica do dispositivo na Fase 3: balanças homologadas com chave de hardware (secure element) assinando cada leitura com nonce/timestamp emitido pela Charya — impede emulador e replay de telemetria.
 - Pareamento certificado: aceitar apenas device IDs/firmware versions de uma allowlist; rejeitar perfis GATT genéricos.
 - Nonce dinâmico da Charya por pesagem (análogo ao token de tela): a balança deve assinar uma challenge fresca, derrubando MITM/replay.
@@ -197,6 +205,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** baixa · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Visor com profundidade/espessura, bordas, reflexo ou paralaxe anômalos em relação ao corpo da balança.
 - Fonte/segmentos do display não correspondendo ao modelo declarado.
 - Latência entre subir na balança e o número "estabilizar" inconsistente com a física (display falso pode mostrar valor instantâneo ou ter dígitos que não tremem).
@@ -204,6 +213,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Reflexo do ambiente/token na superfície do visor incoerente.
 
 **Mitigações:**
+
 - Cross-check obrigatório visor (OCR) vs telemetria BLE/wearable: o display falso não move a telemetria real, então diverge.
 - Exigir objeto de referência de massa conhecida no mesmo vídeo: o display falso não saberá reproduzir a leitura correta do objeto + corpo de forma consistente.
 - Computer vision (Fase 2): detectar overlay/adesivo no visor, anomalia de profundidade, fonte de display divergente do modelo, ausência de jitter do dígito final.
@@ -220,12 +230,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Aparência da balança (cor, formato, visor, plataforma, marca) diferente entre baseline, intermediária e final no vídeo.
 - Modelo/visor de balança trocando ao longo da jornada.
 - Telemetria/device ID BLE diferente entre pesagens (Fase 3).
 - Objeto de referência lendo diferente entre as duas balanças.
 
 **Mitigações:**
+
 - Fingerprint do equipamento ao longo da jornada: na Fase 1, capturar e comparar características visuais da balança (modelo, cor, marcas físicas, padrão do visor) entre baseline e final via computer vision; mudança dispara revisão.
 - Fase 3: amarrar todas as pesagens ao mesmo device ID BLE/atestação; balança diferente entre momentos invalida a sequência ou exige reaprovação.
 - Objeto de referência de massa conhecida em todas as pesagens: balanças distintas terão erros distintos no objeto, denunciando a troca.
@@ -241,12 +253,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Leitura instável/oscilante no vídeo de baseline (números pulando antes de "estabilizar" alto).
 - Indicador de bateria fraca visível no visor.
 - Reprodutibilidade ruim entre pesagens próximas.
 - Objeto de referência lendo errado no baseline e certo no final.
 
 **Mitigações:**
+
 - UX da pesagem: exigir duas leituras consecutivas estáveis (sobe, desce, sobe de novo) no mesmo vídeo, com tolerância apertada; instabilidade reprova a captura.
 - App detecta indicador de bateria fraca no visor (computer vision) e bloqueia a submissão.
 - Objeto de referência de massa conhecida valida a precisão do instrumento naquele momento.
@@ -262,12 +276,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** baixa · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Balança não marcando 0,0 exato quando vazia (zero deslocado) no início do baseline.
 - Diferença sistemática que some quando a balança é re-zerada.
 - Geolocalização/metadata sugerindo ambiente quente; horário de pico de calor.
 - Objeto de referência lendo deslocado de forma uniforme (offset, não ganho).
 
 **Mitigações:**
+
 - Exigir captura do visor marcando 0,0 com a balança vazia imediatamente antes de subir, no mesmo vídeo contínuo (o token sobre o visor zerado). Pré-carga térmica deslocaria esse zero, denunciando.
 - Exigir re-zeragem (tare) on-camera antes da pesagem, anulando o offset térmico.
 - Objeto de referência de massa conhecida detecta offset uniforme.
@@ -283,12 +299,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Balança visivelmente desnivelada/inclinada no vídeo.
 - Plano da plataforma não paralelo ao piso; sombra/folga sob um dos pés.
 - Leitura que não fecha em 0,0 com a balança vazia, ou que muda ao reposicionar.
 - Objeto de referência lendo errado de forma estável (offset/ganho).
 
 **Mitigações:**
+
 - Exigir enquadramento que mostre os 4 pés/base da balança apoiados no piso (gesto: filmar a balança por baixo/lateral antes de subir) — calço aparece.
 - Exigir 0,0 com balança vazia on-camera; calço normalmente impede zero limpo ou aparece no objeto de referência.
 - Computer vision (Fase 2): detectar inclinação da plataforma, folga sob os pés, balança não nivelada.
@@ -305,12 +323,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** baixa · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Uso de balança de mola/mecânica (já bloqueada por política).
 - Leitura que não zera ou que muda quando a balança é movida de posição.
 - Comportamento não-reprodutível entre pesagens próximas.
 - Objeto de referência inconsistente.
 
 **Mitigações:**
+
 - Política: rejeitar balança de mola/mecânica (mesma mitigação do vetor analógico).
 - Exigir balanças digitais com células de carga de qualidade homologadas; preferir Fase 3 com balança smart blindada.
 - Objeto de referência de massa conhecida e re-zeragem on-camera.
@@ -326,12 +346,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Subida brusca/com impacto no baseline; subida anormalmente lenta no final.
 - Corpo encostando ou estabilizando-se em parede/móvel/superfície fora de quadro (mão fora de enquadramento, postura assimétrica).
 - Leitura "hold" sem oscilação de estabilização.
 - Postura instável ou apoio parcial visível.
 
 **Mitigações:**
+
 - UX da pesagem: exigir subida controlada e permanência parado por N segundos com leitura estável (sem hold/pico); reprovar capturas com leitura não-estabilizada.
 - Enquadramento de corpo inteiro com mãos visíveis e sem contato com paredes/móveis durante a pesagem (parte do protocolo de gesto/postura); braços ao lado do corpo.
 - Pedir gesto (ex.: levantar a mão) enquanto na balança, exigindo equilíbrio sem apoio externo e confirmando peso total sobre o instrumento.
@@ -348,12 +370,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Superfície sob a balança diferente entre baseline e final (carpete vs piso) no vídeo.
 - Balança afundando/inclinando no tapete; pés não apoiados em superfície rígida.
 - Ambiente/cômodo diferente entre pesagens (geolocalização, cenário).
 - Objeto de referência lendo diferente entre as superfícies.
 
 **Mitigações:**
+
 - UX/política: instruir e exigir piso rígido e nivelado; computer vision detecta carpete/tapete/inclinação sob a balança e bloqueia.
 - Exigir mesma superfície/cômodo em toda a jornada (consistência de cenário e geolocalização); mudança dispara revisão.
 - Objeto de referência de massa conhecida na mesma superfície valida a leitura.
@@ -369,12 +393,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** baixa · **Impacto:** baixo
 
 **Sinais de detecção:**
+
 - Roupas/cabelo em movimento incompatível com ambiente parado; som de ventilador/soprador no áudio.
 - Leitura final oscilando para baixo de forma instável.
 - Cômodo/posição que esconde fonte de ar abaixo do corpo.
 - Diferença marginal exatamente no limiar da meta (otimização suspeita).
 
 **Mitigações:**
+
 - Exigir leitura final estável por N segundos sem oscilação descendente; instabilidade reprova a captura.
 - Análise de áudio/vídeo (Fase 2): detectar som de ventilador e movimento de cabelo/roupa indicando fluxo de ar forte.
 - Atenção reforçada da engine a metas fechadas "no fio" (margem mínima) — revisão humana para perdas que batem exatamente no limiar.
@@ -390,6 +416,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Probabilidade:** média | **Impacto:** médio | **Sofisticação:** média
 
 **Sinais de detecção:**
+
 - Linearidade suspeita demais da perda (perda real é ruidosa; reta perfeita é não-natural)
 - Offset absoluto coerente sugerindo balança descalibrada usada de propósito (cruzar com peso esperado por body estimation)
 - Variância intra-sessão de leitura incompatível entre as três pesagens (mesma balança deveria ter ruído parecido)
@@ -397,6 +424,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Intervalo entre pesagens escolhido para maximizar swing favorável
 
 **Mitigações:**
+
 - Validar não só a tendência mas a TEXTURA da curva (ruído fisiológico esperado); penalizar linearidade perfeita
 - Ancorar pelo menos uma pesagem em balança/contexto controlado quando possível (Fase 3: balança smart pareada, peso absoluto cruzado com wearable)
 - Cruzar peso numérico de cada ponto com body estimation visual do mesmo vídeo — incoerência na intermediária vira flag
@@ -404,13 +432,13 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Tratar a intermediária com o mesmo rigor de verificação da final (token, gesto, liveness), nunca como etapa 'leve'
 - Análise de consistência de assinatura da balança (ruído, tempo de estabilização) entre as três capturas
 
-*(identificado na revisão de completude)*
+_(identificado na revisão de completude)_
 
 ---
 
 ## 2. Truques corporais e de peso aparente no momento da pesagem
 
-*16 vetores nesta categoria.*
+_16 vetores nesta categoria._
 
 ### Lastro oculto no corpo/roupa no baseline
 
@@ -421,6 +449,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Roupa desproporcionalmente pesada/volumosa no baseline vs. roupa leve no final (assimetria de vestuário entre check-ins).
 - Marcha rígida, passos curtos, postura "pesada", balanço de braços reduzido ao subir na balança no baseline.
 - Silhueta corporal (body estimation) incompatível com o peso declarado: corpo "magro demais" para o número alto do baseline.
@@ -429,6 +458,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Densidade aparente inconsistente: IMC implausível para a aparência facial/óssea.
 
 **Mitigações:**
+
 - **Protocolo de vestuário padronizado:** exigir roupa justa/mínima padronizada (regata + short, descalço) em TODAS as pesagens, declarada na UX antes de gravar; rejeitar vídeos com casaco/camadas.
 - **Body estimation (Fase 2)** cruzando silhueta com peso lido pelo OCR: discrepância corpo-vs-número > limiar gera flag e revisão humana obrigatória.
 - **Engine comportamental:** marcar baseline cujo IMC/aparência diverge do peso declarado e priorizar baselines altos para escrutínio (o ataque depende de inflar o baseline, que é o momento de menor incentivo do usuário a ser honesto).
@@ -445,6 +475,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Calçado/bota no baseline vs. pés descalços no final (detectável por CV nos frames dos pés na plataforma).
 - Casaco/calça pesada no baseline vs. roupa leve no final.
 - Áudio/visual de bolsos cheios, tilintar de chaves/moedas, volume nos bolsos.
@@ -452,6 +483,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Tonalidade/saturação do jeans sugerindo umidade.
 
 **Mitigações:**
+
 - **Padronização de vestuário obrigatória e enforced por CV:** detectar calçado, casaco e camadas; bloquear submissão ou forçar regravação com aviso "remova calçado, casaco e esvazie os bolsos".
 - **Gesto de liveness:** "mostre os pés descalços na plataforma", "vire os bolsos" — torna o vídeo autocomprovante da ausência de peso de roupa/bolso.
 - **Detecção de calçado por OCR/CV nos frames dos pés** como gate automático: pés calçados no baseline = pesagem inválida.
@@ -468,6 +500,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Enquadramento que corta deliberadamente paredes/laterais/o entorno da balança; câmera "apertada" demais no corpo.
 - Inclinação corporal persistente para um lado (centro de massa deslocado para fora da vertical da balança).
 - Ombro/quadril/braço saindo de quadro ou "encostando" em algo invisível.
@@ -476,6 +509,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Sombra/iluminação revelando superfície próxima fora de quadro.
 
 **Mitigações:**
+
 - **Requisito de enquadramento "ambiente completo":** o token/UX exige um giro panorâmico de 360° mostrando que a balança está em área aberta, longe de paredes/móveis, ANTES de subir — vídeo contínuo registra o entorno.
 - **Gesto de liveness anti-apoio:** "estenda os dois braços para os lados", "levante as duas mãos acima da cabeça", "mantenha as mãos na cabeça durante a leitura" — impossibilita apoiar mão/antebraço.
 - **Detecção de pose (Fase 2):** estimar centro de massa e ângulo do tronco; inclinação sustentada + braço fora de quadro = flag. Detectar contato corporal com bordas do frame.
@@ -492,6 +526,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Mão/antebraço apoiado em superfície horizontal próxima durante toda a leitura (não só ao subir).
 - Antebraço/punho com tensão e ângulo de empurrão; ombro abaixado do lado do apoio.
 - Visor estabiliza num valor abaixo da oscilação inicial exatamente quando a mão pressiona.
@@ -499,6 +534,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Movimento de "ajuste fino": pequenas variações no visor sincronizadas com a pressão da mão.
 
 **Mitigações:**
+
 - **Mãos visíveis e livres durante a leitura:** o token/gesto exige as duas mãos longe de qualquer superfície (ex.: "mãos na cabeça", "braços cruzados no peito", "segure o celular com as duas mãos mostrando o visor") no momento da estabilização do peso.
 - **Panorâmica obrigatória** mostrando que a balança não está adjacente a bancada/corrimão/pia.
 - **Detecção de pose** que penaliza qualquer contato de mão/antebraço com superfície fora do corpo durante a janela de leitura do OCR.
@@ -515,6 +551,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Vídeo nunca mostra os dois pés inteiros e claramente sobre a plataforma.
 - Balança posicionada junto a degrau/desnível/tapete; entorno dos pés não enquadrado.
 - Postura na ponta dos pés ou peso jogado no antepé.
@@ -522,6 +559,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Pés cortados pela borda do frame.
 
 **Mitigações:**
+
 - **Gate obrigatório "mostre os dois pés inteiros na plataforma":** o token exige um close dos pés sobre a balança no início da pesagem; CV valida que ambos os pés estão integralmente sobre a plataforma e que não há degrau/desnível ao redor.
 - **Panorâmica do piso** ao redor da balança (superfície plana, sem degrau, sem tapete grosso).
 - **Detecção CV de pés/plataforma (Fase 2):** segmentação dos pés e da balança; calcanhar fora ou pé na borda = flag.
@@ -538,6 +576,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Tremor/estabilidade do vídeo incompatível com handheld puro (câmera apoiada/empurrada).
 - Braço esticado e tenso em direção ao dispositivo/tripé durante a leitura.
 - Microvibrações na imagem sincronizadas com variações do visor.
@@ -545,6 +584,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Acelerômetro/giroscópio do dispositivo (metadata) indicando força/encosto durante a leitura.
 
 **Mitigações:**
+
 - **Telemetria de sensores do device:** capturar acelerômetro/giroscópio durante a gravação; padrão de "empurrão/apoio" no aparelho (força sustentada, não tremor natural de mão) = flag. Charya já planeja usar metadata do arquivo — estender para IMU em tempo real.
 - **Gesto de liveness com mãos livres:** exigir que, no momento da leitura, ambas as mãos estejam visíveis e longe do dispositivo/tripé (ex.: tripé obrigatório + mãos na cabeça).
 - **Política de setup:** recomendar tripé fixo distante e mãos livres; vídeos com a mão claramente no dispositivo durante a leitura são revisados.
@@ -561,6 +601,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Barra/corrimão/móvel na altura do quadril visível ou inferido no entorno.
 - Quadril/coxa em contato com superfície durante a leitura; postura semi-sentada.
 - Joelhos levemente flexionados com peso jogado para trás.
@@ -568,6 +609,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Entorno enquadrado de forma a esconder a região do quadril/laterais.
 
 **Mitigações:**
+
 - **Panorâmica obrigatória do entorno** comprovando ausência de barra/corrimão/móvel na altura do quadril junto à balança.
 - **Detecção de pose (Fase 2):** ângulo de quadril/joelho indicando postura semi-sentada + contato lateral = flag automática.
 - **Gesto de liveness dinâmico:** "dê um pequeno giro de 90°", "fique reto com os braços na cabeça" — sustentar peso numa barra fica incompatível com o gesto.
@@ -584,12 +626,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Pés posicionados na borda/canto em vez do centro da plataforma.
 - Postura instável, pés muito juntos ou muito afastados nas bordas.
 - Mesma balança lendo valores inconsistentes entre check-ins para evolução implausível.
 - Oscilação anômala do visor (leitura instável típica de carga descentralizada).
 
 **Mitigações:**
+
 - **Posicionamento padronizado dos pés:** UX e CV exigem pés centrados, paralelos, dentro de uma região central; close obrigatório dos pés na plataforma valida posição.
 - **Balança própria da Charya / balança smart homologada (Fase 3):** controlar o equipamento elimina a exploração de geometria de balança barata; balanças calibradas com leitura consistente independente do posicionamento.
 - **Cross-check com balança secundária / bioimpedância:** valor único da balança de vidro tem peso menor no score; preferir equipamentos com leitura robusta.
@@ -606,12 +650,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Movimento corporal (subida/descida, balanço, ponta dos pés) durante a janela de estabilização.
 - Visor com oscilação grande antes de travar; valor final no extremo baixo da faixa.
 - Flexão de joelhos, alteração de altura do corpo, ou respiração exagerada sincronizada com a leitura.
 - Tempo até estabilização anormalmente curto (leitura "pega" um vale).
 
 **Mitigações:**
+
 - **OCR temporal robusto:** capturar a série temporal completa do visor e exigir estabilização por N segundos consecutivos (ex.: 3-5s estável) antes de aceitar; usar a MEDIANA/valor estável, não o frame mais baixo. Rejeitar leituras voláteis.
 - **Liveness de imobilidade:** instruir "fique completamente parado, pés retos, em pé, olhando para frente" durante a contagem regressiva da leitura; detecção de pose penaliza movimento na janela de captura.
 - **Detecção de variação de altura/centro de massa** por CV durante a leitura = flag.
@@ -628,6 +674,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Taxa de perda final implausível: queda acentuada concentrada nos últimos dias (curva de perda com "degrau" no final).
 - Sinais visuais de desidratação: pele/lábios secos, olhos fundos, vascularização aparente, rosto "chupado".
 - Rebote pós-pesagem: se houver check-in de confirmação dias depois, o peso volta a subir bruscamente.
@@ -635,6 +682,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Frequência cardíaca de repouso elevada / variabilidade alterada (wearable) compatível com desidratação.
 
 **Mitigações:**
+
 - **Plausibilidade fisiológica da TAXA (núcleo da engine):** limitar perda fisiologicamente sustentável (ex.: ~0,5-1% do peso/semana de gordura real); quedas finais que excedem o limite biológico = flag automática e payout retido.
 - **Janela de estabilização pós-meta:** exigir que o peso final seja CONFIRMADO/mantido por uma pesagem adicional 3-7 dias depois (anti-rebote). Pagar só após confirmação de peso sustentado elimina o cutting de água.
 - **Bioimpedância via balança smart (Fase 3):** exigir % de água corporal e massa magra; desidratação aparece como queda de água, não de gordura — invalida a "perda".
@@ -652,6 +700,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** baixa · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Bioimpedância: queda de água corporal e massa magra (glicogênio + água), gordura ~estável.
 - Aparência "flat"/murcha dos músculos, perda de volume sem perda de definição de gordura subcutânea.
 - Rebote pós-pesagem (recuperação de 2-5kg em dias).
@@ -659,6 +708,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Curva de perda com aceleração suave mas atípica no trecho final.
 
 **Mitigações:**
+
 - **Confirmação de peso sustentado (anti-rebote):** mesma mitigação central — pagar só após re-pesagem dias depois neutraliza qualquer manipulação de glicogênio/água, pois o peso volta.
 - **Bioimpedância obrigatória (Fase 3):** decompor a perda em gordura vs. água/magra; "perda" que não vem majoritariamente de massa gorda não conta integralmente para a meta.
 - **Score metabólico (Fase 3)** combinando peso, bioimpedância e wearables para estimar perda de gordura real.
@@ -675,6 +725,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** baixa · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Queda extrema e isolada no último ponto (degrau agudo no dia da pesagem).
 - Rebote pronunciado em qualquer pesagem subsequente.
 - Bioimpedância: colapso de água corporal.
@@ -682,6 +733,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Wearable: FC elevada, possíveis arritmias, atividade reduzida.
 
 **Mitigações:**
+
 - **Confirmação de peso sustentado (anti-rebote)** — neutraliza completamente o "soco" de última hora.
 - **Limiar de queda diária fisiológica:** queda > X% em 24-48h = flag automática e bloqueio de payout até reconfirmação.
 - **Bioimpedância (Fase 3):** queda de água sem queda de gordura invalida.
@@ -698,12 +750,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Horário do baseline (tarde/noite) vs. final (manhã cedo) sistematicamente oposto (timestamp/metadata).
 - Padrão consistente de pesagens matinais só no final.
 - Pequenas perdas combinadas que somam um delta suspeito vs. a curva geral.
 - Cross-check com check-ins intermediários revela inconsistência de horário/condição.
 
 **Mitigações:**
+
 - **Padronização de condições de pesagem:** exigir mesma janela horária (ex.: sempre de manhã em jejum, OU sempre no mesmo horário) e mesma condição declarada para TODAS as pesagens — incluindo o baseline. Isso remove o delta artificial.
 - **Timestamp confiável (já no stack):** usar o token com timestamp + metadata para validar horário; rejeitar baseline noturno vs. final matinal quando a política exige consistência.
 - **Geolocalização + timestamp** para corroborar horário e local consistentes.
@@ -720,6 +774,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Queda rápida e grande logo APÓS o baseline (primeiro check-in), incompatível com perda de gordura — assinatura clássica de baseline inflado por água.
 - Aparência "inchada" no baseline (rosto, abdômen distendido) vs. normal depois.
 - Bioimpedância no baseline com % de água anormalmente alto.
@@ -727,6 +782,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Histórico/peso declarado no cadastro divergente do baseline.
 
 **Mitigações:**
+
 - **Período de estabilização do baseline:** exigir 2-3 pesagens em dias diferentes para estabelecer o baseline (média), em vez de um único ponto — anula o pico de super-hidratação.
 - **Body estimation no baseline (Fase 2):** silhueta incompatível com peso alto = flag; é o mesmo controle do lastro oculto.
 - **Bioimpedância (Fase 3):** % de água alto no baseline sinaliza inflação hídrica.
@@ -744,6 +800,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Mudança de ângulo de câmera, distância e altura entre baseline e final (metadata de lente/EXIF, estimativa de distância focal).
 - Roupa contrastante em cor/padrão/compressão entre os dois momentos.
 - Body estimation inconsistente com a perda de peso declarada (silhueta "magra demais" para o delta).
@@ -751,6 +808,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Iluminação manipulada para criar sombras afinadoras.
 
 **Mitigações:**
+
 - **Protocolo de captura padronizado e enforced:** mesma distância, mesma altura de câmera (tripé na altura do peito), mesmo enquadramento, roupa justa neutra padronizada em todas as pesagens — remove os graus de liberdade da ilusão.
 - **Token de calibração de escala:** incluir um objeto/marcador de referência de tamanho conhecido (ou usar a própria balança de dimensão conhecida) no quadro para o CV calibrar escala e distância — desfaz o truque de lente/distância.
 - **Body estimation 3D/multi-ângulo (Fase 2):** exigir gesto "vire 360°" para reconstruir o corpo de múltiplos ângulos, neutralizando ângulo único enganoso.
@@ -767,6 +825,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Probabilidade:** alta | **Impacto:** médio | **Sofisticação:** baixa
 
 **Sinais de detecção:**
+
 - Curva de perda atípica para perda natural por dieta/exercício (degrau pós-cirúrgico, platô-queda-platô do GLP-1)
 - Perda localizada incoerente com perda sistêmica (body composition: cintura cai sem mudança proporcional em face/membros = sugere lipo)
 - Ausência de sinais de atividade compatível em wearables (perda grande sem gasto calórico correspondente — Fase 3)
@@ -774,6 +833,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Padrão de aposta no valor máximo logo após cadastro por perfil com IMC alto e meta agressiva
 
 **Mitigações:**
+
 - Termos explícitos: perda por cirurgia/medicação de emagrecimento durante a vigência invalida ou ajusta o payout; exigir declaração no onboarding (controle contratual, não técnico)
 - Underwriting de meta: limitar taxa de perda elegível à faixa fisiológica saudável; perda acima da faixa exige documentação médica e revisão humana
 - Health-check de produto: alinhar incentivos para não premiar perda perigosa (cap de velocidade, bônus por consistência e não por velocidade)
@@ -781,13 +841,13 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Janela de carência entre cadastro e início da aposta para reduzir arbitragem de cirurgia já agendada
 - Body composition analysis para distinguir redução sistêmica de redução localizada (lipo)
 
-*(identificado na revisão de completude)*
+_(identificado na revisão de completude)_
 
 ---
 
 ## 3. Fraude de identidade, proxy e conluio (pesar outra pessoa)
 
-*15 vetores nesta categoria.*
+_15 vetores nesta categoria._
 
 ### Dublê magro de aparência semelhante no final
 
@@ -798,6 +858,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Quebra de continuidade temporal entre o frame com rosto e o frame com visor (rosto e peso nunca coexistem no mesmo enquadramento contínuo).
 - Mudança abrupta de proporções corporais (ombro, cintura, pescoço, mãos) entre baseline e final, incompatível com a perda de peso declarada.
 - Tom de pele, pelos, tatuagens, cicatrizes, formato de joelho/pé divergentes do baseline.
@@ -805,6 +866,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Altura aparente (cabeça-a-pé na mesma balança/cenário) divergente entre vídeos.
 
 **Mitigações:**
+
 - UX da pesagem que EXIGE rosto + corpo inteiro + visor da balança no MESMO frame contínuo, com travessia obrigatória (pan único do rosto até o visor sem corte) — engine rejeita vídeos onde rosto e visor nunca coexistem.
 - Fase 2: body estimation / pose+anthropometria por computer vision criando assinatura corporal (razões de proporção, comprimento de membros, biacromial/altura) e cruzando baseline↔intermediário↔final; divergência > limiar vira flag.
 - Marcadores biométricos invariantes ao peso: tatuagens, cicatrizes, formato de orelha, dentição no gesto de falar, pulsos/mãos — comparação histórica entre check-ins.
@@ -821,6 +883,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Score facial alto porém não-idêntico (gêmeos não passam em matchers ajustados para distinguir univitelinos): micro-divergências em pintas, sobrancelha, assimetria facial.
 - Marcadores invariantes (tatuagens, cicatrizes, piercings, esmalte, relógio) presentes/ausentes de forma inconsistente entre check-ins.
 - Voz/biometria vocal divergente ao cantar o token (gêmeos têm timbres distinguíveis).
@@ -828,6 +891,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - CPF/cadastro com parentesco detectável (mesmo sobrenome, mesmo endereço, dependentes declarados).
 
 **Mitigações:**
+
 - Calibrar threshold de liveness/biometria de terceiros (Unico, idwall, Onfido) em modo "anti-gêmeo": exigir similaridade muito alta E ausência de micro-divergências, escalando para humano quando o score cai na zona "parecido mas não idêntico".
 - Biometria vocal no token cantado (voiceprint) como segundo fator independente do rosto, comparado entre baseline e final.
 - Marcadores invariantes obrigatórios no protocolo: registrar tatuagens/cicatrizes no baseline e exigir reaparecimento no final.
@@ -843,12 +907,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Reuso de corpo: o MESMO corpo (assinatura antropométrica, tatuagem, mão) aparecendo em contas distintas de titulares diferentes.
 - Cenários, iluminação, balança ou ângulos recorrentes entre contas não relacionadas (assinatura de "estúdio" do serviço).
 - Roupas/objetos idênticos reaparecendo em CPFs distintos.
 - Divergência corpo↔rosto consistente com o padrão de dublê, repetida no portfólio.
 
 **Mitigações:**
+
 - Assinatura corporal cross-conta (Fase 2): indexar embeddings antropométricos e detectar o MESMO corpo em titulares diferentes — colusão em escala vira detectável.
 - Fingerprint de cenário/dispositivo: hash perceptual do ambiente, modelo da balança via OCR/visão, metadata de câmera; reuso entre contas distintas escala para investigação.
 - Token dinâmico imprevisível por sessão (gesto + palavra + código) eleva o custo de "treinar" o dublê e impede roteiro pré-ensaiado.
@@ -864,6 +930,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - O mesmo corpo aparecendo em contas diferentes (cross-conta) — sinal central.
 - Rosto da conta ausente ou de relance na final; corpo não bate com baseline da própria conta.
 - Correlação de devices, IPs, horários, geolocalização e padrões de aposta entre as contas do anel.
@@ -871,6 +938,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Curvas de peso de várias contas convergindo para o mesmo corpo.
 
 **Mitigações:**
+
 - Cross-conta body matching (Fase 2): o mesmo embedding corporal em contas distintas é o detector primário — disparo automático de investigação do anel.
 - Grafo de colusão na engine: clusterizar contas por device fingerprint, IP, geo, rede social de referência, horários de check-in e similaridade de evidências.
 - Exigência forte rosto+corpo+visor no mesmo frame contínuo destrói a "troca de corpos" porque o rosto do titular precisaria estar na balança junto.
@@ -886,12 +954,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Rosto/voz da final divergentes do baseline apesar de ambiente idêntico (o ambiente bater perfeitamente NÃO deve ser tratado como prova de identidade).
 - Assinatura corporal diferente do baseline da conta.
 - Marcadores invariantes ausentes/trocados.
 - Dois rostos distintos aparecendo em check-ins diferentes da mesma conta ao longo do tempo.
 
 **Mitigações:**
+
 - Tratar identidade como independente do ambiente: liveness facial + voiceprint amarrados ao KYC, não confiar em IP/geo como prova de "mesma pessoa".
 - Biometria histórica (Fase 2): toda final é comparada face+corpo contra o baseline da conta; divergência facial reprova mesmo com ambiente idêntico.
 - Token dinâmico falado força amostra de voz vinculável ao titular em cada check-in.
@@ -907,12 +977,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Baseline com corpo "inflado" artificialmente: contornos de roupa, sombras de enchimento, rosto magro com "corpo gordo" incoerente (rosto e composição corporal não batem).
 - IMC do rosto/pescoço incompatível com o peso declarado no baseline.
 - Pix/pagamento de CPF diferente do titular KYC.
 - Padrão de uso (digitação, device, horários) sugerindo operador distinto do rosto.
 
 **Mitigações:**
+
 - Coerência rosto↔corpo↔peso no BASELINE: engine valida se a face magra é plausível para o peso inicial declarado (IMC facial vs peso); incoerência reprova o baseline, não só a final.
 - Casamento Pix↔CPF↔KYC: o pagador do Pix deve ser o titular do KYC; divergência vira flag forte (anti-laranja).
 - Anti-fat-suit no baseline: detecção de enchimento, costuras tensionadas, transição de textura corpo/roupa.
@@ -928,6 +1000,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Troca de device/IP/geo entre baseline e final (conta migrou de dono).
 - Mudança de padrão comportamental (digitação, horários, idioma de teclado) pós-aprovação do baseline.
 - Conta de baseline antiga "reativada" abruptamente para uma aposta de alto valor.
@@ -935,6 +1008,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Reuso do mesmo corpo magro em várias contas (caso de aluguel).
 
 **Mitigações:**
+
 - Re-verificação de liveness/biometria no MOMENTO da final e do saque, não confiar no KYC antigo: a final precisa casar com o rosto do KYC ao vivo.
 - Continuidade de device/sessão: vincular conta a device fingerprint; troca de device antes de payout alto exige re-KYC.
 - Casamento Pix de saque ↔ CPF do KYC: payout só para conta bancária do mesmo titular, eliminando o benefício da revenda.
@@ -950,12 +1024,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Reuso de corpo, rosto, cenário, balança ou device entre contas formalmente independentes.
 - Cluster de contas com Pix originando/destinando para poucas contas bancárias concentradoras.
 - Apostas calibradas logo abaixo dos limiares de revisão humana (gaming do threshold).
 - Padrões temporais e geográficos correlacionados entre "estranhos".
 
 **Mitigações:**
+
 - Detecção de anéis na engine: grafo cruzando device, IP, geo, Pix, biometria corporal/facial e cenário entre contas; clusters disparam investigação coletiva.
 - Limites de exposição agregada e thresholds de revisão DINÂMICOS/ocultos (não fixos), para impedir calibragem abaixo da linha.
 - Concentração financeira: monitorar convergência de Pix/saques para poucas contas bancárias (anti-laranja).
@@ -971,6 +1047,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** alto · **Probabilidade:** baixa · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Onboarding em lote: muitos KYCs do mesmo device/IP/faixa de rede em janela curta.
 - Mesma câmera/sensor fingerprint ou mesmo ambiente em selfies de "pessoas diferentes".
 - Documentos com padrões de fabricação/template comuns; sinais de câmera virtual no liveness.
@@ -978,6 +1055,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Contas criadas e "dormentes" ativadas em onda quando surge promoção/payout.
 
 **Mitigações:**
+
 - Sinais antifraude do provedor de KYC (Sumsub/Onfido/Veriff) configurados para detectar device farm, câmera virtual e replay de liveness; consumir e ponderar esses sinais na engine.
 - Device/sensor fingerprint e detecção de injeção de câmera (frame rate, metadata, ausência de ruído de sensor real).
 - Correlação de onboarding em lote (mesmo device/IP/template de doc) bloqueia a fábrica na origem.
@@ -994,12 +1072,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Pagador Pix ≠ titular KYC (o apostador real financia, o laranja aparece).
 - Curva de perda compatível com pós-bariátrica/intervenção médica não declarada (perda muito linear/rápida porém "plausível").
 - Saque para conta bancária de terceiro.
 - Conta sem engajamento comportamental típico (não usa features de coaching/check-in voluntário; só aparece para pesar).
 
 **Mitigações:**
+
 - Casamento estrito Pix de entrada ↔ CPF KYC ↔ conta de saque: o mesmo titular financia, aparece e recebe — quebra o sequestro economicamente.
 - Declaração e detecção de cirurgia bariátrica/medicação (GLP-1) como fator de underwriting: ajustar regras/odds ou exigir disclosure; perda "garantida" não deveria render EV de fraude.
 - Engajamento comportamental como sinal: contas que só pesam e nunca interagem entram em score de risco mais alto.
@@ -1015,6 +1095,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Texturas/transições não-naturais de pele-tecido (bordas de fat suit, costuras tensionadas, "gordura" que não se move como tecido adiposo real).
 - Rosto magro com corpo gordo (ou vice-versa) — incoerência IMC facial vs corporal.
 - Linha de peruca/barba postiça, sombra de cola, simetria artificial.
@@ -1022,6 +1103,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Balança mostrando peso incompatível com volume aparente do "corpo gordo".
 
 **Mitigações:**
+
 - Anti-fat-suit por computer vision (Fase 2): detectar enchimento, biomecânica de massa, coerência entre volume corporal aparente e peso do visor.
 - Coerência IMC facial ↔ peso do visor ↔ volume corporal em CADA pesagem (especialmente baseline).
 - Gesto dinâmico que exige movimento revelador (agachar, virar de lado, levantar os braços) — disfarces e fat suits falham na dinâmica.
@@ -1038,12 +1120,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Token e visor da balança nunca aparecem no MESMO frame com rosto e corpo do mesmo indivíduo.
 - Descontinuidade temporal entre o trecho do token (rosto) e o trecho da balança.
 - Corpo na balança não bate com o corpo do titular no trecho do token.
 - Áudio do token (voz) de pessoa diferente da que está na balança (se houver fala na subida).
 
 **Mitigações:**
+
 - Amarração token↔corpo↔visor no mesmo frame contínuo: a UX deve exigir que o token (mostrado na tela/falado), o ROSTO e o VISOR estejam visíveis simultaneamente OU conectados por um pan único e contínuo rosto→corpo→visor, sem corte.
 - Gesto que só faz sentido na balança: ex.: "fale o token enquanto está em pé na balança mostrando o corpo inteiro e o visor" — força sincronia.
 - Detecção de continuidade/edição (Fase 2): qualquer descontinuidade entre token e leitura do peso reprova.
@@ -1059,6 +1143,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** baixa · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Dados de wearable "perfeitos demais"/lineares ou estatisticamente sintéticos (FC, passos, sono sem ruído humano realista).
 - Inconsistência entre peso da balança smart e peso do vídeo OCR no mesmo momento.
 - BLE com características de dispositivo emulado, ausência de atestação de hardware, payloads sem assinatura.
@@ -1066,6 +1151,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Padrão de atividade incompatível com IMC declarado (FC de repouso e VO2 de atleta num "obeso" em baseline).
 
 **Mitigações:**
+
 - Atestação de integridade do dispositivo: Play Integrity/App Attest, detecção de root/jailbreak e de câmera/sensor virtual; dados de device comprometido são descartados como prova.
 - Dispositivos com canal seguro/assinado e pareamento auditável; preferir integrações OAuth oficiais (Garmin/Apple Health/Google Health Connect) a leitura BLE crua spoofável.
 - Cross-validação multimodal: peso da balança smart DEVE bater com OCR do vídeo no mesmo evento; divergência reprova ambos.
@@ -1082,6 +1168,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Probabilidade:** média | **Impacto:** alto | **Sofisticação:** média
 
 **Sinais de detecção:**
+
 - Taxa de aprovação manual anômala por analista (outlier vs. pares)
 - Aprovações concentradas em horários/sessões curtas (tempo médio de revisão abaixo do plausível)
 - Correlação entre analista específico e contas que depois dão chargeback/fraude confirmada
@@ -1090,6 +1177,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Clusters de payout aprovados pelo mesmo revisor com features semelhantes (mesma balança, GPS próximo, device parecido)
 
 **Mitigações:**
+
 - Dupla revisão obrigatória (4-eyes) para payout acima de threshold; revisores não se conhecem e são atribuídos aleatoriamente
 - Maker-checker: quem revisa não libera o pagamento; segregação de função
 - Decoy cases / mystery shopping: casos sintéticos fraudulentos injetados na fila para auditar a fidelidade do revisor
@@ -1099,7 +1187,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Offboarding com revogação imediata de acesso e revisão retroativa das últimas aprovações do desligado
 - Modelo de detecção de anomalia sobre o comportamento dos próprios revisores (analytics de quem aprova)
 
-*(identificado na revisão de completude)*
+_(identificado na revisão de completude)_
 
 ### Laranjas e CPFs de vazamento como serviço (fraude-as-a-service do mercado brasileiro)
 
@@ -1110,6 +1198,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Probabilidade:** alta | **Impacto:** alto | **Sofisticação:** média
 
 **Sinais de detecção:**
+
 - Clustering de devices, IPs, faixas de horário, modelos de aparelho e operadoras entre contas 'sem relação'
 - Chave Pix de saque divergente do titular ou reutilizada entre contas distintas
 - Reuso de comprovante de endereço, mesma geolocalização de pesagem para vários CPFs
@@ -1118,6 +1207,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Grafo de Pix convergindo para poucas contas beneficiárias finais
 
 **Mitigações:**
+
 - Device fingerprinting + graph analytics para detectar redes de contas e fila de laranjas
 - Exigir que a chave Pix de saque seja do mesmo CPF do titular verificado (amarração titularidade-pagamento)
 - Liveness ativo + biometria histórica: o MESMO rosto deve aparecer no baseline, intermediária e final (impede troca por laranja magro só no final)
@@ -1126,13 +1216,13 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Velocity rules e cooling-off para padrões de cadastro automatizados ('método')
 - Monitorar Telegram/marketplaces por venda do 'método' do próprio app (threat intel) e mudar challenge para invalidar tutoriais publicados
 
-*(identificado na revisão de completude)*
+_(identificado na revisão de completude)_
 
 ---
 
 ## 4. Manipulação de vídeo e mídia (replay, edição, deepfake/GenAI)
 
-*14 vetores nesta categoria.*
+_14 vetores nesta categoria._
 
 ### Replay de tela filmada (segunda tela)
 
@@ -1143,6 +1233,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Moiré/aliasing e padrão de subpixel RGB da tela reproduzida; banding de refresh (rolling shutter vs. taxa de atualização do display).
 - Reflexos especulares na moldura do monitor, bordas retas do bezel entrando no enquadramento, brilho/contraste fora de faixa de cena real.
 - Profundidade plana: liveness 3D/parallax falha (tudo no mesmo plano focal); ausência de paralaxe quando o app pede micro-movimento de câmera.
@@ -1150,6 +1241,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Áudio com eco/reverb de ambiente duplo; nível de ruído ambiente incompatível com fala ao vivo.
 
 **Mitigações:**
+
 - Liveness ativo de terceiros (Onfido/iProov/Unico) com challenge-response 3D e flash de cor aleatória na tela do app que deve refletir no rosto real — telas reproduzidas não refletem corretamente a cor projetada.
 - Token dinâmico STRICT: código + palavra + gesto gerados no momento da gravação, com janela curta (ex.: 60-90s) e validação de que apareceram NO vídeo via OCR/ASR; rejeitar se não casar exatamente.
 - Detector de tela/recapture na engine (CV Fase 2): classificador de moiré, bezel, banding de refresh e reflexo especular treinado para "screen-of-screen".
@@ -1166,12 +1258,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta (se houver brecha) · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Token corrente ausente ou divergente do desafio emitido para aquela sessão.
 - Hash/fingerprint do arquivo idêntico a submissão anterior (mesma conta ou cross-account).
 - Timestamp/EXIF anterior à emissão do desafio; metadata estática entre check-ins que deveriam ser dias diferentes.
 - Iluminação, roupa e cenário idênticos entre pesagens separadas por semanas.
 
 **Mitigações:**
+
 - Amarração obrigatória token↔vídeo: o desafio (código + palavra + gesto + timestamp) é gerado server-side por sessão, com nonce único, e a engine valida presença via OCR (código) + ASR (palavra falada) + CV (gesto). Sem match, rejeição automática.
 - Banco de perceptual hashes (pHash/vídeo fingerprint) de todas as submissões; bloquear reuso intra e inter-conta.
 - Captura only-in-app com nonce embutido no overlay renderizado pelo próprio app no momento (impossível de existir em vídeo pré-gravado).
@@ -1186,12 +1280,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Texto do token com bordas perfeitas, sem motion blur, sem oclusão por objetos da cena, sem variação de iluminação/sombra coerente.
 - Token "flutua": não respeita perspectiva, não é ocluído quando a mão/corpo passa na frente, sem grão/compressão local igual ao resto do frame.
 - Gesto genérico que não corresponde exatamente à instrução randomizada (ex.: pediu "mão direita levantada e virar de lado" e só há mão levantada).
 - Descontinuidade de ELA (Error Level Analysis) na região do overlay; níveis de ruído/quantização diferentes na caixa do texto.
 
 **Mitigações:**
+
 - Gesto físico randomizado e composto (combinação de 2-3 ações) que precisa ser executado pelo corpo na cena — overlay de texto não satisfaz; validar via pose estimation (Fase 2).
 - Exigir que o usuário FALE o token (ASR) além de mostrá-lo; e mostrá-lo manuscrito em papel segurado na cena, ocluído pela mão (oclusão física difícil de forjar em overlay).
 - Detecção de composição/overlay na engine: análise de consistência de ruído, ELA, fronteiras de objeto, e ausência de motion blur coerente.
@@ -1207,12 +1303,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Inconsistência local na região do visor: ruído/compressão, temperatura de cor e blur diferentes do entorno; bordas do display "limpas demais".
 - Dígitos de LCD sem o leve flicker/refresh real, sem reflexo do ambiente no vidro do visor, segmentos com antialiasing artificial.
 - Tracking imperfeito: micro-jitter ou "deslize" do número quando a balança se move; oclusão por dedo/pé não respeitada.
 - Peso incoerente com plausibilidade fisiológica e com histórico de check-ins/wearables.
 
 **Mitigações:**
+
 - Cross-check com fonte independente do número: balança smart BLE/Wi-Fi (Fase 3) que transmite o peso direto ao app; OCR do vídeo serve só como confirmação secundária.
 - Plausibilidade fisiológica (Engine Charya): taxa de perda coerente (ex.: >1-1,5% do peso/semana = flag), consistência com baseline e intermediária, e com massa corporal estimada por body estimation (Fase 2).
 - Detector de edição local/composição: ELA, mapas de ruído PRNU, análise de consistência de iluminação na ROI do display.
@@ -1228,12 +1326,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Região do visor estática enquanto o entorno (reflexos, sombras, micro-movimento) varia — patch congelado.
 - Display já mostrando número antes da subida completa na balança; ausência da sequência zerar→subir→estabilizar.
 - Número que não oscila durante a estabilização (balanças reais flutuam por 1-3s antes de travar).
 - Cortes/oclusão do visor exatamente no momento da leitura.
 
 **Mitigações:**
+
 - Exigir sequência contínua e verificável: balança zerada → corpo entra no frame → subida → estabilização com oscilação natural → leitura. Validar a transição via CV (Fase 2).
 - Análise temporal por região: detectar frames congelados/looped no patch do visor (diferença de pixel ≈0 numa ROI enquanto o resto varia).
 - Balança smart (Fase 3) com stream de peso em tempo real timestampado, dispensando a leitura visual como fonte primária.
@@ -1248,12 +1348,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Descontinuidade temporal no ponto do gesto: salto de iluminação, posição de fundo, roupa/cabelo, relógio/sombra; quebra de continuidade de movimento (velocity discontinuity).
 - Quebra de cadência de frames/timestamps internos; mudança de fingerprint de compressão (GOP boundary) no ponto de emenda.
 - Áudio com clique/descontinuidade de ruído de fundo no corte; troca abrupta de reverb.
 - Pose/identidade corporal antes e depois do corte não batem (body estimation).
 
 **Mitigações:**
+
 - Captura only-in-app com gravação nativa contínua assinada frame-a-frame (timestamps monotônicos + sensores), tornando qualquer corte detectável por descontinuidade de cadência/hash.
 - Gesto composto e imprevisível no MEIO e no FIM do vídeo (não só num ponto), forçando continuidade real; validar fluidez via optical flow (Fase 2).
 - Detecção de cut/splice: análise de continuidade de optical flow, iluminação, fundo e cadência de GOP.
@@ -1269,6 +1371,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Baseline com roupas/calçado vs. final mais leve de vestimenta; objetos suspeitos no corpo.
 - Variação de peso fisiologicamente rápida demais no curtíssimo prazo (água/desidratação): perda concentrada perto do fim, não progressiva.
 - Composição corporal estimada (body estimation) quase inalterada apesar de grande "queda" no número — sinal clássico de manipulação de água/roupa.
@@ -1276,6 +1379,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Mesma balança? superfície/piso diferente entre pesagens; balança não zerada/calibrada no baseline.
 
 **Mitigações:**
+
 - Protocolo de pesagem padronizado e validado por CV: roupas mínimas (ex.: regata e shorts), descalço, balança em piso rígido nivelado, zeragem mostrada — rejeitar baseline fora do protocolo.
 - Body estimation (Fase 2) cruzando número da balança com volume/silhueta corporal: queda de peso sem mudança de composição = flag.
 - Balança smart com bioimpedância (Fase 3): % de gordura vs. água; perda dominada por água é detectável.
@@ -1292,12 +1396,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Artefatos de faceswap: costuras na borda do rosto/cabelo, flicker temporal, descolamento em oclusões (mão na frente do rosto), olhos/dentes inconsistentes, iluminação do rosto incoerente com o corpo.
 - Liveness ativo (challenge de flash de cor, movimento de cabeça extremo, oclusão) quebra o swap em tempo real.
 - Incompatibilidade rosto×corpo: tom de pele/iluminação do pescoço, ausência de paralaxe 3D do rosto.
 - Câmera virtual/integridade do device comprometida (root/inject) detectada por attestation.
 
 **Mitigações:**
+
 - Liveness ativo robusto de terceiros (iProov Flashmark, Onfido, Unico) com flash de cor aleatório e challenges que quebram faceswap em tempo real; preferir fornecedor com defesa anti-deepfake comprovada.
 - Device/integrity attestation (Play Integrity / DeviceCheck/App Attest) + detecção de câmera virtual e root para bloquear injeção de feed.
 - Verificação rosto↔corpo: pedir momentos em que rosto e corpo aparecem juntos no MESMO frame em movimento; checar coerência de iluminação e oclusão (mão cruzando o rosto rompe swap).
@@ -1314,6 +1420,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** baixa-média (crescente) · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Texto incoerente: modelos de difusão renderizam mal código/timestamp/dígitos do visor (caracteres deformados, instáveis frame-a-frame).
 - Física implausível: subir na balança sem deslocamento de peso, mãos com dedos extras, reflexos impossíveis, fundo "respirando", morphing sutil.
 - Ausência de ruído de sensor real/PRNU; fingerprint de modelo generativo; metadata sem assinatura de câmera real.
@@ -1321,6 +1428,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Falta de paralaxe/coerência 3D sob movimento de câmera prescrito.
 
 **Mitigações:**
+
 - Liveness ativo INTERATIVO em tempo real (challenge-response com flash de cor e movimentos imprevisíveis) — vídeo gerado offline não responde ao desafio do momento.
 - Captura only-in-app + device attestation + detecção de câmera virtual: barra a injeção do arquivo gerado.
 - Token com código alfanumérico + timestamp ao vivo, exigido por OCR e ASR — difusão erra texto; overlay posterior cai no detector de composição.
@@ -1337,12 +1445,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** baixa · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Spill verde residual nas bordas, halo/matte line ao redor do rosto/cabelo, bordas duras.
 - Iluminação/temperatura de cor do rosto incoerente com a cena de fundo; sombras do rosto não projetadas no ambiente.
 - Ausência de interação física rosto↔corpo (rosto nunca ocluído por elementos do fundo); paralaxe inconsistente.
 - Token integrado só na camada do rosto, não no plano da balança.
 
 **Mitigações:**
+
 - Exigir frames com corpo inteiro + rosto + balança simultâneos e em movimento contínuo, com oclusões cruzadas (mão passando do rosto ao visor) — impossível de manter com composição em camadas separadas.
 - Liveness ativo com flash de cor que deve banhar rosto E ambiente igualmente — composição revela divergência.
 - Detector de chroma/composição na engine: matte lines, spill, descontinuidade de iluminação e ruído entre camadas.
@@ -1358,12 +1468,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Display não muda durante zerar→subir→estabilizar (número fixo independe de quem sobe).
 - Textura de papel/segundo display: ausência de retroiluminação real de LCD, reflexo de papel fosco, bordas do adesivo/tela, paralaxe entre o "visor" e a carcaça da balança.
 - Número não oscila na estabilização; fonte de dígitos sutilmente diferente da balança real do modelo detectado.
 - Sombra projetada do papel/tela sobreposta.
 
 **Mitigações:**
+
 - Exigir vídeo da sequência completa zerar→subir→estabilizar com a câmera passando em ângulo sobre o visor (paralaxe revela sobreposição não-coplanar).
 - Balança smart BLE/Wi-Fi (Fase 3) como fonte primária do peso — OCR vira apenas confirmação.
 - OCR robusto que valida flutuação dinâmica do display e coerência da fonte/modelo da balança; flag se o número é estático antes da subida.
@@ -1379,12 +1491,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** alta (se metadata for confiada) · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Metadata inconsistente: software tag de exiftool/ffmpeg/Lavf no container; ordem de atoms MP4 não-nativa do device declarado.
 - GPS preciso demais/estático, ou divergente do IP/geolocalização de rede e do fuso do timestamp; coordenadas batendo no centroide de cidade.
 - Timestamp do arquivo ≠ horário do servidor/desafio; mtime do filesystem vs. EXIF divergentes.
 - Codec/bitrate/resolução incompatíveis com o modelo de câmera declarado.
 
 **Mitigações:**
+
 - NÃO confiar em metadata client-side. Frescor e origem vêm do server: nonce/desafio emitido server-side, captura only-in-app, timestamp do servidor no momento do upload.
 - Geolocalização autoritativa server-side (IP + sinais do device via SDK), não GPS do EXIF; cruzar com GPS reportado e flagar divergência.
 - Gravação nativa assinada pelo SDK (frames + sensores + attestation) — metadata reescrita não reproduz a assinatura.
@@ -1400,12 +1514,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** médio (potencializador)
 
 **Sinais de detecção:**
+
 - Dupla/múltipla compressão detectável (double-JPEG/duplo-GOP), bloco DCT inconsistente, qualidade global degradada vs. resolução declarada.
 - Ruído adicionado uniforme/sintético em vez de PRNU de sensor; ausência total de fingerprint de sensor real.
 - Banding/recapture (se regravado por tela): moiré, taxa de refresh, bezel.
 - Bitrate/qualidade incompatíveis com captura direta do device declarado.
 
 **Mitigações:**
+
 - Captura only-in-app com upload do stream original assinado (frames + hash + sensores): qualquer recompressão posterior quebra a assinatura e é rejeitada antes da forense.
 - Detector de double-compression/recapture e de "lavagem" na engine; exigir PRNU de sensor coerente com o device attestado.
 - Device/integrity attestation + anti-câmera-virtual para impedir reinjeção do arquivo lavado.
@@ -1421,6 +1537,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Probabilidade:** baixa | **Impacto:** alto | **Sofisticação:** alta
 
 **Sinais de detecção:**
+
 - Artefatos de síntese temporal: inconsistência de iluminação/sombra entre corpo e ambiente real, física de cabelo/roupa, oclusão da balança
 - Latência de resposta ao challenge ligeiramente fora da janela humana (render em tempo real ainda custa)
 - Ausência de micro-sinais físicos reais: deformação do colchão/piso ao subir na balança, reflexo do visor, vapor/respiração, PPG facial (rPPG) inconsistente com pessoa real
@@ -1429,6 +1546,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Frame-level forensics / detector de geração (modelo anti-deepfake) sobre a stream
 
 **Mitigações:**
+
 - Provar INTERAÇÃO FÍSICA com o mundo, não só a imagem: exigir momentos que GenAI não modela bem — colocar objeto na balança e mostrar o delta de peso, sequência imprevisível de subir/descer com leituras coerentes, manipular a própria balança
 - Fase 3 como âncora forte: peso absoluto de balança smart pareada + dados de wearable corroborando atividade/biometria tornam a cena sintética insuficiente sozinha
 - Liveness com sinais difíceis de sintetizar em tempo real: rPPG (pulso facial), challenge multimodal rápido, reflexos especulares
@@ -1437,13 +1555,13 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Detector de mídia sintética atualizado continuamente; roteamento automático para revisão humana de qualquer payout alto com score de síntese não-trivial
 - Comprovação multi-momento espaçada no tempo aumenta o custo de manter o pipeline de geração consistente em todas as sessões
 
-*(identificado na revisão de completude)*
+_(identificado na revisão de completude)_
 
 ---
 
 ## 5. Spoofing digital: app, câmera e sensores (balança smart, wearables, API)
 
-*14 vetores nesta categoria.*
+_14 vetores nesta categoria._
 
 ### Câmera virtual / feed injetado (root, emulador, OBS/VCam)
 
@@ -1454,6 +1572,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Ausência de jitter/sensor noise real: frames "limpos demais", sem micro-tremor de mão, sem variação de exposição/AWB ao mover a câmera.
 - Latência entre a exibição do token e a resposta gestual maior do que o humanamente esperado (tempo para o operador trocar o clipe).
 - Metadados/EXIF e características do encoder inconsistentes com a câmera nativa declarada (codec, GOP, color profile, ausência de frames descartados típicos da câmera real).
@@ -1462,6 +1581,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Reuso de fundo/iluminação idêntico entre baseline, intermediária e final (mesma cena pré-gravada).
 
 **Mitigações:**
+
 - Captura SOMENTE in-app com pipeline próprio (CameraX/AVCapture), proibindo seleção de fonte de câmera; bloquear `EXTERNAL`/virtual cameras e recusar quando mais de uma câmera lógica suspeita for enumerada.
 - Liveness ativo de terceiros (Onfido/iProov/FaceTec) executado DENTRO do mesmo stream da pesagem, com challenge-response do próprio fornecedor (flash de cor na tela refletido no rosto / movimento randômico) que um clipe pré-gravado não consegue acompanhar.
 - Correlação multissensor obrigatória: gravar IMU (acelerômetro/giroscópio) sincronizado com o vídeo e validar na engine que o movimento óptico bate com o movimento físico; câmera virtual não move o IMU.
@@ -1479,6 +1599,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Assinatura do app diferente da chave oficial; package name/cert hash divergente no attestation.
 - Play Integrity falha em `MEETS_STRONG_INTEGRITY`/`ctsProfileMatch`; App Attest com chave não reconhecida.
 - Versão de build/checksum do binário não consta na allowlist do backend.
@@ -1486,6 +1607,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Telemetria ausente: o app legítimo emite eventos contínuos (heartbeat, sensores) que a build modificada não reproduz fielmente.
 
 **Mitigações:**
+
 - Server-authoritative: o backend NUNCA confia em "aprovado" vindo do cliente; toda decisão de validade do peso é tomada no servidor a partir do artefato bruto (vídeo + sensores), não de flags.
 - Play Integrity API + App Attest/DeviceCheck obrigatórios, com allowlist de assinatura/cert e checksum do binário; build não-oficial → bloqueio de submissão e retenção.
 - Token de captura assinado: o backend emite um nonce por sessão; o app legítimo carimba frames com HMAC(nonce, frame-derived data) usando chave protegida (Android Keystore/Secure Enclave, idealmente com attestation de hardware). Vídeo sem carimbo válido é rejeitado.
@@ -1502,12 +1624,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Presença de `frida-server`, portas de debug (27042), bibliotecas injetadas, `gum-js-loop`/threads anômalas, `ptrace` no processo.
 - Módulos Xposed/LSPosed/Magisk e hooks detectáveis em métodos sensíveis (checksum de código em memória divergente).
 - Inconsistência peso OCR vs. peso re-extraído no servidor a partir do mesmo vídeo (o cliente diz 78kg, o OCR server-side lê 92kg).
 - Play Integrity rebaixado e tempos de execução de funções fora do baseline.
 
 **Mitigações:**
+
 - OCR de peso é AUTORIDADE DO SERVIDOR: o valor exibido no app é meramente informativo; o peso oficial é re-extraído server-side do vídeo bruto. Hook no OCR client-side torna-se irrelevante.
 - Liveness verdict vem do FORNECEDOR (server-to-server), não do device: Charya consulta o resultado direto na API do Onfido/iProov, não confia em "passou" reportado pelo app.
 - Anti-hooking/RASP: detecção de Frida/Xposed/`ptrace`, integrity check de código em memória, certificate transparency; sinal de hooking → sessão invalidada e flag de fraude.
@@ -1523,12 +1647,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** baixa · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Submissão de resultado SEM artefato bruto correspondente (não há vídeo+sensores na sessão, ou o vídeo não tem carimbo válido).
 - Sessão sem os eventos intermediários esperados (start de captura, frames, heartbeat, telemetria de sensores).
 - Cadência/sequência de chamadas atípica, headers de cliente não-oficial, ausência de attestation token válido no request.
 - Mesma chave/segredo usada de múltiplos IPs/devices.
 
 **Mitigações:**
+
 - Zero trust no cliente: a aprovação do peso NÃO existe como campo enviável; o veredito é computado no servidor a partir do vídeo bruto + liveness do fornecedor + sensores. Não há "POST aprovado=true" a forjar.
 - Toda submissão exige (a) sessão server-side válida e não expirada, (b) attestation token (Play Integrity/App Attest) por request, (c) carimbo HMAC com chave de hardware. Falta de qualquer um → rejeição.
 - Sem segredos estáticos no binário; autenticação por mTLS/OAuth com tokens de curta duração ligados ao device atestado.
@@ -1544,11 +1670,13 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Nonce/sessionId reutilizado, timestamp fora da janela, ou liveness token associado a outra sessão/usuário.
 - Mesmo artefato de mídia (hash idêntico) submetido mais de uma vez.
 - CA não-confiável / falha de pinning logada pelo app; geo/IP do request divergente do device.
 
 **Mitigações:**
+
 - Binding criptográfico forte: cada sessão tem nonce único do servidor; liveness verdict, OCR e vídeo são amarrados ao mesmo `sessionId` e usuário no servidor. Token de liveness de outra sessão não cola.
 - Anti-replay: nonce de uso único, timestamps assinados, idempotency keys; rejeitar hash de mídia já visto.
 - Certificate pinning robusto + verificação server-side de Play Integrity por request (não só no login).
@@ -1564,11 +1692,13 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Play Integrity retorna apenas `MEETS_BASIC_INTEGRITY` (sem `STRONG`), ou veredito inconsistente com hardware backing.
 - Discrepância entre checagem local (diz "limpo") e veredito server-side do Google/Apple.
 - Bootloader desbloqueado, propriedades do build adulteradas, presença de DenyList/Shamiko detectável.
 
 **Mitigações:**
+
 - Exigir hardware-backed attestation: Play Integrity API com veredito processado SERVER-SIDE (nonce do servidor, validação da assinatura do Google) e App Attest/DeviceCheck no iOS; nunca confiar em root-check local como única barreira.
 - Política de risco por tier de integridade: `STRONG` → fluxo normal; `BASIC`/falha → revisão humana obrigatória + holds de payout, especialmente em valores altos.
 - Key Attestation do Android Keystore para o carimbo de captura, garantindo que a chave reside em hardware seguro.
@@ -1584,12 +1714,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Fingerprints de emulador: hardware/`Build.FINGERPRINT` genéricos (goldfish/ranchu), ausência de sensores reais ou valores "perfeitos demais", bateria sempre 100%/carregando, ausência de variação térmica.
 - Play Integrity falha (emulador não obtém `STRONG`/`ctsProfileMatch`).
 - IMU sem ruído natural; câmera com feed plano e sem características de sensor físico.
 - Telemetria de toque/UX não-humana, GPS estático com precisão irreal.
 
 **Mitigações:**
+
 - Play Integrity/App Attest barram a maioria dos emuladores (não passam em hardware attestation) → bloqueio ou revisão obrigatória.
 - Detecção de emulador (fingerprints de build/sensores/hardware) na engine; sinal de emulador invalida a captura.
 - Exigir ruído de sensor realista e correlação IMU↔vídeo (emuladores raramente reproduzem ruído físico convincente).
@@ -1605,11 +1737,13 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** baixa · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Identificadores do device BLE (MAC/firmware/serial) não-registrados ou inconsistentes entre check-ins; peso "limpo" sem o ruído natural de impedância/oscilação de uma pesagem real.
 - Ausência dos dados secundários que a balança real envia (impedância/bioimpedância, batimento, composição corporal) ou valores fisiologicamente incoerentes.
 - Peso da balança BLE divergente do peso lido no vídeo/OCR da mesma sessão.
 
 **Mitigações:**
+
 - NUNCA usar a balança smart como prova única: ela é sinal CORROBORANTE do vídeo+OCR+token, não substituto. O peso oficial vem do vídeo verificado.
 - Exigir pareamento via API oficial do fabricante (Withings Health API, conta na nuvem) em vez de BLE direto sempre que possível — autenticação server-to-server é mais difícil de spoofar que GATT local.
 - Vincular o serial/firmware da balança à conta e validar consistência entre os 3 check-ins; device novo a cada pesagem = flag.
@@ -1626,12 +1760,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - `sourceRevision`/`HKSource` dos samples = app de terceiros ou entrada manual, não uma balança/fabricante reconhecido; `wasUserEntered = true`.
 - Curva "perfeita demais": variância diária irreal, ausência de oscilações fisiológicas (retenção hídrica, fim de semana), timestamps em horários improváveis ou inseridos em lote.
 - Samples com `startDate` retroativo mas `creationDate` recente (tudo escrito de uma vez).
 - Divergência entre série do Health e o peso medido no vídeo/balança vinculada.
 
 **Mitigações:**
+
 - Tratar HealthKit/Health Connect como sinal CORROBORANTE, nunca como prova de payout. A prova é o vídeo com token + OCR server-side.
 - Filtrar por procedência: aceitar apenas samples cujo `source` seja um device/fabricante de balança reconhecido e vinculado à conta; descartar entradas manuais e de apps não-confiáveis.
 - Inspecionar metadados: rejeitar séries com `creationDate` em lote, `wasUserEntered=true`, ou curva sem ruído fisiológico.
@@ -1647,12 +1783,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - `.FIT`/atividades com assinatura de upload manual ou device não-vinculado; HR sem variabilidade fisiológica (HRV chapada), cadência/pace constantes demais.
 - GPS de treinos ausente, repetido ou incoerente; calorias que não fecham com a perda de peso (impossibilidade energética).
 - Passos inseridos em blocos, fora de horários plausíveis, ou volume incompatível com check-ins anteriores.
 - Atividade que aparece toda de uma vez perto do payout.
 
 **Mitigações:**
+
 - Atividade de wearable é sinal SECUNDÁRIO/comportamental, jamais prova de peso; ela ajusta o score de risco, não libera payout.
 - Vincular via OAuth oficial (Garmin/Apple Health/Health Connect) e aceitar só dados de device pareado; rejeitar upload `.FIT` avulso ou origem manual.
 - Conferência energética na engine: a perda de peso reivindicada precisa ser consistente com o balanço calórico plausível dado o histórico; incoerência = flag (não bloqueio, mas peso menor na decisão).
@@ -1668,11 +1806,13 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Flag `isFromMockProvider`/mock location ativo; coordenadas idênticas ao decimal entre sessões (GPS real tem deriva natural).
 - Incoerência GPS vs. IP vs. timezone vs. rede móvel/Wi-Fi; "teletransporte" impossível entre check-ins.
 - Precisão/altitude irreais, ausência de variação de satélites/sinal.
 
 **Mitigações:**
+
 - Tratar geo como sinal de PLAUSIBILIDADE, não prova; nunca decisivo sozinho, mas alimenta o score de risco.
 - Detectar mock location (Android `isFromMockProvider`, ausência em ambiente atestado) e triangular GPS contra IP, timezone do device, e rede; divergência → flag.
 - Validar consistência de device atestado entre os 3 check-ins (mesmo device/conta) — geo uniforme com devices diferentes é suspeito.
@@ -1688,11 +1828,13 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Divergência entre o horário do device e o horário do servidor no momento do request (drift anômalo).
 - Timestamp do token (emitido pelo servidor) inconsistente com o tempo real de submissão; NTP desativado.
 - EXIF/`creationDate` da mídia incoerente com o recebimento server-side; timezone do device manipulada.
 
 **Mitigações:**
+
 - NUNCA confiar no relógio do device: o token e a janela do desafio são governados por timestamp do SERVIDOR. O nonce/token tem TTL curto validado server-side; vídeo recebido fora da janela = rejeição, independente do que o device diz.
 - Carimbar a captura com tempo do servidor (token assinado com expiração) e medir o round-trip; recusar se o tempo de submissão exceder a janela.
 - Detectar relógio manual/NTP off e drift device-vs-servidor como sinal de fraude.
@@ -1708,6 +1850,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Probabilidade:** baixa | **Impacto:** alto | **Sofisticação:** alta
 
 **Sinais de detecção:**
+
 - Resposta ao token rápida demais (latência menor que o tempo humano de ler+executar gesto)
 - Token correto mas exibido antes do timestamp do challenge server-side (impossível se gerado no servidor)
 - Mesmos gestos/palavras recorrendo em contas distintas em janela curta (enumeração)
@@ -1715,6 +1858,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Divergência entre relógio do device e relógio do servidor no momento do challenge
 
 **Mitigações:**
+
 - Token gerado EXCLUSIVAMENTE server-side e entregue just-in-time; nada de geração ou seed no cliente
 - Espaço de gestos+palavras grande o suficiente e combinatório (sequência de N gestos em ordem aleatória) para inviabilizar pré-gravação exaustiva
 - Token vinculado a nonce de servidor + relógio de servidor; rejeitar respostas com latência fora da janela humana plausível (nem rápido demais, nem lento demais)
@@ -1722,7 +1866,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Rotação periódica do dicionário de palavras/gestos; gestos novos introduzidos para quebrar bancos de vídeo pré-gravados
 - Attestation forte (Play Integrity/App Attest) como pré-condição para emitir o token
 
-*(identificado na revisão de completude)*
+_(identificado na revisão de completude)_
 
 ### Probing adversarial da engine para mapear thresholds e operar logo abaixo do flag
 
@@ -1733,12 +1877,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Probabilidade:** média | **Impacto:** médio | **Sofisticação:** alta
 
 **Sinais de detecção:**
+
 - Muitas contas com resultados 'colados' logo abaixo dos thresholds conhecidos (distribuição com pico suspeito junto à fronteira)
 - Contas-sonda: cadastro, poucos check-ins anômalos, abandono, sem aposta real
 - Sequências de submissões variando sistematicamente uma única variável
 - Mesma rede/device gerando padrões de teste de fronteira
 
 **Mitigações:**
+
 - Não expor o motivo do flag ao usuário; mensagens genéricas para negar feedback de oráculo ao atacante
 - Thresholds estocásticos/randomizados e em ensemble (não um corte fixo conhecível); fronteiras móveis ao longo do tempo
 - Detecção de anomalia sobre a distribuição populacional: pico de casos 'logo abaixo do limiar' é em si um sinal
@@ -1746,13 +1892,13 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Defense-in-depth: nenhuma decisão de payout depende de um único limiar conhecível; revisão humana amostral aleatória mesmo em casos 'aprovados'
 - Modelos comportamentais holísticos (graph + histórico + device) que não podem ser evadidos ajustando uma feature isolada
 
-*(identificado na revisão de completude)*
+_(identificado na revisão de completude)_
 
 ---
 
 ## 6. Derrota de OCR, token dinâmico, gesto e liveness
 
-*15 vetores nesta categoria.*
+_15 vetores nesta categoria._
 
 ### Adesivo/overlay físico de dígitos no visor
 
@@ -1763,6 +1909,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Dígitos sem o "ghosting"/segmentos apagados típicos do 7-segmentos (um LCD real mostra fracamente os segmentos inativos do "8"); número impresso costuma ser "perfeito demais".
 - Bordas, sombra de relevo, brilho/reflexo inconsistente sobre a área dos dígitos vs. resto do visor; reflexo da luz ambiente não percorre o número.
 - Peso que não muda micro-oscilações ao subir/estabilizar (balança real oscila décimos antes de travar); número estático desde o frame em que o visor aparece.
@@ -1770,6 +1917,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 - Mesma balança com fonte/posição de dígitos diferente entre check-ins do mesmo usuário.
 
 **Mitigações:**
+
 - Exigir no roteiro de captura um "zero dinâmico": o usuário deve filmar a balança ligando/zerando e, em seguida, a oscilação dos dígitos durante a subida — overlay estático não reproduz a transição numérica nem o settling.
 - OCR + classificador de display: além de ler o número, validar que é um 7-segmentos legítimo (presença de segmentos fantasma, geometria de segmento, anti-aliasing do LCD vs. impressão). Treinar detector de "overlay/adesivo" como sinal antifraude.
 - Cross-check fisiológico na Engine Charya: variação de baseline para final fora de plausibilidade gera flag; baseline muito alto vs. body estimation/altura declarada também.
@@ -1785,12 +1933,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Modelo de balança não identificável/banco de modelos conhecidos; ausência de marca, certificação INMETRO, ou layout de display atípico.
 - Comportamento de pesagem "perfeito" demais ou repetível idêntico (settling sempre igual ao milissegundo) entre sessões.
 - Inconsistência peso x body estimation; peso não correlaciona com wearable/balança smart histórica.
 - Mesma "balança" exibindo pesos com saltos fisiologicamente impossíveis entre check-ins.
 
 **Mitigações:**
+
 - Onboarding da balança: na primeira pesagem, capturar marca/modelo/serial e foto da etiqueta inferior (selo INMETRO); manter no perfil e exigir a mesma nos 3 momentos.
 - Body estimation (Fase 2) como sanity-check independente do display: estimativa de massa por visão computacional precisa estar coerente com o número lido (tolerância calibrada).
 - Fase 3: priorizar fortemente balança smart com handshake criptográfico (peso assinado pelo firmware via BLE), tornando o display filmado irrelevante; wearables (Garmin/Apple Health/Health Connect) como sinal cruzado de tendência.
@@ -1806,12 +1956,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Assinatura de tela emissiva: cintilação/PWM, padrão sub-pixel RGB, moiré e refresh-rate visíveis em alguns frames (um LCD de balança reflexivo não emite luz própria da mesma forma).
 - Reflexos/brilho de tela de smartphone, bordas de bezel, ou proporção de dígitos atípica para o modelo de balança.
 - Visor "flutuando" sem integração física com o corpo da balança; paralaxe inconsistente quando a câmera se move.
 - Enquadramento que evita mostrar o visor e o corpo da balança no mesmo plano contínuo.
 
 **Mitigações:**
+
 - Roteiro de captura com plano contínuo obrigatório que mostre balança INTEIRA + pés sobre a plataforma + visor no MESMO frame, sem corte de enquadramento isolando o display.
 - Detector de tela emissiva no pipeline de visão (Fase 2): classificar a região do número como "display reflexivo de balança" vs. "tela emissiva", flag para PWM/moiré/sub-pixel.
 - Exigir movimento de câmera prescrito (pan do rosto -> corpo -> pés na balança -> visor) num único take; segundo device exposto a paralaxe se desmascara.
@@ -1827,12 +1979,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** médio · **Probabilidade:** alta · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Confiança do OCR consistentemente baixa só nas pesagens favoráveis ao usuário; visor nítido no resto do vídeo (rosto, token) mas borrado exatamente no número.
 - Reflexo/ofuscamento localizado sobre dígito crítico; histograma de nitidez anômalo só na ROI do display.
 - Múltiplas tentativas/reenvios antes de uma submissão aceita (padrão de "tentar até passar").
 - Discrepância entre leitura final aceita e tendência histórica/wearable.
 
 **Mitigações:**
+
 - Gate de qualidade na captura, no próprio app: rejeitar em tempo real frames com reflexo/desfoque na ROI do visor e instruir o usuário a reposicionar ANTES de enviar — não aceitar OCR de baixa confiança como prova.
 - OCR robusto multi-frame: ler o número em N frames do clipe e exigir concordância; divergência entre frames (8 ora lido como 3) = flag, não escolha do valor favorável.
 - Nunca tratar "baixa confiança" como fallback leniente: baixa confiança -> repesagem obrigatória ou revisão humana com viés conservador (na dúvida em peso final, arredondar contra o usuário).
@@ -1849,12 +2003,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Dedo/objeto/reflexo sobreposto à área do display no momento da leitura; oclusão parcial detectável por segmentação.
 - Contagem de dígitos inconsistente entre frames (ora 2, ora 3 dígitos); dígito que "aparece e some".
 - Peso fora de faixa plausível para o corpo estimado (ex.: "8 kg" para adulto) — implausibilidade fisiológica grosseira.
 - Reflexo/sombra com formato exato de um segmento isolado.
 
 **Mitigações:**
+
 - OCR com detecção de oclusão: rejeitar leitura se houver dedo/objeto/reflexo sobre a ROI do display; exigir visor totalmente desobstruído e mãos fora do visor durante a leitura.
 - Validação de número de dígitos e faixa plausível: peso < limiar fisiológico (ex.: <30 kg para o ICP) = rejeição automática; comparar contagem de dígitos com baseline do usuário.
 - Leitura multi-frame com consenso: dígito instável entre frames invalida; exigir estabilidade do display por X frames consecutivos sem oclusão.
@@ -1871,11 +2027,13 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Token correto convivendo com sinais de adulteração de display (overlay, tela emissiva, oclusão).
 - Token falado sem que o token escrito apareça simultaneamente no mesmo frame do visor.
 - Descompasso temporal entre fala do token e o momento em que o peso estabiliza.
 
 **Mitigações:**
+
 - Não tratar token como prova de peso, e sim como prova de momento: o token autentica o INSTANTE; a veracidade do número vem de OCR robusto + body estimation + balança smart/wearable. Desenhar o sistema assumindo que token correto NÃO garante peso correto.
 - Exigir token MOSTRADO no mesmo frame que o visor: o usuário escreve/exibe o código (em papel/tela do próprio app no espelho) junto da balança, forçando o cruzamento token<->cena num único quadro.
 - Token efêmero com validade curta (ex.: 60-120s) e timestamp embutido: vídeo deve ser capturado e enviado dentro da janela, com metadata batendo.
@@ -1891,12 +2049,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Token exibido em tela emissiva separada (cintilação/moiré) em vez de manuscrito/no app oficial.
 - Token e visor nunca no mesmo plano contínuo; token "entra" no quadro por fora.
 - Metadata/timestamp do clipe inconsistente com a emissão do token; geolocalização divergente.
 - Sinais simultâneos de display falso na balança.
 
 **Mitigações:**
+
 - Token gerado e renderizado DENTRO do app, com watermark dinâmico/anti-screenshot; preferir token que o usuário precisa reproduzir manuscrito + falar, dificultando exibição de segunda tela.
 - Exigir token + rosto + visor no MESMO frame contínuo (regra de co-presença), invalidando token que aparece isolado.
 - Detector de segunda tela na ROI do token (mesma lógica do visor emissivo).
@@ -1912,12 +2072,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Tempo entre emissão do token e início da captura/upload próximo do limite da janela.
 - Vídeo "produzido demais" (iluminação, enquadramento, gesto perfeitos) com latência alta.
 - Múltiplos starts de gravação/reenvios na mesma janela.
 - Timestamp do arquivo vs. timestamp de emissão com gap suspeito.
 
 **Mitigações:**
+
 - Janela mínima e curta (ex.: 60-90s) entre emissão do token e fim do upload; expirar e exigir novo token se estourar.
 - Captura in-app obrigatória (sem upload de arquivo externo): gravação começa logo após o token e o clipe é carimbado pelo SDK com timestamps confiáveis frame-a-frame.
 - Token revelado SÓ no momento da gravação (just-in-time), reduzindo tempo de preparo; segundo gesto/token aleatório DURANTE a gravação (challenge no meio do vídeo) que não pode ser pré-roteirizado.
@@ -1933,12 +2095,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** médio · **Probabilidade:** baixa · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Geolocalização/IP/rede do device que pediu o token divergente do local da captura.
 - Device com sinais de root/jailbreak, emulador, hooking (Frida/Magisk), ou câmera virtual.
 - Latência anômala entre emissão e captura; dispositivo de captura diferente do registrado (device fingerprint).
 - Biometria facial/corpo do clipe diverge do histórico do titular (proxy).
 
 **Mitigações:**
+
 - Atestação de integridade do app e device: Play Integrity API / DeviceCheck/App Attest; bloquear root/jailbreak, emulador, câmera virtual e hooking. SDK de liveness de terceiros (Onfido/Unico/idwall) com detecção de injeção/virtual camera.
 - Vincular token a sessão+device+geo: token só válido para captura no MESMO device/sessão que o solicitou; rejeitar se geo/IP/fingerprint divergirem.
 - Captura in-app com pipeline selado (frames carimbados pelo SDK), não upload de arquivo arbitrário — relay precisaria comprometer o próprio device de captura.
@@ -1955,12 +2119,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Artefatos de tela/impressão: moiré, reflexo, bordas de papel/monitor, ausência de profundidade/microtextura de pele.
 - Liveness passivo/ativo: falta de resposta a challenge (piscar, virar, profundidade); reflexo especular de tela.
 - Movimento 2D "achatado", paralaxe inconsistente, frequência de cintilação de monitor.
 - Rosto do clipe descasa do corpo/cena (iluminação, ângulo) — composição.
 
 **Mitigações:**
+
 - Liveness ativo challenge-response de terceiros (Onfido/Persona/Sumsub/Veriff/Unico) integrado, com gestos aleatórios em tempo real difíceis de pré-gravar; preferir vendor com PAD (presentation attack detection) certificado iBeta nível 1/2.
 - Atrelar o desafio facial à MESMA sessão contínua da pesagem (rosto + corpo + visor no mesmo take), impedindo inserir playback isolado.
 - Detecção de tela/impressão e câmera virtual no SDK; bloquear injeção de stream.
@@ -1976,12 +2142,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** alto · **Probabilidade:** baixa · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Microexpressões ausentes/rígidas, pele sem perfusão (sem variação rPPG/pulso na face), bordas de máscara no maxilar/olhos, oclusão de boca/olhos.
 - Textura de silicone (especular uniforme), ausência de poros/sudorese, piscar não natural.
 - Descompasso entre face (titular) e corpo (proxy mais magro/diferente) — body biometrics.
 - Tendência de peso historicamente impossível de bater de repente "ao vivo".
 
 **Mitigações:**
+
 - Vendor de liveness com PAD avançado contra máscaras: análise de textura de pele, rPPG (sinal de pulso na face), challenge de microexpressão; exigir nível iBeta PAD Level 2.
 - Cross-biometria rosto+corpo (Fase 2): a Engine deve cruzar face com altura/proporção/composição corporal do baseline; proxy magro com máscara descasa do corpo histórico.
 - Wearable/HealthKit como verdade longitudinal: queda de peso só "no vídeo", sem lastro em tendência de wearable/balança smart, vira flag forte.
@@ -1997,12 +2165,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** alto · **Probabilidade:** baixa · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Sinais de câmera virtual/injeção de stream; ausência de sensores reais (sem dados de câmera nativa, frame timing sintético).
 - Artefatos de deepfake: bordas de face-swap, inconsistência de iluminação/oclusão, falta de coerência temporal em movimento rápido, rPPG ausente.
 - Device comprometido (root/emulador/hooking) na atestação.
 - Cena de pesagem composta (visor/corpo) sem física consistente; sem lastro em wearable/balança smart.
 
 **Mitigações:**
+
 - Atestação forte de device e detecção de câmera virtual/injeção como pré-requisito: Play Integrity/App Attest; SDK de liveness com anti-injection (muitos vendors detectam virtual camera e stream emulado). Bloquear root/jailbreak/emulador.
 - Liveness com sinais físicos difíceis de sintetizar em tempo real (rPPG, reflexo de luz estruturada/flash colorido aleatório na face — "flash challenge").
 - Challenge multimodal aleatório combinando rosto + corpo + interação com objeto físico real (subir/descer carga conhecida na balança), que um avatar facial não reproduz fisicamente.
@@ -2018,12 +2188,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Face do clipe diverge da biometria do titular (KYC/baseline) — falha de match facial.
 - Corpo/altura/proporção/tatuagens/marcas incoerentes entre baseline e final (body biometrics).
 - Mudança brusca de características faciais entre check-ins; voz divergente no token falado.
 - Queda de peso sem lastro em wearable/balança smart do titular.
 
 **Mitigações:**
+
 - Match facial 1:1 obrigatório contra o KYC do titular em CADA pesagem (não só liveness genérico); vendor de biometria (Unico/idwall/Onfido) comparando com documento e baseline.
 - Cross-biometria de corpo (Fase 2): comparar altura/proporção/marcas corporais e composição entre os 3 momentos; proxy descasa do baseline.
 - Biometria de voz no token falado, casada com baseline.
@@ -2039,12 +2211,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Descontinuidade no vídeo: salto de iluminação/fundo/roupa, corte/transição, inconsistência de timestamp frame-a-frame, mudança de codec/qualidade no meio.
 - Metadata indicando edição (software de edição, recompressão); hashes de frames repetidos de sessões antigas (replay detection).
 - Visor/peso descasa do corpo visível na cena (corpo atual mais pesado que o peso exibido).
 - Token e visor nunca no mesmo plano contínuo.
 
 **Mitigações:**
+
 - Captura in-app contínua e selada: gravação direta pelo SDK com carimbo de tempo monotônico por frame e assinatura; rejeitar upload de arquivo externo editável.
 - Detecção de edição/continuidade (Fase 2): verificar fluxo óptico contínuo, ausência de cortes, consistência de iluminação/fundo; flag para qualquer descontinuidade.
 - Replay/dedup: hash perceptual de frames vs. base histórica do usuário e global — trecho reaproveitado bate com gravação anterior.
@@ -2061,12 +2235,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** alto · **Probabilidade:** baixa · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Divergência entre leitura do OCR principal e de um OCR secundário/independente (ensemble) ou revisão humana.
 - Padrões/texturas atípicas na ROI do display; ruído de alta frequência incoerente com um LCD real.
 - Confiança do OCR anormalmente alta para um display visualmente ambíguo; leitura instável sob pequenas transformações (crop/blur).
 - Peso lido descasa de body estimation e tendência histórica.
 
 **Mitigações:**
+
 - OCR em ensemble + verificação cruzada: dois modelos heterogêneos (e regras clássicas de 7-segmentos) precisam concordar; divergência -> revisão humana.
 - Robustez adversarial: data augmentation, defesa por transformações aleatórias (random crop/resize/jpeg) na inferência; preprocessamento que destrói perturbações de alta frequência.
 - Não confiar só na máquina em payout alto: revisão humana sempre lê o número de forma independente da camada automática.
@@ -2078,7 +2254,7 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 
 ## 7. Abuso de processo, metas, baseline e políticas
 
-*13 vetores nesta categoria.*
+_13 vetores nesta categoria._
 
 ### Goal-gaming: meta/prazo calibrados ao swing fisiológico
 
@@ -2089,12 +2265,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Cluster de metas posicionadas suspeitosamente próximas ao teto inferior da faixa "plausível" (ex.: muitos usuários escolhendo exatamente 4,0-5,0%).
 - Perda concentrada nas margens temporais: zero/negativa no meio do desafio e todo o delta materializado nos últimos 2-3 dias.
 - Composição corporal inalterada entre baseline e final (mesmo contorno/circunferência) apesar do peso menor — sinal de água, não gordura.
 - Recuperação imediata de peso (rebound) se houver check-in pós-payout ou follow-up.
 
 **Mitigações:**
+
 - Engine comportamental deve tratar plausibilidade como faixa DE DUPLA BORDA: não só flag de perda rápida demais, mas também score de "perda concentrada no fim" e "delta dentro do envelope de swing hídrico" para o peso/sexo declarados.
 - Exigir que a meta mínima de payout supere o swing fisiológico esperado (ex.: payout só a partir de ~6-7% ou perda absoluta acima do envelope água+glicogênio estimado para a massa do usuário), tornando 4-5% economicamente não lucrativo de fraudar.
 - Validação intermediária OBRIGATÓRIA com peso real decrescente ao longo do tempo (curva monotônica suave), não apenas dois pontos nas pontas.
@@ -2110,12 +2288,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Timestamp do token revelando baseline noturno tardio vs. final de madrugada/manhã cedo — padrão sistemático de "cheio→vazio".
 - Diferença entre o horário das pesagens fora do protocolo recomendado.
 - Delta de peso compatível com swing diurnal (1,5-3kg) e nulo no resto da curva.
 - Ausência de geolocalização/contexto consistente de rotina (baseline e final em horários que delatam encenação).
 
 **Mitigações:**
+
 - Padronizar protocolo de pesagem por POLÍTICA: todas as pesagens (baseline, intermediária, final) na MESMA janela horária (ex.: jejum matinal, 6h-9h), mesmas condições (roupa mínima padronizada, pós-banheiro declarado). Token dinâmico carimba o timestamp real, e a engine rejeita pesagens fora da janela.
 - Engine cruza o timestamp embutido no token com a fase diurnal: baseline noturno + final matinal = flag automática de "exploração de swing".
 - UX de pesagem que agenda e força a janela: o app só libera a gravação do baseline e do final no mesmo intervalo de horário, exibindo countdown.
@@ -2131,12 +2311,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Modelo/aparência da balança diferente entre vídeos (cor, formato do visor, fonte do display, plataforma).
 - Ambiente de pesagem distinto entre baseline e final (piso, iluminação, geolocalização) sem justificativa.
 - Sequência de zeragem inconsistente: comportamento do display ao zerar difere entre os vídeos.
 - Delta de peso compatível com offset de equipamento e curva intermediária ruidosa/incoerente.
 
 **Mitigações:**
+
 - Política de "balança única registrada": exigir que o usuário use a MESMA balança em todas as pesagens, com foto/identificação do equipamento (marca, modelo, visor) capturada no baseline e re-confirmada visualmente pela CV em cada pesagem.
 - Computer vision (fase 2) faz fingerprint visual da balança (geometria do display, fonte do visor, plataforma) e flag quando o equipamento muda entre check-ins.
 - Procedimento de "two-step weigh-in" no vídeo: zerar a balança a 0,0 e mostrar (already no protocolo) + colocar um objeto de referência de peso conhecido (ex.: o próprio celular, cuja massa o app conhece pelo modelo, ou um halter declarado) para verificar a calibração da balança em vídeo.
@@ -2152,12 +2334,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Ausência ou inconsistência da unidade no visor entre baseline e final.
 - Sequência de zeragem não mostrada, mostrada parcialmente, ou com objeto sobre a plataforma antes de subir.
 - Valor de baseline fisiologicamente improvável para o contorno corporal visível (peso declarado não bate com body estimation).
 - Display em modo/aparência diferente entre check-ins (acende segmentos extras, casas decimais distintas).
 
 **Mitigações:**
+
 - OCR deve detectar e travar a UNIDADE explicitamente (kg vs lb vs st) e rejeitar a pesagem se a unidade não for legível ou divergir entre check-ins; normalizar tudo para kg com validação cruzada.
 - Protocolo obrigatório de zeragem em vídeo contínuo: mostrar a balança vazia exibindo 0,0 imediatamente antes de subir, sem corte — o token dinâmico ancora o timestamp para impedir reuso.
 - Body estimation (fase 2) estabelece faixa plausível de massa pelo vídeo do corpo; um baseline 8-10kg acima da estimativa visual vira flag de "número inflado".
@@ -2173,12 +2357,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Pesos finais concentrados estatisticamente na borda exata da tolerância (distribuição com pico suspeito em meta+margem).
 - Múltiplos envios com valores incrementais varrendo a fronteira (assinatura de sondagem).
 - Apoio corporal/postura anômala no momento da leitura (mão fora do quadro, peso parcial).
 - Leitura no limiar combinada com curva intermediária que não suportaria aquele final.
 
 **Mitigações:**
+
 - Tolerância NÃO deve ser uma borda dura conhecível: usar margem assimétrica e privada, e tratar resultados "na borda" como faixa de revisão, não aprovação automática.
 - Anti-probing: limitar tentativas de pesagem final (ver retry farming) e detectar varredura incremental como sinal de fraude por si só.
 - OCR robusto deve capturar a leitura ESTABILIZADA do display (vídeo mostrando o número travar por N segundos), não o frame mais favorável; média de frames estáveis reduz o jogo de borda.
@@ -2194,12 +2380,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Número alto de submissões de pesagem final em curto intervalo para o mesmo check-in.
 - Leituras oscilando logo abaixo e logo acima da meta entre tentativas consecutivas.
 - Variância anormal entre vídeos do mesmo dia/usuário (postura, enquadramento mudando a cada take).
 - Padrão de "tentar até aceitar" — última submissão sempre marginalmente aprovada.
 
 **Mitigações:**
+
 - Limitar rigidamente o número de tentativas por check-in (ex.: 1-2 por janela de 24h) e tornar cada token dinâmico de uso ÚNICO, atrelado a um timestamp curto, de modo que cada vídeo seja uma pesagem distinta auditável.
 - Registrar e PONTUAR todas as tentativas, não só a aprovada: a engine considera a melhor + as descartadas; muitas tentativas com leituras divergentes = score de fraude alto, não aprovação.
 - Cooldown obrigatório entre tentativas e bloqueio progressivo após N falhas, empurrando para revisão humana.
@@ -2215,12 +2403,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Mesmo usuário/KYC com múltiplos desafios abandonados, cada um com baseline progressivamente mais alto.
 - Baselines do mesmo CPF/face divergindo vários kg em poucos dias sem trajetória coerente.
 - Padrão de abandono sempre logo após o baseline, antes de qualquer check-in intermediário.
 - Recriação concentrada em dias de provável retenção (pós-feriado).
 
 **Mitigações:**
+
 - Vincular baseline ao KYC/CPF/biometria PERSISTENTE: a engine mantém histórico de todos os pesos já registrados por aquela identidade e rejeita/flag baseline novo que diverge do histórico (ex.: baseline 6kg acima do último peso conhecido = suspeito).
 - Penalizar abandono: cooldown entre desafios após abandono, e baseline do novo desafio NÃO pode ser maior que o último peso comprovado da mesma identidade sem revisão.
 - Custo de re-roll: tornar a aposta mínima e/ou o atrito de KYC alto o suficiente para que abandonar-e-recriar não seja barato.
@@ -2236,12 +2426,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** médio · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Múltiplas contas com baselines registrados em janelas pós-feriado/fim de semana.
 - Dispositivo/IP/geolocalização/comportamento compartilhados entre contas "independentes".
 - KYCs distintos mas sinais de device fingerprint, padrão de digitação, mesma balança/ambiente nos vídeos.
 - Alta taxa de contas que abandonam logo após o baseline.
 
 **Mitigações:**
+
 - Device fingerprinting e correlação de sinais (IP, hardware, padrão de uso, ambiente do vídeo, balança) para ligar contas "independentes" operadas pela mesma pessoa.
 - KYC de terceiros (Onfido/Unico/idwall) com liveness forte para encarecer a criação de contas e detectar reuso de documentos/faces; sinalizar faces/documentos recorrentes.
 - Engine antifraude trata baseline registrado em janela de retenção conhecida (pós-feriado) com peso fora da estimativa visual como flag.
@@ -2257,12 +2449,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Pedidos de exceção/override concentrados após falha nas camadas 1-2.
 - Narrativas recorrentes/templatizadas entre usuários diferentes (mesma "doença", mesma "balança quebrada").
 - Escalonamento emocional + ameaça de chargeback/exposição como alavanca.
 - Agentes específicos com taxa de override acima da média (possível conluio ou alvo fácil).
 
 **Mitigações:**
+
 - Política de override estrita: nenhum agente pode aprovar payout sozinho; overrides exigem dupla aprovação, motivo registrado, e ficam fora do alcance de metas de CSAT.
 - Runbook antifraude para a camada 3: lista de narrativas conhecidas, exigência de evidência verificável (não atestado autodeclarado), e nunca relaxar tolerância de peso por história emocional.
 - Auditoria de overrides: dashboard de exceções por agente, por narrativa, por valor; revisão dos outliers.
@@ -2278,12 +2472,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** baixa · **Custo p/ fraudador:** baixo · **Probabilidade:** alta · **Impacto:** médio
 
 **Sinais de detecção:**
+
 - Diferença visível de vestimenta/calçado entre baseline e final no vídeo.
 - Condições de pesagem inconsistentes (uma vestido, outra não) detectáveis pela CV.
 - Delta de peso parcialmente explicável por vestuário (roupa+tênis pesam 0,8-2kg).
 - Argumentação legalista do usuário citando lacunas dos termos em disputas.
 
 **Mitigações:**
+
 - Especificar a política exaustivamente: roupa padronizada (ex.: roupa íntima ou roupa leve definida), sem calçado, mesma janela horária, mesma balança, unidade kg, condição declarada — em TODOS os check-ins, com o mesmo padrão obrigatório.
 - Computer vision (fase 2) verifica conformidade visual: detecta calçado, roupa pesada, e flag/rejeita pesagem fora do dress code.
 - "Default fecha a favor da casa": termos estabelecem que qualquer condição não conforme ao protocolo invalida a pesagem; ônus de conformidade é do usuário.
@@ -2299,12 +2495,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Intermediária registrada em janela de retenção (timestamp + padrão pós-feriado/fim de semana).
 - Curva de 3 pontos suspeitosamente "limpa" mas com composição corporal inalterada.
 - Intervalo irregular entre check-ins (intermediária deslocada para o dia conveniente).
 - Final e intermediária com condições de pesagem divergentes (cheio→vazio).
 
 **Mitigações:**
+
 - Múltiplos pontos intermediários, não apenas um: quanto mais check-ins (idealmente diários via balança smart na fase 3), mais difícil cronometrar todos para a fase certa.
 - Fixar o cronograma dos check-ins (datas/janelas definidas pelo app, não escolhidas pelo usuário), com mesma condição/horário, eliminando a escolha do "dia conveniente".
 - Engine valida não só monotonicidade mas TAXA e composição: queda concentrada nos últimos dias, ou curva consistente com swing hídrico, gera flag mesmo sendo "coerente" na forma.
@@ -2320,12 +2518,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** média · **Custo p/ fraudador:** baixo · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Aberturas de MED/contestação concentradas após desafio PERDIDO.
 - Mesma identidade com histórico de contestações em desafios falhos.
 - Alegação de "golpe/não reconheço" para transação claramente autenticada e consentida no app.
 - Pico de contestações correlacionado a coortes que falharam a meta.
 
 **Mitigações:**
+
 - Trilha de consentimento à prova de disputa: registrar aceite explícito dos termos, autenticação forte no momento da aposta (biometria/KYC), comprovante de que o usuário operou o app e iniciou o desafio — evidência para contestar MED/chargeback.
 - Estrutura de produto/jurídica que caracterize a transação como prestação de serviço/entrada em programa, com termos claros sobre não reembolso em caso de falha na meta, em conformidade regulatória brasileira.
 - Modelo de pagamento que reduza exposição: custódia/escrow, liberação faseada, ou estrutura em que o valor apostado não fique simplesmente "recebido e reembolsável".
@@ -2341,12 +2541,14 @@ Ordenada por **urgência de mitigação** = (Probabilidade × Impacto), ponderad
 **Sofisticação:** alta · **Custo p/ fraudador:** alto · **Probabilidade:** média · **Impacto:** alto
 
 **Sinais de detecção:**
+
 - Correlação de dispositivos/IPs/contas bancárias de saque/padrões de comportamento entre contas "independentes".
 - Mesma estratégia exata (mesma meta %, mesmo timing, mesma balança/ambiente) replicada em muitas contas.
 - Cluster de payouts para contas bancárias/Pix relacionadas ou para o mesmo destino final.
 - Picos de cadastro/KYC em lote; faces/documentos com sinais de reuso ou de provedores de laranja.
 
 **Mitigações:**
+
 - Antifraude de grafo: ligar contas por device fingerprint, IP, geolocalização, chave Pix de saque, ambiente do vídeo, balança e padrão comportamental; tratar clusters como uma entidade e cortar payouts agregados.
 - KYC + liveness forte de terceiros (Unico/idwall/Onfido/Sumsub) com detecção de câmera virtual, deepfake e reuso de documento; sinalizar identidades recorrentes e velocidade anômala de cadastro.
 - Limites de exposição por unidade de tempo e teto de payout agregado por cluster/coorte, com circuit breaker automático quando a taxa de aprovação/pagamento sai do envelope esperado.
@@ -2363,93 +2565,101 @@ Cada item indica os vetores-alvo principais. Princípio de priorização: **cust
 ---
 
 ### FASE 1 / MVP — Matar a fraude trivial e impor fricção econômica
-*(regras automáticas, protocolo de captura, revisão manual; sem IA pesada)*
+
+_(regras automáticas, protocolo de captura, revisão manual; sem IA pesada)_
 
 **A. Protocolo de pesagem padronizado e supervisionado (ataca a maior família de fraude barata)**
+
 - **Baseline gravado e validado como evento crítico**, com os mesmos requisitos do final (rosto + corpo inteiro + balança zerada + subida + visor), revisado antes de aceitar a aposta. Mata "re-roll de baseline", "abandono-e-recriação", "conta descartável no pior dia de retenção".
-  → *Vetores: baseline inflado, lastro oculto no baseline, roupa/calçado pesado no baseline, abandono-e-recriação, conta descartável.*
+  → _Vetores: baseline inflado, lastro oculto no baseline, roupa/calçado pesado no baseline, abandono-e-recriação, conta descartável._
 - **Protocolo de roupa obrigatório**: pesagem em roupa mínima padronizada (camiseta/shorts, descalço), idêntico no início e no fim, exibido na câmera. Roupa pesada no baseline vs. seminu no final deixa de gerar delta.
 - **Demonstração da balança zerada com objeto de referência**: o app pede que o usuário mostre a balança marcando 0 e, em momentos aleatórios, pese um item de peso conhecido sugerido na hora (ex.: "coloque uma garrafa de 2L cheia") — detecta offset de fábrica, troca de balança, calço sob célula, bateria fraca, adesivo no visor, balança de brinquedo.
-  → *Vetores: offset de calibração, troca de balança, cunha/calço, bateria fraca, adesivo/overlay de dígitos, balança de brinquedo/protótipo, segundo device como visor.*
+  → _Vetores: offset de calibração, troca de balança, cunha/calço, bateria fraca, adesivo/overlay de dígitos, balança de brinquedo/protótipo, segundo device como visor._
 - **Pesagem em superfície dura obrigatória, mostrada na câmera** (piso, nunca carpete/inclinado), pés ao centro, sem nada ao alcance das mãos no quadro. Câmera deve enquadrar mãos e entorno.
-  → *Vetores: superfície inclinada/carpete, apoio em parede/móvel, mão na pia/corrimão, corrimão na altura do quadril, pé fora da plataforma, apoio no próprio device.*
+  → _Vetores: superfície inclinada/carpete, apoio em parede/móvel, mão na pia/corrimão, corrimão na altura do quadril, pé fora da plataforma, apoio no próprio device._
 
 **B. Token dinâmico co-localizado e amarrado ao peso (fecha o desacoplamento)**
+
 - **Regra dura: token + gesto + visor + rosto no MESMO frame / mesma cena contínua.** O peso só é válido se o OCR do visor e o token aparecem co-visíveis. "Falar" o token sem mostrá-lo é rejeitado; o token deve ser **exibido fisicamente** (escrito/mostrado) perto da balança.
-  → *Vetores: falar o token em vez de mostrar, titular canta o token + proxy fora de quadro, token em segundo device, token correto + peso de outra sessão, replay parcial.*
+  → _Vetores: falar o token em vez de mostrar, titular canta o token + proxy fora de quadro, token em segundo device, token correto + peso de outra sessão, replay parcial._
 - **Token com janela curtíssima de validade (TTL) e seed server-side** (HMAC com segredo no backend, nunca derivável no cliente). Gera-se sob demanda no momento da captura, expira em segundos.
-  → *Vetores: replay attack puro, janela de pré-gravação da resposta, comprometimento do seed do token, replay de tela filmada.*
+  → _Vetores: replay attack puro, janela de pré-gravação da resposta, comprometimento do seed do token, replay de tela filmada._
 - **Gesto aleatório de corpo inteiro** (não só "mostrar a mão"): virar de lado, agachar, levantar a balança e mostrar a base — encarece pré-gravação e splicing, e ajuda body estimation futuro.
 
 **C. Captura blindada no app (eleva o custo do digital trivial)**
+
 - **Vídeo contínuo gravado dentro do app, sem upload de arquivo externo** no MVP. Sem "escolher da galeria" — só captura ao vivo. Mata em massa edição, splicing, GenAI, reuso de vídeo, foto impressa.
-  → *Vetores: splicing, reuso/edição de dois vídeos, deepfake, vídeo GenAI, green screen, foto impressa, replay.*
+  → _Vetores: splicing, reuso/edição de dois vídeos, deepfake, vídeo GenAI, green screen, foto impressa, replay._
 - **Coleta e verificação de metadata na origem** (timestamp do servidor, não do device; geolocalização; integridade do stream). Carimbo de tempo é do backend no momento do recebimento.
-  → *Vetores: manipulação do relógio do device, adulteração de timestamp/GPS, GPS spoofing.*
+  → _Vetores: manipulação do relógio do device, adulteração de timestamp/GPS, GPS spoofing._
 - **Detecção básica de ambiente comprometido**: root/jailbreak, emulador, câmera virtual conhecida, screen-recording/overlay ativos → bloqueia ou força revisão humana.
-  → *Vetores: câmera virtual/feed injetado, emulador, app repackado, replay de tela filmada.*
+  → _Vetores: câmera virtual/feed injetado, emulador, app repackado, replay de tela filmada._
 - **App attestation nativa (Play Integrity / App Attest)** desde o MVP — barato e mata requisições diretas ao backend e apps repackados.
-  → *Vetores: requisições diretas ao backend, app repackado, MITM, hooking.*
+  → _Vetores: requisições diretas ao backend, app repackado, MITM, hooking._
 
 **D. Engine Charya v1 — regras de plausibilidade fisiológica (defende o swing, o vetor #1)**
+
 - **Limites de taxa de perda**: flag automático acima de ~1% do peso corporal/semana ou perdas implausíveis (ex.: 18 kg em 20 dias). Bloqueio para revisão humana.
-  → *Vetores: depleção carb/water/sodium, desidratação aguda, diuréticos/laxantes, perda médica/cirúrgica não declarada.*
+  → _Vetores: depleção carb/water/sodium, desidratação aguda, diuréticos/laxantes, perda médica/cirúrgica não declarada._
 - **Janela de pesagem aleatória imposta pelo app** (o usuário não escolhe a hora/dia): notificação "pese nas próximas X horas", randomizada, para quebrar o timing diurnal/menstrual/intestinal e o pico do swing.
-  → *Vetores: timing diurnal/intestinal, esvaziamento de bexiga/intestino + jejum, peak week.*
+  → _Vetores: timing diurnal/intestinal, esvaziamento de bexiga/intestino + jejum, peak week._
 - **Validação intermediária obrigatória e também aleatória**, comparada à curva esperada — curva fisicamente impossível (platô e queda abrupta no fim) vira flag.
-  → *Vetores: ataque à janela intermediária, balança intermediária inflada para fabricar curva.*
+  → _Vetores: ataque à janela intermediária, balança intermediária inflada para fabricar curva._
 - **Anti-retry / anti-arbitragem**: número limitado de tentativas de submissão, cada rejeição registrada; baseline e final na **mesma balança** (mostrada), comparação de aparência da balança entre sessões.
-  → *Vetores: retry farming, arbitragem entre balanças descalibradas, abuso de tolerância/arredondamento do OCR.*
+  → _Vetores: retry farming, arbitragem entre balanças descalibradas, abuso de tolerância/arredondamento do OCR._
 
 **E. Política, KYC e regras contratuais (camada barata e potente)**
+
 - **KYC de terceiro no onboarding** (Onfido/idwall/Unico) + **selfie liveness amarrada à conta** desde o cadastro. Uma conta = uma pessoa.
-  → *Vetores: documento/selfie de terceiro, conta familiar compartilhada, conta vendida/alugada.*
+  → _Vetores: documento/selfie de terceiro, conta familiar compartilhada, conta vendida/alugada._
 - **Regras explícitas e antifrágeis** no termo: proibição de perda por meios médicos/cirúrgicos (GLP-1, bariátrica, lipo) não declarados, definição precisa de protocolo de pesagem, cláusula de perda da aposta por fraude. Elimina "ambiguidade de regras".
-  → *Vetores: exploração de ambiguidade, perda médica não declarada, goal-gaming.*
+  → _Vetores: exploração de ambiguidade, perda médica não declarada, goal-gaming._
 - **Estrutura de metas robusta ao swing**: metas mínimas (ex.: ≥ X% do peso) e prazos longos o suficiente para que o swing de água/intestino não baste para ganhar — torna o EV do swing negativo.
-  → *Vetor: goal-gaming calibrado ao swing fisiológico.*
+  → _Vetor: goal-gaming calibrado ao swing fisiológico._
 - **Pix antifraude**: titularidade do Pix de aposta e de payout = titular do KYC; janela anti-chargeback/MED, retenção de payout para casos sob revisão.
-  → *Vetores: chargeback/MED de Pix, laranjas, multiconta.*
+  → _Vetores: chargeback/MED de Pix, laranjas, multiconta._
 - **Revisão humana obrigatória para payout alto e qualquer flag**, com checklist anti-engenharia-social e separação de funções.
-  → *Vetores: engenharia social no suporte, insider na camada 3.*
+  → _Vetores: engenharia social no suporte, insider na camada 3._
 
 ---
 
 ### FASE 2 — IA visual e biometria histórica encarecem a falsificação de mídia e o proxy
-*(computer vision, detecção de edição, body estimation, biometria ao longo do tempo)*
+
+_(computer vision, detecção de edição, body estimation, biometria ao longo do tempo)_
 
 - **Detecção de replay / tela filmada / re-captura** (moiré, reflexos, banding, análise de bordas de tela) — encarece o replay de segunda tela, hoje alta probabilidade/baixa sofisticação.
-  → *Vetores: replay de tela filmada, foto impressa, segundo display, presentation attack.*
+  → _Vetores: replay de tela filmada, foto impressa, segundo display, presentation attack._
 - **OCR robusto e adversarial-aware**: leitura tolerante a parallax controlado mas que rejeita ângulos suspeitos, detecta degradação proposital da imagem, dígitos por parallax, overlay/CGI no visor, e exige nitidez mínima do visor.
-  → *Vetores: manipulação de dígito por ângulo, degradação proposital, CGI/edição do visor, loop/freeze do visor, adversarial OCR poisoning.*
+  → _Vetores: manipulação de dígito por ângulo, degradação proposital, CGI/edição do visor, loop/freeze do visor, adversarial OCR poisoning._
 - **Body/pose estimation e consistência corporal entre sessões**: estima volume/composição corporal e compara baseline→intermediária→final; detecta troca de corpo, dublê magro, postura/contração para enganar, ilusão de ângulo.
-  → *Vetores: dublê magro, gêmeo/sósia, fat suit/maquiagem, postura/contração/respiração, ilusão óptica, conluio de troca de corpos.*
+  → _Vetores: dublê magro, gêmeo/sósia, fat suit/maquiagem, postura/contração/respiração, ilusão óptica, conluio de troca de corpos._
 - **Biometria facial histórica**: a face de cada check-in é comparada à âncora do KYC e ao histórico (mesma pessoa ao longo do tempo), com liveness ativo (challenge-response).
-  → *Vetores: dublê/sósia, faceswap, sequestro de identidade, máscara 3D, deepfake.*
+  → _Vetores: dublê/sósia, faceswap, sequestro de identidade, máscara 3D, deepfake._
 - **Análise forense de mídia**: detecção de splicing, freeze-frame, recompressão/transcodificação, inconsistência de iluminação/composição, artefatos de GenAI/diffusion, green screen.
-  → *Vetores: splicing, reuso/edição, green screen, deepfake, vídeo GenAI, recompressão para apagar rastros, token injetado em pós.*
+  → _Vetores: splicing, reuso/edição, green screen, deepfake, vídeo GenAI, recompressão para apagar rastros, token injetado em pós._
 - **Certificate pinning + attestation forte + detecção de hooking (Frida/Xposed/Magisk)** — fecha o que o MVP só mitigou parcialmente.
-  → *Vetores: bypass de pinning, hooking em runtime, MITM/replay de pacote, câmera virtual avançada.*
+  → _Vetores: bypass de pinning, hooking em runtime, MITM/replay de pacote, câmera virtual avançada._
 - **Engine Charya v2 — underwriting comportamental**: scoring de probing adversarial (usuários que ficam logo abaixo do threshold), grafo de relacionamento entre contas (laranjas, multiconta, KYC farm, coordenação em escala), padrões de device/IP/geolocalização compartilhados.
-  → *Vetores: probing da engine, laranjas/fraude-as-a-service, multiconta em escala, KYC farm, coordenação de fila de laranjas, conluio entre participantes.*
+  → _Vetores: probing da engine, laranjas/fraude-as-a-service, multiconta em escala, KYC farm, coordenação de fila de laranjas, conluio entre participantes._
 
 ---
 
 ### FASE 3 — Sinais físicos independentes tornam a fraude do peso quase inviável
-*(balanças smart, HealthKit/Health Connect, wearables, score metabólico)*
+
+_(balanças smart, HealthKit/Health Connect, wearables, score metabólico)_
 
 - **Balança inteligente Charya-certificada (BLE/Wi-Fi) como caminho preferencial**, com peso assinado criptograficamente na origem (firmware confiável, chave por device) — remove a confiança no visor filmado e no OCR.
-  → *Vetores: todos os de manipulação de visor/balança, spoof BLE, firmware adulterado, MITM da balança, leitura por OCR.*
+  → _Vetores: todos os de manipulação de visor/balança, spoof BLE, firmware adulterado, MITM da balança, leitura por OCR._
 - **Pareamento balança↔corpo↔conta**: a smart scale com bioimpedância amarrada ao mesmo perfil biométrico/wearable, evitando que se pese outra pessoa ou dispositivo.
-  → *Vetores: wearable/balança pareada ao proxy, proxy fora de quadro, conluio.*
+  → _Vetores: wearable/balança pareada ao proxy, proxy fora de quadro, conluio._
 - **Correlação multi-sinal com wearables (Garmin/Apple Health/Google Health Connect)**: atividade, gasto calórico, sono, frequência cardíaca e tendência de peso devem ser **coerentes** com a perda alegada. Perda real de gordura tem assinatura metabólica; swing de água não.
-  → *Vetores: injeção de peso falso no Apple Health/Health Connect, falsificação de dados de wearable, desidratação/depleção, perda médica não declarada.*
+  → _Vetores: injeção de peso falso no Apple Health/Health Connect, falsificação de dados de wearable, desidratação/depleção, perda médica não declarada._
 - **Validação de proveniência dos dados de saúde**: aceitar apenas dados originados de devices certificados/atestados, não escrita manual de app de terceiro na HealthKit/Health Connect.
-  → *Vetores: injeção no Apple Health/Health Connect, spoof de wearable.*
+  → _Vetores: injeção no Apple Health/Health Connect, spoof de wearable._
 - **Score metabólico Charya**: modelo que funde balança smart + bioimpedância + wearable + histórico, produzindo uma probabilidade de "perda fisiologicamente real" — o underwriting final do payout alto.
-  → *Vetores: peak week, depleção, dublê com peso real, qualquer ganho por swing.*
+  → _Vetores: peak week, depleção, dublê com peso real, qualquer ganho por swing._
 - **Defesa contra deepfake em tempo real / GenAI condicionada à pessoa**: liveness multimodal (challenge físico + sinal de device certificado), que um avatar do próprio usuário magro não consegue acompanhar junto com a balança assinada.
-  → *Vetores: deepfake em tempo real respondendo challenge, GenAI condicionada à pessoa real, máscara 3D.*
+  → _Vetores: deepfake em tempo real respondendo challenge, GenAI condicionada à pessoa real, máscara 3D._
 
 ---
 
@@ -2477,4 +2687,4 @@ Cada item indica os vetores-alvo principais. Princípio de priorização: **cust
 
 ---
 
-*Documento gerado a partir da auditoria interna e do dossiê do ecossistema Charya. Objetivo declarado do programa antifraude: não eliminar 100% da fraude (inviável), e sim torná-la **difícil, cara e economicamente inviável** na média.*
+_Documento gerado a partir da auditoria interna e do dossiê do ecossistema Charya. Objetivo declarado do programa antifraude: não eliminar 100% da fraude (inviável), e sim torná-la **difícil, cara e economicamente inviável** na média._

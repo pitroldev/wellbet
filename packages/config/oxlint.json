@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+  "//": "Preset oxlint base do Charya. §7: oxlint roda como PRE-PASSO rapido (50-100x) em pre-commit/CI, ANTES do ESLint. Foca em correctness/suspicious (bugs reais), nao em estilo — formato e Prettier, lint type-aware e ESLint.",
+  "plugins": ["typescript", "unicorn", "oxc"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "rules": {
+    "no-explicit-any": "warn",
+    "no-debugger": "error",
+    "no-console": "off"
+  },
+  "env": {
+    "es2023": true,
+    "node": true,
+    "browser": true
+  },
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**",
+    "**/.expo/**",
+    "**/.turbo/**",
+    "**/coverage/**"
+  ]
+}

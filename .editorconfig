@@ -1,0 +1,29 @@
+# EditorConfig — https://editorconfig.org
+# Mantido em sincronia com o preset Prettier (@charya/config/prettier).
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+max_line_length = 100
+
+[*.md]
+# Markdown usa dois espaços no fim de linha para quebra; não trimar.
+trim_trailing_whitespace = false
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[Makefile]
+indent_style = tab
+
+[*.{tf,tfvars}]
+# OpenTofu/HCL (infra/terraform): convenção de 2 espaços (tofu fmt).
+indent_size = 2
+
+[*.go]
+indent_style = tab

@@ -1,0 +1,21 @@
+# Next.js
+/.next/
+/out/
+next-env.d.ts
+
+# Build / standalone
+/dist/
+
+# Test artifacts
+/coverage/
+/playwright-report/
+/test-results/
+/.playwright/
+
+# Env
+.env
+.env.*.local
+.env.local
+
+# Misc
+*.tsbuildinfo

@@ -20,12 +20,12 @@ Objetivo: tornar a fraude cara/arriscada o suficiente para que **emagrecer de ve
 
 ## 2. O que o MVP entrega (e só isso)
 
-| # | Componente | Tipo | Custo |
-|---|---|---|---|
-| C1 | Gravação de vídeo **dentro do app** (bloqueia upload da galeria) | Software | baixo |
-| C2 | **Código dinâmico** exibido ao vivo na captura | Software | baixo |
-| C3 | **Revisão humana de 100%** das pesagens | Operação | médio (ok no volume baixo) |
-| C4 | **Uma regra dura** de plausibilidade (bloqueio de perda absurda) | Software | ~zero |
+| #   | Componente                                                       | Tipo     | Custo                      |
+| --- | ---------------------------------------------------------------- | -------- | -------------------------- |
+| C1  | Gravação de vídeo **dentro do app** (bloqueia upload da galeria) | Software | baixo                      |
+| C2  | **Código dinâmico** exibido ao vivo na captura                   | Software | baixo                      |
+| C3  | **Revisão humana de 100%** das pesagens                          | Operação | médio (ok no volume baixo) |
+| C4  | **Uma regra dura** de plausibilidade (bloqueio de perda absurda) | Software | ~zero                      |
 
 Nada além disso entra no MVP.
 
@@ -35,11 +35,11 @@ Nada além disso entra no MVP.
 
 Procedimento idêntico em todas — sem captura de "menor rigor":
 
-| Captura | Quando | Papel |
-|---|---|---|
-| `T0` baseline | início | ponto de partida (inflar aqui falsifica todo o delta) |
-| `T1` intermediária | meio | confirma evolução gradual |
-| `T2` final | fim | define o prêmio — máximo incentivo de fraude |
+| Captura            | Quando | Papel                                                 |
+| ------------------ | ------ | ----------------------------------------------------- |
+| `T0` baseline      | início | ponto de partida (inflar aqui falsifica todo o delta) |
+| `T1` intermediária | meio   | confirma evolução gradual                             |
+| `T2` final         | fim    | define o prêmio — máximo incentivo de fraude          |
 
 ---
 
@@ -62,16 +62,16 @@ O app **gera o código** (C2) e **força a gravação interna** (C1). O resto é
 
 No MVP a validação de cada item é **feita por uma pessoa**, com critério objetivo. Este é o checklist que o revisor aplica a cada pesagem:
 
-| Item a validar | O que o revisor confere | Reprova quando |
-|---|---|---|
-| **Frescor / anti-replay** | O código dinâmico no vídeo é o mesmo que o app emitiu para esta sessão, e o gesto foi feito | Código errado/ausente, gesto não feito |
-| **Vídeo contínuo** | Take único, sem corte/emenda; gravado no app (não upload) | Cortes, reencode de editor, origem externa |
+| Item a validar                             | O que o revisor confere                                                                              | Reprova quando                                                |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| **Frescor / anti-replay**                  | O código dinâmico no vídeo é o mesmo que o app emitiu para esta sessão, e o gesto foi feito          | Código errado/ausente, gesto não feito                        |
+| **Vídeo contínuo**                         | Take único, sem corte/emenda; gravado no app (não upload)                                            | Cortes, reencode de editor, origem externa                    |
 | **Balança zerada (âncora do instrumento)** | Antes de subir, balança vazia marca **0,0 limpo e estável**; mostra o número saindo do zero ao subir | Não mostra o zero, zero instável/deslocado, ou não está vazia |
-| **Piso/cena** | Chão plano e nivelado, balança não inclinada, sem calço/tapete grosso | Piso torto, balança tombada, calço aparente |
-| **Sem truque de corpo** | Sobe sem apoio, mãos visíveis, peso estável | Apoio em parede/móvel, descarga de peso |
-| **Visor íntegro** | Número se firma do zero; sem visor sobreposto (borda/reflexo/fonte estranhos) | Sinais de display falso |
-| **Mesma pessoa** | Rosto bate entre `T0`, `T1`, `T2` (comparação visual dos 3 vídeos) | Pessoa diferente entre capturas |
-| **Plausibilidade** | A perda faz sentido fisiológico para o prazo/perfil | Perda incompatível → ver §6 |
+| **Piso/cena**                              | Chão plano e nivelado, balança não inclinada, sem calço/tapete grosso                                | Piso torto, balança tombada, calço aparente                   |
+| **Sem truque de corpo**                    | Sobe sem apoio, mãos visíveis, peso estável                                                          | Apoio em parede/móvel, descarga de peso                       |
+| **Visor íntegro**                          | Número se firma do zero; sem visor sobreposto (borda/reflexo/fonte estranhos)                        | Sinais de display falso                                       |
+| **Mesma pessoa**                           | Rosto bate entre `T0`, `T1`, `T2` (comparação visual dos 3 vídeos)                                   | Pessoa diferente entre capturas                               |
+| **Plausibilidade**                         | A perda faz sentido fisiológico para o prazo/perfil                                                  | Perda incompatível → ver §6                                   |
 
 **Decisão do revisor:** `APROVADO` · `PENDENTE` (pede recaptura com orientação) · `REPROVADO`.
 
@@ -95,11 +95,11 @@ se perda_por_semana > LIMITE_DURO:
 
 ## 7. Veredito
 
-| Estado | Significado | Ação |
-|---|---|---|
-| `APROVADO` | Revisor validou o checklist; regra de sanidade passou. | Settlement segue. |
-| `PENDENTE` | Algo no checklist ficou dúbio ou faltou frame. | Recaptura orientada → revisor reavalia. |
-| `REPROVADO` | Fraude clara no checklist, ou bloqueio da regra dura. | Recusa conforme termos. |
+| Estado      | Significado                                            | Ação                                    |
+| ----------- | ------------------------------------------------------ | --------------------------------------- |
+| `APROVADO`  | Revisor validou o checklist; regra de sanidade passou. | Settlement segue.                       |
+| `PENDENTE`  | Algo no checklist ficou dúbio ou faltou frame.         | Recaptura orientada → revisor reavalia. |
+| `REPROVADO` | Fraude clara no checklist, ou bloqueio da regra dura.  | Recusa conforme termos.                 |
 
 Política: **na dúvida, `PENDENTE`** — nunca aprovar no susto, nunca reprovar honesto por vídeo ruim.
 
@@ -109,16 +109,16 @@ Política: **na dúvida, `PENDENTE`** — nunca aprovar no susto, nunca reprovar
 
 Tudo abaixo são **automações de tarefas que o humano faz no MVP**, construídas só quando o volume justificar:
 
-| Fora do MVP | Substitui (no MVP é feito por) |
-|---|---|
+| Fora do MVP                                                     | Substitui (no MVP é feito por)                                                      |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | **Objeto de peso conhecido** (calibração ad-hoc do instrumento) | no MVP, a honestidade da balança é ancorada **só pelo zero** (balança vazia em 0,0) |
-| OCR automático do visor | revisor lê o número |
-| Forense de vídeo (corte/edição automáticos) | revisor percebe corte; app força gravação interna |
-| Engine de plausibilidade (taxa + curva + consistência) | revisor + regra dura |
-| Face match / liveness comprado | revisor compara os 3 vídeos |
-| Classificador automático de tipo de balança | revisor vê se é digital |
-| Detecção automática de gesto/pose | revisor confere o gesto |
-| Cascateamento automático de 3 camadas | fila única de revisão humana |
+| OCR automático do visor                                         | revisor lê o número                                                                 |
+| Forense de vídeo (corte/edição automáticos)                     | revisor percebe corte; app força gravação interna                                   |
+| Engine de plausibilidade (taxa + curva + consistência)          | revisor + regra dura                                                                |
+| Face match / liveness comprado                                  | revisor compara os 3 vídeos                                                         |
+| Classificador automático de tipo de balança                     | revisor vê se é digital                                                             |
+| Detecção automática de gesto/pose                               | revisor confere o gesto                                                             |
+| Cascateamento automático de 3 camadas                           | fila única de revisão humana                                                        |
 
 ---
 
@@ -144,9 +144,9 @@ Esse rótulo humano é o **dataset** que torna possível automatizar tudo das pr
 
 ## 11. Parâmetros a calibrar
 
-| Parâmetro | Onde | Significado |
-|---|---|---|
-| `LIMITE_DURO` | §6 | perda/semana que bloqueia automaticamente |
-| tempo de validade do código | §4 | janela do código dinâmico |
-| roteiro mínimo | §4 | itens obrigatórios no vídeo |
-| capacidade de revisão | §5 | pesagens/revisor/dia → quando o humano vira gargalo (gatilho da Fase 2) |
+| Parâmetro                   | Onde | Significado                                                             |
+| --------------------------- | ---- | ----------------------------------------------------------------------- |
+| `LIMITE_DURO`               | §6   | perda/semana que bloqueia automaticamente                               |
+| tempo de validade do código | §4   | janela do código dinâmico                                               |
+| roteiro mínimo              | §4   | itens obrigatórios no vídeo                                             |
+| capacidade de revisão       | §5   | pesagens/revisor/dia → quando o humano vira gargalo (gatilho da Fase 2) |

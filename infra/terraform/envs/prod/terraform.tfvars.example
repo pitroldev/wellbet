@@ -1,0 +1,37 @@
+# envs/prod/terraform.tfvars.example
+# Copie para terraform.tfvars (GIT-IGNORADO) e preencha. NUNCA commitar valores
+# reais. Secrets via TF_VAR_* no CI. Apply em prod exige aprovação manual.
+
+# ── GCP ──────────────────────────────────────────────────────────────────
+gcp_project_id = "charya-prod"
+gcp_region     = "southamerica-east1"
+
+# Imagem PROMOVIDA de staging (mesmo digest — não rebuild):
+api_image   = "southamerica-east1-docker.pkg.dev/charya-prod/charya/api@sha256:REPLACE"
+admin_image = "southamerica-east1-docker.pkg.dev/charya-prod/charya/admin@sha256:REPLACE"
+
+api_service_account_email   = "charya-api-prod@charya-prod.iam.gserviceaccount.com"
+admin_service_account_email = "charya-admin-prod@charya-prod.iam.gserviceaccount.com"
+
+# ── Secret Manager (IDs; valores ficam no Secret Manager) ─────────────────
+database_url_secret_id  = "charya-database-url-prod"
+auth_secret_id          = "charya-better-auth-secret-prod"
+r2_access_key_secret_id = "charya-r2-access-key-id-prod"
+r2_secret_key_secret_id = "charya-r2-secret-access-key-prod"
+
+# ── Cloudflare ────────────────────────────────────────────────────────────
+cloudflare_account_id = "REPLACE_ACCOUNT_ID"
+cloudflare_zone_id    = "REPLACE_ZONE_ID"
+# cloudflare_api_token via TF_VAR_cloudflare_api_token
+
+# ── R2 (token S3 p/ CORS/lifecycle) ───────────────────────────────────────
+# r2_access_key_id / r2_secret_access_key via TF_VAR_*
+
+# ── Neon ──────────────────────────────────────────────────────────────────
+# neon_api_key via TF_VAR_neon_api_key
+
+# ── App ────────────────────────────────────────────────────────────────────
+app_cors_origins = [
+  "https://admin.charya.bet",
+  "https://app.charya.bet",
+]

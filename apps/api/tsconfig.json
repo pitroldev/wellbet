@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // NestJS depende de metadados de decorator emitidos pelo tsc (DI por reflexão).
+    // Por isso este app NÃO usa type-stripping/bundler: usa emit real do tsc.
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    // verbatimModuleSyntax + isolatedModules da base quebram o emit de
+    // metadados de decorator do Nest (elidem imports usados só como tipo
+    // em parâmetros de construtor). Desligados aqui de propósito.
+    "verbatimModuleSyntax": false,
+    "isolatedModules": false,
+    "moduleDetection": "auto",
+    "baseUrl": "./",
+    "sourceMap": true,
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictBindCallApply": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node", "vitest/globals"],
+    // Este config é para IDE + `tsc --noEmit` (typecheck de tudo: src, test,
+    // configs). O EMIT real (nest build) usa tsconfig.build.json.
+    "noEmit": true
+  },
+  // Project References (§1): aponta para os tsconfig dos @charya/* que a api
+  // importa (inferido das deps de package.json: @charya/env, @charya/schemas).
+  "references": [{ "path": "../../packages/env" }, { "path": "../../packages/schemas" }],
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "drizzle.config.ts",
+    "vitest.config.ts",
+    "openapi-ts.config.ts",
+    "eslint.config.mjs"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

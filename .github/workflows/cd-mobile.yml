@@ -1,0 +1,103 @@
+name: CD — Mobile (EAS)
+
+# §8.3: via EAS Workflows.
+#   - mudança só JS/TS → EAS Update (OTA) p/ canal staging → promove p/ prod.
+#   - mudança nativa    → EAS Build (cache) → EAS Submit (TestFlight / Play Internal).
+# O Fingerprint do EAS decide se a mudança é nativa (pula build redundante).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/mobile/**"
+      - "packages/**"
+      - ".github/workflows/cd-mobile.yml"
+  workflow_dispatch:
+    inputs:
+      force_native:
+        description: "Forçar EAS Build nativo (ignora fingerprint)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: cd-mobile
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  # Decide a rota: comparar o fingerprint nativo do commit com o do último build.
+  fingerprint:
+    name: Fingerprint (nativo mudou?)
+    runs-on: ubuntu-latest
+    outputs:
+      native_changed: ${{ steps.fp.outputs.native_changed }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+        with:
+          install: true
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+      - name: Compute fingerprint
+        id: fp
+        working-directory: apps/mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ "${{ inputs.force_native }}" = "true" ]; then
+            echo "native_changed=true" >> "$GITHUB_OUTPUT"
+          else
+            # TODO(mobile): usar `eas fingerprint:compare` (SDK 56) p/ detectar
+            # diff de runtime nativo vs o último build publicado.
+            echo "native_changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # Rota A — só JS/TS: OTA via EAS Update (sem passar pela store).
+  ota-update:
+    name: EAS Update (OTA)
+    needs: fingerprint
+    if: needs.fingerprint.outputs.native_changed == 'false'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+        with:
+          install: true
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+      - name: Publish OTA to staging channel
+        working-directory: apps/mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: pnpm exec eas update --branch staging --auto --non-interactive
+      # TODO(mobile): promoção staging→prod via `eas channel:edit prod --branch staging`
+      # após validação (pode ser um job com environment: production e gate manual).
+
+  # Rota B — mudança nativa: Build (cache) → Submit p/ canais internos.
+  native-build:
+    name: EAS Build + Submit (nativo)
+    needs: fingerprint
+    if: needs.fingerprint.outputs.native_changed == 'true'
+    runs-on: ubuntu-latest
+    environment: production # gate manual antes de mandar build p/ as stores.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+        with:
+          install: true
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+      - name: EAS Build (iOS + Android, com cache)
+        working-directory: apps/mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: pnpm exec eas build --platform all --profile production --non-interactive --no-wait
+      - name: EAS Submit (TestFlight / Play Internal)
+        working-directory: apps/mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: pnpm exec eas submit --platform all --latest --non-interactive
+      # TODO(mobile): definir perfis em apps/mobile/eas.json (build + submit) e
+      # avaliar migrar este YAML para EAS Workflows (.eas/workflows/*.yml) nativo.

@@ -1,0 +1,34 @@
+{
+  "name": "@charya/landing",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Charya Bet — landing page de marketing (Next.js 16 App Router, SSG/SEO, container standalone, anti-lock-in).",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -p 3002",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@charya/ui-tokens": "workspace:*",
+    "lucide-react": "^1.0.0",
+    "next": "^16.2.9",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@charya/config": "workspace:*",
+    "@eslint/eslintrc": "^3.2.0",
+    "@tailwindcss/postcss": "^4.3.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "catalog:",
+    "eslint-config-next": "^16.2.9",
+    "tailwindcss": "^4.3.0",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
+  }
+}

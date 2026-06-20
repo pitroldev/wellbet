@@ -1,0 +1,164 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Charya API (placeholder)",
+    "version": "0.0.0",
+    "description": "Placeholder do contrato OpenAPI até apps/api emitir o openapi.json real (via `pnpm --filter @charya/api openapi:emit`). Modela um recorte mínimo do fluxo de pesagem (weigh-in) do MVP manual-first para que @charya/contracts gere e tipe-cheque. NÃO é a fonte da verdade — a api é."
+  },
+  "servers": [{ "url": "http://localhost:3000", "description": "dev local" }],
+  "tags": [
+    { "name": "health", "description": "Liveness/readiness." },
+    { "name": "weighin", "description": "Pesagem: captura, desafio dinâmico e veredito." }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "getHealth",
+        "tags": ["health"],
+        "summary": "Health check.",
+        "responses": {
+          "200": {
+            "description": "Serviço no ar.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthStatus" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/weighins/{weighinId}": {
+      "get": {
+        "operationId": "getWeighinById",
+        "tags": ["weighin"],
+        "summary": "Busca uma pesagem pelo id.",
+        "parameters": [
+          {
+            "name": "weighinId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pesagem encontrada.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Weighin" }
+              }
+            }
+          },
+          "404": {
+            "description": "Pesagem não encontrada.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/weighins": {
+      "post": {
+        "operationId": "createWeighin",
+        "tags": ["weighin"],
+        "summary": "Registra uma nova pesagem (T0/T1/T2).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateWeighinInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pesagem criada; segue para a fila de revisão humana.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Weighin" }
+              }
+            }
+          },
+          "422": {
+            "description": "Bloqueio da regra dura de sanidade (perda fisiologicamente impossível).",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthStatus": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": { "type": "string", "enum": ["ok"] }
+        }
+      },
+      "WeighinCapture": {
+        "type": "string",
+        "description": "Qual das três capturas do MVP: baseline (T0), intermediária (T1) ou final (T2).",
+        "enum": ["T0", "T1", "T2"]
+      },
+      "ReviewVerdict": {
+        "type": "string",
+        "description": "Veredito do revisor humano (§7 do doc de validação).",
+        "enum": ["PENDENTE", "APROVADO", "REPROVADO"]
+      },
+      "CreateWeighinInput": {
+        "type": "object",
+        "required": ["capture", "weightKg", "videoKey", "challengeCode"],
+        "properties": {
+          "capture": { "$ref": "#/components/schemas/WeighinCapture" },
+          "weightKg": {
+            "type": "number",
+            "description": "Peso lido no visor, em kg.",
+            "minimum": 0,
+            "maximum": 500
+          },
+          "videoKey": {
+            "type": "string",
+            "description": "Chave do objeto no R2 (upload direto via URL pré-assinada)."
+          },
+          "challengeCode": {
+            "type": "string",
+            "description": "Código dinâmico exibido ao vivo na captura (anti-replay)."
+          }
+        }
+      },
+      "Weighin": {
+        "type": "object",
+        "required": ["id", "capture", "weightKg", "verdict", "createdAt"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "capture": { "$ref": "#/components/schemas/WeighinCapture" },
+          "weightKg": { "type": "number" },
+          "verdict": { "$ref": "#/components/schemas/ReviewVerdict" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ApiError": {
+        "type": "object",
+        "description": "Resposta de erro padronizada da api ({ code, message, details }).",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "details": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  }
+}

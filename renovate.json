@@ -1,0 +1,104 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    "group:monorepos",
+    "group:recommended"
+  ],
+  "//": "§7/§10: Renovate mantém o baseline jun/2026 atualizado. Agrupa por ecossistema p/ reduzir ruído de PR e manter versões que precisam casar (ex.: Expo/RN, React) sempre juntas. Catálogo pnpm é a fonte única de versões compartilhadas (pnpm-workspace.yaml).",
+  "timezone": "America/Sao_Paulo",
+  "schedule": ["before 9am on monday"],
+  "rangeStrategy": "bump",
+  "rebaseWhen": "conflicted",
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 4,
+  "labels": ["dependencies"],
+  "dependencyDashboard": true,
+  "configMigration": true,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 9am on monday"]
+  },
+  "packageRules": [
+    {
+      "description": "Turborepo (build system).",
+      "groupName": "turbo",
+      "matchPackageNames": ["turbo", "/^@turbo//", "eslint-config-turbo"]
+    },
+    {
+      "description": "Expo + React Native: versões acopladas, sempre no mesmo PR.",
+      "groupName": "expo / react-native",
+      "matchPackageNames": [
+        "expo",
+        "/^expo-/",
+        "/^@expo//",
+        "react-native",
+        "/^react-native-/",
+        "/^@react-native//",
+        "babel-preset-expo",
+        "jest-expo",
+        "eslint-config-expo",
+        "eas-cli"
+      ]
+    },
+    {
+      "description": "NestJS (backend).",
+      "groupName": "nest",
+      "matchPackageNames": ["/^@nestjs//", "nestjs-pino", "nestjs-zod"]
+    },
+    {
+      "description": "TanStack (React Query etc., compartilhado admin+mobile).",
+      "groupName": "tanstack",
+      "matchPackageNames": ["/^@tanstack//"]
+    },
+    {
+      "description": "React: precisa casar com o React Native (ver catálogo). Agrupa e não auto-mergeia.",
+      "groupName": "react",
+      "matchPackageNames": ["react", "react-dom", "/^@types/react$/", "/^@types/react-dom$/"]
+    },
+    {
+      "description": "Drizzle ORM + Kit (release-candidate fixadas; subir juntas).",
+      "groupName": "drizzle",
+      "matchPackageNames": ["drizzle-orm", "drizzle-kit", "drizzle-zod"]
+    },
+    {
+      "description": "OpenTelemetry (instrumentação da api).",
+      "groupName": "opentelemetry",
+      "matchPackageNames": ["/^@opentelemetry//"]
+    },
+    {
+      "description": "DevDeps de tooling do repo: agrupa updates não-major e permite auto-merge.",
+      "groupName": "dev-tooling (non-major)",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchPackageNames": [
+        "prettier",
+        "oxlint",
+        "eslint",
+        "typescript-eslint",
+        "knip",
+        "syncpack",
+        "lefthook",
+        "vitest",
+        "@manypkg/cli",
+        "publint",
+        "@arethetypeswrong/cli",
+        "/^@changesets//",
+        "/^@commitlint//"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "Major updates: nunca auto-merge; exigem revisão humana.",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "GitHub Actions: pinadas/atualizadas em grupo separado.",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions"
+    }
+  ]
+}

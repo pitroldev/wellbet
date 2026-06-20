@@ -17,6 +17,7 @@ Cada validação é especificada com o mesmo template:
 - **Automação no MVP** — o que roda sozinho vs. o que cai para revisão humana (honesto sobre os limites do MVP sem visão computacional pesada).
 
 Convenção de saída em três estados:
+
 - `PASS` — segue no automático.
 - `PENDENTE` — escala para revisão humana ou recaptura (não é reprovação).
 - `FAIL` — invalidação automática (raro; só onde a regra é inequívoca).
@@ -27,15 +28,15 @@ Convenção de saída em três estados:
 
 O que o app envia ao servidor por pesagem (`T0`, `T1` ou `T2`):
 
-| Campo | Origem | Uso na validação |
-|---|---|---|
-| `video` | gravação in-app contínua | V1–V7 |
-| `session_id` | servidor (início da captura) | vincula nonce/desafios |
-| `nonce` exibido | servidor → renderizado na captura | V1 |
-| `declared_weight` | input do usuário | V4 |
-| `device_meta` | SO/SDK (timestamp, modelo, sensores) | V2, V8 |
-| `liveness_payload` | SDK do provider de KYC | V6 |
-| `scale_ref` | cadastro (foto/marca/modelo no onboarding) | V5, V7 |
+| Campo              | Origem                                     | Uso na validação       |
+| ------------------ | ------------------------------------------ | ---------------------- |
+| `video`            | gravação in-app contínua                   | V1–V7                  |
+| `session_id`       | servidor (início da captura)               | vincula nonce/desafios |
+| `nonce` exibido    | servidor → renderizado na captura          | V1                     |
+| `declared_weight`  | input do usuário                           | V4                     |
+| `device_meta`      | SO/SDK (timestamp, modelo, sensores)       | V2, V8                 |
+| `liveness_payload` | SDK do provider de KYC                     | V6                     |
+| `scale_ref`        | cadastro (foto/marca/modelo no onboarding) | V5, V7                 |
 
 **Regra dura:** o vídeo é gravado **pela câmera dentro do app** (não upload da galeria). Upload de arquivo externo → `FAIL` imediato. Isso ancora todas as demais validações no tempo e no dispositivo.
 
@@ -108,13 +109,13 @@ O que o app envia ao servidor por pesagem (`T0`, `T1` ou `T2`):
 
 Roteiro de captura obrigatório; cada item abaixo é um sub-sinal. No MVP, a **presença** de cada frame exigido é checada automaticamente (existe/não existe), e a **interpretação fina** é dirigida à revisão humana quando há gatilho.
 
-| Sub-item | Como é validado | Automático no MVP? |
-|---|---|---|
-| **Balança vazia em 0,0** | Frame sem pés sobre a balança + OCR == `0.0` antes da subida | Sim |
-| **Base/piso visível** | Frame mostrando os 4 pés apoiados em piso plano | Presença: sim · nivelamento: humano |
-| **Corpo inteiro na subida** | Frame com corpo completo, mãos visíveis, sem apoio | Presença: sim · apoio/descarga: humano |
-| **Visor em close estabilizando** | V3 (estabilização do zero ao peso) | Sim |
-| **Rosto no quadro** | Entrada para V6 | Sim |
+| Sub-item                         | Como é validado                                              | Automático no MVP?                     |
+| -------------------------------- | ------------------------------------------------------------ | -------------------------------------- |
+| **Balança vazia em 0,0**         | Frame sem pés sobre a balança + OCR == `0.0` antes da subida | Sim                                    |
+| **Base/piso visível**            | Frame mostrando os 4 pés apoiados em piso plano              | Presença: sim · nivelamento: humano    |
+| **Corpo inteiro na subida**      | Frame com corpo completo, mãos visíveis, sem apoio           | Presença: sim · apoio/descarga: humano |
+| **Visor em close estabilizando** | V3 (estabilização do zero ao peso)                           | Sim                                    |
+| **Rosto no quadro**              | Entrada para V6                                              | Sim                                    |
 
 - **Decisão:** todos os frames exigidos presentes + sub-sinais automáticos OK → `PASS`. Frame faltante → `PENDENTE` (recaptura). Sinal fino suspeito → gatilho de revisão (§5).
 - **Automação no MVP:** detecção de **presença** de cada frame é automática; detecção fina de apoio corporal, nivelamento de piso e visor sobreposto depende de inspeção humana — visão computacional dedicada é Fase 2.
@@ -171,6 +172,7 @@ V1..V8 (captura)  ─►  V9..V11 (longitudinal)  ─►  gatilhos  ─►  vere
 ```
 
 **Gatilhos que forçam revisão humana (Camada 3):**
+
 - `T2` que **gera payout** → revisão **obrigatória (100%)**.
 - Qualquer validação em estado `PENDENTE`.
 - `payout > threshold_valor` → revisão mesmo sem flag (tolerância inversa ao prêmio).
@@ -182,42 +184,42 @@ V1..V8 (captura)  ─►  V9..V11 (longitudinal)  ─►  gatilhos  ─►  vere
 
 ## 6. Máquina de estados do veredito
 
-| Estado | Como se chega | Ação |
-|---|---|---|
-| `APROVADO` | Todas as validações `PASS` e nenhum gatilho. | Settlement segue. |
-| `PENDENTE` | ≥1 validação `PENDENTE` ou gatilho. | Fila de revisão humana / recaptura orientada → reavalia. |
-| `REPROVADO` | ≥1 validação `FAIL` ou revisão humana confirma fraude. | Recusa conforme termos da aposta. |
+| Estado      | Como se chega                                          | Ação                                                     |
+| ----------- | ------------------------------------------------------ | -------------------------------------------------------- |
+| `APROVADO`  | Todas as validações `PASS` e nenhum gatilho.           | Settlement segue.                                        |
+| `PENDENTE`  | ≥1 validação `PENDENTE` ou gatilho.                    | Fila de revisão humana / recaptura orientada → reavalia. |
+| `REPROVADO` | ≥1 validação `FAIL` ou revisão humana confirma fraude. | Recusa conforme termos da aposta.                        |
 
 ---
 
 ## 7. O que é automático vs. humano no MVP (resumo)
 
-| Validação | Automático | Humano (por gatilho) |
-|---|---|:---:|:---:|
-| V1 nonce (texto/TTL/uso único) | ✅ | gesto |
-| V2 continuidade de vídeo | ✅ | borderline |
-| V3 OCR do visor | ✅ | — |
-| V4 visor vs. declarado | ✅ | — |
-| V5 tipo de balança | ✅ | ambíguo |
-| V6 liveness + face match | ✅ (buy) | — |
-| V7 integridade de cena | presença ✅ | apoio/piso/visor |
-| V8 objeto de peso conhecido | ✅ | — |
-| V9 taxa de perda | ✅ | flag |
-| V10 regularidade da curva | ✅ | flag |
-| V11 consistência inter-captura | parcial | cenário/balança |
+| Validação                      | Automático  | Humano (por gatilho) |
+| ------------------------------ | ----------- | :------------------: |
+| V1 nonce (texto/TTL/uso único) | ✅          |        gesto         |
+| V2 continuidade de vídeo       | ✅          |      borderline      |
+| V3 OCR do visor                | ✅          |          —           |
+| V4 visor vs. declarado         | ✅          |          —           |
+| V5 tipo de balança             | ✅          |       ambíguo        |
+| V6 liveness + face match       | ✅ (buy)    |          —           |
+| V7 integridade de cena         | presença ✅ |   apoio/piso/visor   |
+| V8 objeto de peso conhecido    | ✅          |          —           |
+| V9 taxa de perda               | ✅          |         flag         |
+| V10 regularidade da curva      | ✅          |         flag         |
+| V11 consistência inter-captura | parcial     |   cenário/balança    |
 
 ---
 
 ## 8. Cobertura vs. threat model
 
-| Validação | Vetores neutralizados |
-|---|---|
-| V1, V2 | replay, vídeo reaproveitado, deepfake, edição/corte |
+| Validação      | Vetores neutralizados                                                                  |
+| -------------- | -------------------------------------------------------------------------------------- |
+| V1, V2         | replay, vídeo reaproveitado, deepfake, edição/corte                                    |
 | V8, V3, V4, V5 | balança/visor adulterados, calço, ímã, piso desnivelado/inclinado, balança de ponteiro |
-| V7 | truques de corpo (apoio/descarga), manipulação de piso, visor falso |
-| V6 | substituição de pessoa, troca de identidade |
-| V9, V10, V11 | "peso de água", baseline inflado, maquiagem de curva, metas impossíveis |
-| Gatilhos | residual de alto valor, anomalias não cobertas pelo automático |
+| V7             | truques de corpo (apoio/descarga), manipulação de piso, visor falso                    |
+| V6             | substituição de pessoa, troca de identidade                                            |
+| V9, V10, V11   | "peso de água", baseline inflado, maquiagem de curva, metas impossíveis                |
+| Gatilhos       | residual de alto valor, anomalias não cobertas pelo automático                         |
 
 **Risco residual conhecido:** o "peso de água" (manipulação hídrica/glicogênio) **não é detectável por nenhuma validação de captura** — o corpo é real, o vídeo é honesto, a balança está correta. Depende exclusivamente de V9–V11 + janela de pesagem sorteada. Permanece o vetor de maior atenção do MVP.
 
@@ -227,15 +229,15 @@ V1..V8 (captura)  ─►  V9..V11 (longitudinal)  ─►  gatilhos  ─►  vere
 
 Definidos com piloto/dados, não fixados aqui:
 
-| Parâmetro | Validação | Significado |
-|---|---|---|
-| `δ` | V8 | tolerância do objeto de referência |
-| `tol_visor` | V4 | divergência OCR × peso declarado |
-| `N`, `T_estável` | V3 | frames/segundos para leitura estável |
-| `ttl` | V1 | janela de validade do nonce |
-| `edit_distance` máx | V1 | tolerância de OCR no nonce |
-| `limite_flag`, `limite_duro` | V9 | taxa de perda flag vs. bloqueio |
-| piso de variância | V10 | quão "suave demais" dispara flag |
-| limiares liveness/face match | V6 | definidos com o provider |
-| `threshold_valor` | §5 | payout que força revisão |
-| meta % automático | §5 | alvo de pesagens resolvidas sem humano |
+| Parâmetro                    | Validação | Significado                            |
+| ---------------------------- | --------- | -------------------------------------- |
+| `δ`                          | V8        | tolerância do objeto de referência     |
+| `tol_visor`                  | V4        | divergência OCR × peso declarado       |
+| `N`, `T_estável`             | V3        | frames/segundos para leitura estável   |
+| `ttl`                        | V1        | janela de validade do nonce            |
+| `edit_distance` máx          | V1        | tolerância de OCR no nonce             |
+| `limite_flag`, `limite_duro` | V9        | taxa de perda flag vs. bloqueio        |
+| piso de variância            | V10       | quão "suave demais" dispara flag       |
+| limiares liveness/face match | V6        | definidos com o provider               |
+| `threshold_valor`            | §5        | payout que força revisão               |
+| meta % automático            | §5        | alvo de pesagens resolvidas sem humano |

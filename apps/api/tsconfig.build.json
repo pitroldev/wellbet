@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // Emite de verdade (nest build / tsc) — sobrescreve o noEmit do base.
+    "noEmit": false,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "declaration": false,
+    "removeComments": true,
+    // Specs/e2e podem ter vars não usadas em fixtures; não bloquear o build.
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "vitest.config.ts",
+    "drizzle.config.ts",
+    "openapi-ts.config.ts"
+  ]
+}

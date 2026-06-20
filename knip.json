@@ -1,0 +1,51 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "//": "Knip — detecta codigo/deps/exports mortos (§1/§7 higiene continua). Entradas por app/package; os pacotes scaffolded ainda nao existem, entao as entradas sao TODO ate cada area ser criada.",
+  "workspaces": {
+    ".": {
+      "entry": ["lefthook.yml", "commitlint.config.mjs", "knip.json", ".changeset/config.json"],
+      "ignoreDependencies": ["lefthook", "syncpack", "@changesets/cli"]
+    },
+    "packages/config": {
+      "entry": ["src/eslint.base.js", "src/eslint.*.js", "prettier.config.mjs"],
+      "project": "src/**/*.js",
+      "ignoreDependencies": ["eslint", "prettier", "oxlint"]
+    },
+    "packages/schemas": {
+      "entry": ["src/index.ts"],
+      "project": "src/**/*.ts"
+    },
+    "packages/contracts": {
+      "entry": ["src/index.ts"],
+      "project": "src/**/*.ts",
+      "ignore": ["src/generated/**"]
+    },
+    "packages/env": {
+      "entry": ["src/index.ts"],
+      "project": "src/**/*.ts"
+    },
+    "packages/ui-tokens": {
+      "entry": ["src/index.ts"],
+      "project": "src/**/*.ts"
+    },
+    "apps/api": {
+      "entry": ["src/main.ts", "drizzle.config.ts", "vitest.config.ts"],
+      "project": "src/**/*.ts"
+    },
+    "apps/admin": {
+      "entry": [
+        "next.config.ts",
+        "app/**/{page,layout,loading,error,not-found,route,template}.tsx",
+        "app/**/{page,layout,route}.ts",
+        "middleware.ts"
+      ],
+      "project": "{app,src}/**/*.{ts,tsx}"
+    },
+    "apps/mobile": {
+      "entry": ["app/**/*.{ts,tsx}", "app.config.ts", "metro.config.js", "babel.config.js"],
+      "project": "{app,src}/**/*.{ts,tsx}"
+    }
+  },
+  "ignoreWorkspaces": ["infra/**"],
+  "ignoreBinaries": ["tofu", "eas", "expo", "nest"]
+}

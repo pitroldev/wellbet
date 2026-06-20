@@ -1,0 +1,14 @@
+{
+  "// recommendations": "Extensões recomendadas ao abrir o repo (§7/§8). ESLint flat, Prettier, Turbo LSP.",
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "Vercel.turbo-vsc",
+    "bradlc.vscode-tailwindcss",
+    "EditorConfig.EditorConfig",
+    "ms-azuretools.vscode-docker",
+    "expo.vscode-expo-tools",
+    "hashicorp.terraform"
+  ],
+  "unwantedRecommendations": ["hookyqr.beautify", "rvest.vs-code-prettier-eslint"]
+}
