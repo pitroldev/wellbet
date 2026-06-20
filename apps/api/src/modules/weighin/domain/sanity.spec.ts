@@ -6,19 +6,20 @@ import { describe, expect, it, vi } from "vitest";
  * A função compartilhada vive no pacote schemas (fonte única banco↔front).
  * Aqui mockamos com a fórmula do doc (§6) para testar a REGRA DE DECISÃO do
  * domínio (`checkSanity`) de forma isolada, sem depender da instalação do
- * pacote. Quando @charya/schemas estiver presente, o contrato é o mesmo:
- *   lossPerWeekKg({ previousWeightKg, currentWeightKg, weeks }) -> number.
+ * pacote. O contrato REAL trabalha em `daysElapsed` (o `checkSanity` converte
+ * `weeks → daysElapsed = weeks * 7` ao chamar a função compartilhada):
+ *   lossPerWeekKg({ previousWeightKg, currentWeightKg, daysElapsed }) -> number.
  */
 vi.mock("@charya/schemas/plausibility", () => ({
   lossPerWeekKg: ({
     previousWeightKg,
     currentWeightKg,
-    weeks,
+    daysElapsed,
   }: {
     previousWeightKg: number;
     currentWeightKg: number;
-    weeks: number;
-  }) => (previousWeightKg - currentWeightKg) / weeks,
+    daysElapsed: number;
+  }) => (previousWeightKg - currentWeightKg) / (daysElapsed / 7),
 }));
 
 const { checkSanity } = await import("./sanity.js");

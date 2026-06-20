@@ -74,6 +74,17 @@ export const serverEnv = createEnv({
     // --- Desafio dinâmico (código/nonce, doc de Validação §4) ---
     CHALLENGE_CODE_TTL_SECONDS: z.coerce.number().int().positive().default(120),
 
+    // --- Pagamentos (Stark Bank — Pix in/out) ---
+    // Sandbox por padrão. PROJECT_ID/PRIVATE_KEY são opcionais para a api SUBIR
+    // sem pagamentos no dev; o StarkBankPaymentAdapter falha com erro claro se
+    // for usado sem credencial. Em produção vêm do Secret Manager.
+    STARKBANK_ENVIRONMENT: z.enum(["sandbox", "production"]).default("sandbox"),
+    STARKBANK_PROJECT_ID: z.string().min(1).optional(),
+    // Chave privada EC (PEM) do projeto Stark Bank — SEGREDO.
+    STARKBANK_PRIVATE_KEY: z.string().min(1).optional(),
+    // Validade padrão da cobrança Pix (segundos).
+    STARKBANK_INVOICE_EXPIRATION_SECONDS: z.coerce.number().int().positive().default(3600),
+
     // --- Runtime ---
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     PORT: z.coerce.number().int().positive().default(3000),

@@ -64,8 +64,15 @@ export class SettleBetUseCase {
     const status = bet.settleWith(weighin.weightKg);
     await this.bets.save(bet);
 
-    // TODO: efeito financeiro (crédito/débito de carteira / payout) — chamada ao
-    // provider de pagamento atrás de um PaymentPort. Mantido fora do MVP-scaffold.
+    // TODO(payment): em caso de vitória, pagar o prêmio via PaymentPort (já
+    // existe: infra/payment, token PAYMENT, adapter Stark Bank):
+    //   await this.payment.createPayout({
+    //     externalId: `bet:${bet.id}`, amountCents: payout,
+    //     recipient: { name, taxId, pixKey }, description: "Prêmio Charya",
+    //   });
+    // Requer no modelo: chave Pix + CPF do vencedor (perfil) e o valor do
+    // prêmio. Idempotência via externalId. O adapter resolve a chave no DICT e
+    // emite a transferência Pix; o webhook confirma o `payout.completed`.
 
     return { betId: bet.id, status };
   }
