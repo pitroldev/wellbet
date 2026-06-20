@@ -65,6 +65,10 @@ module "postgres" {
 }
 
 # ── Storage de vídeos (R2 S3-compatível) ──────────────────────────────────
+# Bucket PRIVADO (vídeos de pesagem com rosto — dado sensível/biométrico, LGPD).
+# Acesso SOMENTE via URL pré-assinada emitida pela api; sem ACL pública, sem
+# domínio público, sem leitura anônima. CORS restrito aos origins do app
+# (`app_cors_origins`, nunca "*"). R2 já criptografa em repouso por padrão.
 module "r2" {
   source = "../../modules/r2-bucket"
 
@@ -76,6 +80,8 @@ module "r2" {
   cloudflare_account_id = var.cloudflare_account_id
   location              = "sam" # América do Sul
   allowed_origins       = var.app_cors_origins
+  # evidence_retention_days: ver TODO(lgpd) no módulo. Default 0 (sem expiração
+  # automática) em staging; definir o prazo legal antes do go-live de prod.
 }
 
 # ── API (Cloud Run, container, escala-a-zero) ─────────────────────────────

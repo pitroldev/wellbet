@@ -67,6 +67,16 @@ services:
   # --- Bootstrap do bucket (cria STORAGE_BUCKET ao subir) -------------------
   # Job efêmero: espera o MinIO, cria o bucket charya-evidence (idempotente) e
   # encerra. Mantém STORAGE_BUCKET coerente entre dev e o .env.example.
+  #
+  # ⚠️  ATENÇÃO — DEV-ONLY / NÃO REPLICAR EM PRODUÇÃO  ⚠️
+  # O `mc anonymous set download` abaixo torna o bucket de LEITURA PÚBLICA/ANÔNIMA.
+  # Isso é ACEITÁVEL APENAS aqui, no MinIO local, para encurtar o loop de dev
+  # (abrir o vídeo no navegador sem assinar URL). Em PRODUÇÃO o storage é o
+  # Cloudflare R2 e o bucket é PRIVADO: os vídeos de pesagem têm ROSTO (dado
+  # pessoal sensível/biométrico — LGPD) e o acesso é SEMPRE via URL pré-assinada
+  # emitida pela api. NUNCA reproduza `mc anonymous set` (nem ACL/domínio público)
+  # contra o R2 ou qualquer ambiente deployado. A infra de prod (infra/terraform/
+  # modules/r2-bucket) NÃO habilita acesso público — mantenha assim.
   createbuckets:
     image: minio/mc:latest
     container_name: charya-createbuckets

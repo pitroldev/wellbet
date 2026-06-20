@@ -40,12 +40,49 @@ import { env } from "../config/env.js";
           const ctx = span.spanContext();
           return { trace_id: ctx.traceId, span_id: ctx.spanId };
         },
-        // Redação de campos sensíveis nos logs.
+        // Redação de PII/segredos nos logs (pino redact).
+        //
+        // `remove: true` apaga o campo do log (não deixa nem o marcador
+        // `[Redacted]`). Cobrimos:
+        //  - headers de credencial (authorization, cookie) e set-cookie da resp;
+        //  - segredos comuns em qualquer profundidade (password/token/secret)
+        //    via wildcards `*.x` e `*.*.x` (pino só faz match em um nível por
+        //    `*`, então listamos os dois níveis mais usados: body/headers e
+        //    objetos aninhados);
+        //  - apiKey/authorization soltos em payloads.
         redact: {
-          paths: ["req.headers.authorization", "req.headers.cookie", 'res.headers["set-cookie"]'],
+          paths: [
+            // Credenciais em headers (req e res).
+            "req.headers.authorization",
+            "req.headers.cookie",
+            'res.headers["set-cookie"]',
+            "set-cookie",
+            // Segredos em qualquer corpo/objeto logado (1 e 2 níveis).
+            "*.password",
+            "*.*.password",
+            "*.token",
+            "*.*.token",
+            "*.accessToken",
+            "*.*.accessToken",
+            "*.refreshToken",
+            "*.*.refreshToken",
+            "*.secret",
+            "*.*.secret",
+            "*.apiKey",
+            "*.*.apiKey",
+            "*.authorization",
+            "*.*.authorization",
+          ],
           remove: true,
         },
-        autoLogging: true,
+        // Não logamos corpo de requisição por padrão (evita vazar
+        // credenciais/PII no boot de /api/auth/*). `autoLogging` registra apenas
+        // a linha req/res (método, rota, status), não o body. Mantemos `false`
+        // o log automático nas rotas de auth para reduzir ainda mais a
+        // superfície de PII.
+        autoLogging: {
+          ignore: (req) => (req.url ?? "").startsWith("/api/auth"),
+        },
       },
     }),
   ],

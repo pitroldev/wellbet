@@ -16,6 +16,7 @@ startOtel();
 
 import { NestFactory } from "@nestjs/core";
 import type { NestExpressApplication } from "@nestjs/platform-express";
+import helmet from "helmet";
 import { Logger } from "nestjs-pino";
 
 import { AppModule } from "./app.module.js";
@@ -30,6 +31,21 @@ async function bootstrap(): Promise<void> {
 
   // Pino como logger do Nest (substitui o logger default).
   app.useLogger(app.get(Logger));
+
+  // Headers de segurança (helmet). Esta é uma API JSON (não serve HTML próprio),
+  // então:
+  //  - `contentSecurityPolicy: false` — CSP é para documentos HTML; mantê-la
+  //    default quebraria o Swagger UI (/docs) sem ganho para respostas JSON.
+  //  - `crossOriginResourcePolicy: 'same-site'` — evita que outros sites
+  //    embutam recursos da API.
+  // Os demais defaults do helmet (HSTS, noSniff, frameguard DENY, hidePoweredBy,
+  // referrerPolicy, etc.) ficam LIGADOS.
+  app.use(
+    helmet({
+      contentSecurityPolicy: false,
+      crossOriginResourcePolicy: { policy: "same-site" },
+    }),
+  );
 
   app.setGlobalPrefix("api", { exclude: ["docs", "docs-json"] });
   app.enableShutdownHooks();

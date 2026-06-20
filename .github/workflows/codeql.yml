@@ -1,0 +1,49 @@
+name: CodeQL
+
+# SAST (análise estática) via CodeQL oficial do GitHub. Roda no PR (barrar code
+# vulnerável antes do merge), no push da main (cobrir o que entrou na base) e num
+# schedule semanal — o schedule pega CVEs/queries novas em código que não muda
+# há tempo (a base de queries do CodeQL evolve mesmo sem o código mudar).
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    # Segunda-feira 06:00 UTC (semanal).
+    - cron: "0 6 * * 1"
+
+concurrency:
+  group: codeql-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  analyze:
+    name: CodeQL analyze (javascript-typescript)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write # publicar alertas no Security tab (code scanning).
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        # Uma única linguagem cobre todo o JS/TS do monorepo (api/admin/mobile/
+        # packages). Adicionar outra linguagem = mais um item aqui.
+        language: ["javascript-typescript"]
+    steps:
+      - uses: actions/checkout@v4
+
+      # init: prepara o banco de dados do CodeQL para a linguagem. build-mode
+      # 'none' = análise direta do fonte JS/TS (não precisa compilar nada).
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+
+      # analyze: roda as queries e sobe os resultados para o code scanning.
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"

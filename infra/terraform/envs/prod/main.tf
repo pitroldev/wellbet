@@ -63,6 +63,12 @@ module "postgres" {
 }
 
 # ── Storage de vídeos (R2 S3-compatível) ──────────────────────────────────
+# PROD: bucket OBRIGATORIAMENTE PRIVADO. Os vídeos de pesagem têm rosto (dado
+# pessoal sensível/biométrico — LGPD). Acesso a objetos SOMENTE via URL pré-
+# assinada de curta duração emitida pela api. PROIBIDO: ACL pública, domínio
+# público (r2.dev/custom), leitura anônima, ou CORS "*". O `mc anonymous set
+# download` do docker-compose é EXCLUSIVO de dev local com MinIO — NUNCA replicar
+# aqui. R2 criptografa em repouso por padrão (AES-256, sempre-on).
 module "r2" {
   source = "../../modules/r2-bucket"
 
@@ -74,6 +80,9 @@ module "r2" {
   cloudflare_account_id = var.cloudflare_account_id
   location              = "sam"
   allowed_origins       = var.app_cors_origins
+  # evidence_retention_days: ver TODO(lgpd) no módulo. Definir o prazo legal de
+  # retenção (jurídico/DPO) e setar aqui ANTES do go-live; default 0 hoje (expurgo
+  # manual) não atende plenamente a minimização da LGPD.
 }
 
 # ── API (Cloud Run — min 1 p/ matar cold start em prod) ───────────────────
