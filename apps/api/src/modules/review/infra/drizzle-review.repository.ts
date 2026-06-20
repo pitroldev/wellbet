@@ -3,7 +3,7 @@ import { desc, eq } from "drizzle-orm";
 
 import { DATABASE, type DbHandle } from "../../../infra/db/client.js";
 import { reviews, weighins } from "../../../infra/db/schema.js";
-import { type ChecklistFlag, Review, type Verdict } from "../domain/review.entity.js";
+import { type ChecklistFlag, Review } from "../domain/review.entity.js";
 import type {
   ReviewQueueItem,
   ReviewRepositoryPort,
@@ -91,7 +91,7 @@ export class DrizzleReviewRepository implements ReviewRepositoryPort {
       id: row.id,
       weighinId: row.weighinId,
       reviewerId: row.reviewerId,
-      verdict: (row.verdict as Verdict | null) ?? null,
+      verdict: row.verdict ?? null,
       reason: row.reason,
       failedChecks: (row.failedChecks as ChecklistFlag[] | null) ?? null,
       decidedAt: row.decidedAt,

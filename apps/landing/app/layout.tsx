@@ -55,20 +55,13 @@ export const metadata: Metadata = {
     title: "Charya Bet — Aposte na sua transformação",
     description:
       "A única aposta em que você torce para você ganhar. Coloque dinheiro real em jogo na sua própria meta e mude quando existe algo de verdade em jogo.",
-    images: [
-      {
-        url: "/og.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Charya Bet — Aposte na sua transformação",
-      },
-    ],
+    // og:image é gerado automaticamente por app/opengraph-image.tsx.
   },
   twitter: {
     card: "summary_large_image",
     title: "Charya Bet — Aposte na sua transformação",
     description: "A única aposta em que você torce para você ganhar. Comprometa-se. Evolua. Ganhe.",
-    images: ["/og.jpg"],
+    // twitter:image vem de app/twitter-image.tsx (reaproveita o OpenGraph).
   },
   category: "health",
 };

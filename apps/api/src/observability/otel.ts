@@ -54,7 +54,6 @@ export function startOtel(): void {
     void sdk
       ?.shutdown()
       .catch((err: unknown) => {
-        // eslint-disable-next-line no-console
         console.error("[otel] erro no shutdown", err);
       })
       .finally(() => process.exit(0));

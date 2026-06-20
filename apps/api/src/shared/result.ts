@@ -29,5 +29,8 @@ export function isErr<T, E>(r: Result<T, E>): r is Err<E> {
 /** Desempacota um Ok; lança o erro embutido se for Err. Útil no boundary HTTP. */
 export function unwrap<T, E>(r: Result<T, E>): T {
   if (r.ok) return r.value;
-  throw r.error;
+  // `E` é genérico (default `DomainError extends Error`), mas pode ser
+  // parametrizado com um valor não-Error. Garantimos um throwable real para
+  // satisfazer `only-throw-error` sem perder a informação original.
+  throw r.error instanceof Error ? r.error : new Error(String(r.error));
 }

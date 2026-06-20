@@ -45,7 +45,7 @@ async function bootstrap(): Promise<void> {
   setupSwagger(app);
 
   await app.listen(env.PORT ?? 3000);
-  // eslint-disable-next-line no-console
+
   console.log(`[charya-api] ouvindo na porta ${env.PORT ?? 3000}`);
 }
 

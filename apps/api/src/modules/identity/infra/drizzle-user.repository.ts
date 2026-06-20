@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 
 import { DATABASE, type DbHandle } from "../../../infra/db/client.js";
 import { users } from "../../../infra/db/schema.js";
-import { User, type UserRole } from "../domain/user.entity.js";
+import { User } from "../domain/user.entity.js";
 import type { UserRepositoryPort } from "../application/user.repository.port.js";
 
 /** Adapter Drizzle/Postgres do UserRepositoryPort. */
@@ -52,7 +52,7 @@ export class DrizzleUserRepository implements UserRepositoryPort {
       id: row.id,
       email: row.email,
       name: row.name,
-      role: row.role as UserRole,
+      role: row.role,
       authUserId: row.authUserId,
     });
   }

@@ -76,7 +76,7 @@ export class DrizzleWeighInRepository implements WeighInRepositoryPort {
       userId: row.userId,
       betId: row.betId,
       challengeId: row.challengeId,
-      kind: row.kind as WeighInKind,
+      kind: row.kind,
       weightKg: row.weightKg,
       videoObjectKey: row.videoObjectKey,
       status: row.status,

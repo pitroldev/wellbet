@@ -29,6 +29,7 @@
     "typescript-eslint": "catalog:"
   },
   "devDependencies": {
+    "@types/node": "^24.0.0",
     "eslint": "catalog:",
     "oxlint": "catalog:",
     "prettier": "catalog:",

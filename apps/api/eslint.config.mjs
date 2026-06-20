@@ -22,6 +22,17 @@ export default tseslint.config(
       "@typescript-eslint/no-extraneous-class": "off",
       // Erro de domínio é union discriminada; `any` permanece proibido (§7).
       "@typescript-eslint/no-explicit-any": "error",
+      // Permite `_unused` intencional (decorators do Nest exigem o parâmetro,
+      // ex.: `@Body() _dto`, mesmo quando o corpo usa só `req`). Alinha com o
+      // preset base de @charya/config e com noUnusedParameters do tsconfig.
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
     },
   },
   {

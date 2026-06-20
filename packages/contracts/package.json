@@ -23,13 +23,17 @@
     "generate": "openapi-ts",
     "build": "tsc --build",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
     "clean": "rm -rf dist .tsbuildinfo"
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.13.0"
   },
   "devDependencies": {
+    "@charya/config": "workspace:*",
     "@hey-api/openapi-ts": "^0.98.0",
-    "typescript": "catalog:"
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
   }
 }

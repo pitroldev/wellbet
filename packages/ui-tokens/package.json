@@ -26,7 +26,10 @@
     "test": "vitest run"
   },
   "devDependencies": {
+    "@charya/config": "workspace:*",
+    "eslint": "catalog:",
     "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
     "vitest": "catalog:"
   }
 }

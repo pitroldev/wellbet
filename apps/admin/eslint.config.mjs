@@ -1,23 +1,26 @@
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-import { FlatCompat } from "@eslint/eslintrc";
+// ESLint flat config do admin (Next.js 16 App Router).
+//
+// `eslint-config-next` 16 já é FLAT (exporta arrays de config que incluem
+// typescript-eslint recommended + react + next). Importamos os presets
+// diretamente — nada de FlatCompat (que é p/ configs legados `.eslintrc` e
+// quebra ao validar configs flat: "Converting circular structure to JSON").
+//
+// O next é a base de regras; acrescentamos só os ajustes da casa (§7: `any`
+// proibido). Layerar o preset `react` de @charya/config colidiria com o plugin
+// typescript-eslint que o next já registra.
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-const compat = new FlatCompat({ baseDirectory: __dirname });
-
-/**
- * ESLint flat config do admin.
- *
- * A fonte da verdade das regras é @charya/config (ESLint flat + typescript-eslint,
- * Arquitetura §5/§7). Enquanto o preset compartilhado não está plugado,
- * estendemos os presets do Next via FlatCompat. Substituir por:
- *
- *   import { config as charyaConfig } from "@charya/config/eslint";
- *   export default [...charyaConfig, ...]
- */
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...nextCoreWebVitals,
+  ...nextTypescript,
+  {
+    name: "charya/admin/rules",
+    rules: {
+      // §7: `any` sem justificativa é erro (o preset do next deixa em warn).
+      "@typescript-eslint/no-explicit-any": "error",
+    },
+  },
   {
     ignores: [".next/**", "dist/**", "node_modules/**", "playwright-report/**"],
   },

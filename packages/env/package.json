@@ -35,7 +35,9 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@charya/config": "workspace:*",
     "@types/node": "^24.0.0",
+    "eslint": "catalog:",
     "typescript": "catalog:"
   }
 }

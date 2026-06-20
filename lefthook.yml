@@ -15,15 +15,15 @@ pre-commit:
     #    motivo: comando de tamanho fixo, robusto no Windows.
     prettier:
       run: pnpm exec prettier --check . --ignore-unknown
-    # 3) ESLint type-aware — DESATIVADO no pre-commit até ser cabeado na RAIZ.
-    #    Cada app tem seu eslint.config.mjs, mas não há eslint nem config na
-    #    raiz, então `pnpm exec eslint` no contexto do hook (raiz) falha
-    #    ("command not found"). TODO: cabear eslint (dep raiz + config raiz que
-    #    delega por glob/projeto, ou rodar via `turbo run lint`) e reativar.
-    #    Por ora, oxlint (passo 1) é o pré-passo de lint no commit.
-    # eslint:
-    #   glob: "*.{js,jsx,ts,tsx}"
-    #   run: pnpm exec eslint --no-warn-ignored {staged_files}
+    # 3) ESLint type-aware — fonte da verdade do lint (§7). Roda via Turborepo
+    #    (`turbo run lint`), que invoca o `lint` de cada pacote/app com seu
+    #    próprio eslint.config.mjs (apps + packages, todos cabeados ao preset
+    #    @charya/config). Comando de TAMANHO FIXO — NÃO passa {staged_files},
+    #    evitando o limite de tamanho de linha de comando do Windows; o Turbo
+    #    cacheia, então re-rodar sem mudanças é barato. O playground é
+    #    experimental e não tem script `lint`, então fica fora do gate.
+    eslint:
+      run: pnpm exec turbo run lint
 
 # Typecheck do afetado fica como hook pre-push (mais pesado que pre-commit).
 # Roda só os pacotes afetados pelo diff contra a main via Turborepo.

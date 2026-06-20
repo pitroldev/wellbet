@@ -39,6 +39,6 @@ export function emitOpenApi(app: INestApplication): void {
   const document = buildOpenApiDocument(app);
   const outPath = resolve(process.cwd(), "openapi.json");
   writeFileSync(outPath, JSON.stringify(document, null, 2));
-  // eslint-disable-next-line no-console
+
   console.log(`[openapi] escrito em ${outPath}`);
 }

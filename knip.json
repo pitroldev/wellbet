@@ -1,6 +1,5 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "//": "Knip — detecta codigo/deps/exports mortos (§1/§7 higiene continua). Entradas por app/package; os pacotes scaffolded ainda nao existem, entao as entradas sao TODO ate cada area ser criada.",
   "workspaces": {
     ".": {
       "entry": ["lefthook.yml", "commitlint.config.mjs", "knip.json", ".changeset/config.json"],

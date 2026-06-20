@@ -14,7 +14,9 @@ import { type DomainError, type ErrorCategory, ErrorCode } from "./errors.js";
 
 /** Resposta de erro padronizada (contrato com o cliente). */
 export interface ErrorResponseBody {
-  code: ErrorCode | string;
+  // `ErrorCode` é uma união de literais string; o campo aceita também códigos
+  // crus (ex.: derivados de status HTTP), então o tipo efetivo é `string`.
+  code: string;
   message: string;
   details?: unknown;
   /** Correlação: traceId ativo (preenchido quando OTel está ligado). */
@@ -29,6 +31,15 @@ const CATEGORY_TO_STATUS: Record<ErrorCategory, HttpStatus> = {
   conflict: HttpStatus.CONFLICT,
   unprocessable: HttpStatus.UNPROCESSABLE_ENTITY,
   internal: HttpStatus.INTERNAL_SERVER_ERROR,
+};
+
+/** Status HTTP (de `HttpException`) → code estável do contrato de erro. */
+const STATUS_TO_CODE: Record<number, ErrorCode> = {
+  [HttpStatus.BAD_REQUEST]: ErrorCode.VALIDATION_FAILED,
+  [HttpStatus.UNAUTHORIZED]: ErrorCode.UNAUTHORIZED,
+  [HttpStatus.FORBIDDEN]: ErrorCode.FORBIDDEN,
+  [HttpStatus.NOT_FOUND]: ErrorCode.NOT_FOUND,
+  [HttpStatus.CONFLICT]: ErrorCode.CONFLICT,
 };
 
 /**
@@ -124,20 +135,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
   }
 
   private statusToCode(status: number): ErrorCode {
-    switch (status) {
-      case HttpStatus.BAD_REQUEST:
-        return ErrorCode.VALIDATION_FAILED;
-      case HttpStatus.UNAUTHORIZED:
-        return ErrorCode.UNAUTHORIZED;
-      case HttpStatus.FORBIDDEN:
-        return ErrorCode.FORBIDDEN;
-      case HttpStatus.NOT_FOUND:
-        return ErrorCode.NOT_FOUND;
-      case HttpStatus.CONFLICT:
-        return ErrorCode.CONFLICT;
-      default:
-        return ErrorCode.INTERNAL;
-    }
+    // Lookup por código HTTP (number). Usar um mapa em vez de `switch` evita
+    // comparar um `number` cru contra membros do enum `HttpStatus`
+    // (no-unsafe-enum-comparison) sem precisar de cast.
+    return STATUS_TO_CODE[status] ?? ErrorCode.INTERNAL;
   }
 
   private activeTraceId(): string | undefined {

@@ -22,13 +22,17 @@
   "scripts": {
     "build": "tsc --build",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
     "test": "vitest run"
   },
   "dependencies": {
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@charya/config": "workspace:*",
+    "eslint": "catalog:",
     "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
     "vitest": "catalog:"
   }
 }

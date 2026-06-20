@@ -4,9 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 5678",
-    "build": "next build",
-    "start": "next start -p 5678",
-    "lint": "eslint"
+    "start": "next start -p 5678"
   },
   "dependencies": {
     "clsx": "^2.1.1",

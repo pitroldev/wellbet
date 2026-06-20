@@ -3,7 +3,7 @@ import { desc, eq } from "drizzle-orm";
 
 import { DATABASE, type DbHandle } from "../../../infra/db/client.js";
 import { bets } from "../../../infra/db/schema.js";
-import { Bet, type BetStatus } from "../domain/bet.entity.js";
+import { Bet } from "../domain/bet.entity.js";
 import type { BetRepositoryPort } from "../application/bet.repository.port.js";
 
 /** Adapter Drizzle/Postgres do BetRepositoryPort. */
@@ -53,7 +53,7 @@ export class DrizzleBetRepository implements BetRepositoryPort {
       targetWeightKg: row.targetWeightKg,
       stakeAmount: row.stakeAmount,
       currency: row.currency,
-      status: row.status as BetStatus,
+      status: row.status,
       settledAt: row.settledAt,
     });
   }
