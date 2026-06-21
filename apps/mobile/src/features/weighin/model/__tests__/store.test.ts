@@ -8,20 +8,15 @@ import { CAPTURE_STEPS } from "../types";
 import { selectCurrentStep, useWeighInStore } from "../store";
 import type { Challenge } from "../types";
 
-// Fixture com o shape de `Challenge` (@charya/schemas). Os ids/timestamps são
-// branded em runtime via Zod; no teste de UI usamos um cast simples — o store
-// só transporta o objeto, não o re-valida.
-const challenge = {
-  id: "11111111-1111-4111-8111-111111111111",
-  betId: "22222222-2222-4222-8222-222222222222",
-  capturePoint: "T0",
+// Fixture com o view-model `Challenge` (espelha o contrato; ver model/types).
+const challenge: Challenge = {
+  challengeId: "11111111-1111-4111-8111-111111111111",
   word: "pomar",
   code: "4827",
   gesture: "thumbs_up",
   nonce: "pomar-4827-thumbs_up",
-  issuedAt: "2026-06-20T12:00:00.000Z",
   expiresAt: "2026-06-20T12:05:00.000Z",
-} as unknown as Challenge;
+};
 
 beforeEach(() => {
   useWeighInStore.getState().reset();
@@ -38,7 +33,7 @@ describe("useWeighInStore", () => {
     useWeighInStore.getState().begin("T0", challenge);
     const s = useWeighInStore.getState();
     expect(s.phase).toBe("instructions");
-    expect(s.challenge?.id).toBe("ch_1");
+    expect(s.challenge?.challengeId).toBe("11111111-1111-4111-8111-111111111111");
     expect(s.stepIndex).toBe(0);
   });
 

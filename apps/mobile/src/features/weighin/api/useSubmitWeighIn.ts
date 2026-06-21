@@ -5,18 +5,14 @@
  * de 100% (MVP §5/§6).
  */
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CapturePayload, CapturePoint } from "@charya/schemas";
 
-import { submitWeighIn, type SubmitWeighInResponse } from "./client";
+import { submitWeighIn, type SubmitWeighInInput, type SubmitWeighInResponse } from "./client";
 import { weighInKeys } from "./keys";
 
 export type { SubmitWeighInResponse };
 
-export interface SubmitWeighInVars {
-  betId: string;
-  capturePoint: CapturePoint;
-  capture: CapturePayload;
-}
+/** Payload do submit (já alinhado ao contrato — ver api/client.ts). */
+export type SubmitWeighInVars = SubmitWeighInInput;
 
 export function useSubmitWeighIn() {
   const qc = useQueryClient();

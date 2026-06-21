@@ -49,6 +49,7 @@ export class WeighInController {
   @ApiOperation({
     summary: "Abre uma sessão de captura (código dinâmico + URL de upload).",
   })
+  @ApiOkResponse({ type: StartWeighInResponseDto })
   async start(
     @Req() req: AuthenticatedRequest,
     @Body() dto: StartWeighInDto,
@@ -64,6 +65,7 @@ export class WeighInController {
 
   @Post()
   @ApiOperation({ summary: "Submete a pesagem capturada." })
+  @ApiOkResponse({ type: SubmitWeighInResponseDto })
   async submit(
     @Req() req: AuthenticatedRequest,
     @Body() dto: SubmitWeighInDto,

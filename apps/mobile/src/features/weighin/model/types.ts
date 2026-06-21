@@ -1,17 +1,29 @@
 /**
  * Tipos do fluxo de pesagem (captura).
  *
- * Reflete o roteiro do doc de Validação de Peso (MVP §3–§4):
- * - Pontos de captura: T0 (baseline), T1 (intermediária), T2 (final).
- * - Roteiro: um ÚNICO vídeo contínuo, sem cortes, com 6 etapas em ordem.
- *
- * Os tipos canônicos de domínio (Challenge, CapturePoint, ChallengeGesture)
- * vivem em `@charya/schemas` (fonte única Zod). Aqui ficam apenas os tipos de
- * estado de UI da captura.
+ * SSoT do contrato = `@charya/contracts` (cliente gerado do OpenAPI da api). Os
+ * view-models abaixo ESPELHAM o contrato; o `capturePoint` (T0/T1/T2) é um
+ * conceito de UI, mapeado para o `kind` da api (baseline/mid/final) na camada
+ * `../api/client.ts`. O fluxo segue o doc de Validação (MVP §3–§4): um ÚNICO
+ * vídeo contínuo com 6 etapas em ordem.
  */
-import type { CapturePoint, Challenge, ChallengeGesture } from "@charya/schemas";
 
-export type { CapturePoint, Challenge, ChallengeGesture };
+/** Ponto de captura (UI): T0 baseline · T1 intermediária · T2 final. */
+export const CAPTURE_POINTS = ["T0", "T1", "T2"] as const;
+export type CapturePoint = (typeof CAPTURE_POINTS)[number];
+
+/**
+ * Código dinâmico ativo na captura — espelha `StartWeighInResponseDto.challenge`
+ * do contrato. `code` é a string exibida (derivada do `number` da api).
+ */
+export interface Challenge {
+  challengeId: string;
+  word: string;
+  code: string;
+  gesture: string;
+  nonce: string;
+  expiresAt: string;
+}
 
 /**
  * Etapas do roteiro de captura (MVP §4). São guias para o usuário e marcadores

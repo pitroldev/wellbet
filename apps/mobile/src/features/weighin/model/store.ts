@@ -65,7 +65,7 @@ export const useWeighInStore = create<WeighInState>((set, get) => ({
     });
     kv.setJSON(StorageKeys.weighinDraft, {
       capturePoint,
-      challengeId: challenge.id,
+      challengeId: challenge.challengeId,
     });
   },
 

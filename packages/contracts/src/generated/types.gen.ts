@@ -29,12 +29,37 @@ export type StartWeighInDto = {
     contentType?: string;
 };
 
+export type StartWeighInResponseDto = {
+    challenge: {
+        challengeId: string;
+        word: string;
+        number: number;
+        gesture: string;
+        nonce: string;
+        expiresAt: string;
+    };
+    upload: {
+        url: string;
+        objectKey: string;
+        expiresAt: string;
+        requiredHeaders?: {
+            [key: string]: string;
+        };
+    };
+};
+
 export type SubmitWeighInDto = {
     kind: 'baseline' | 'mid' | 'final';
     betId?: string | null;
     weightKg: number;
     nonce: string;
     videoObjectKey: string;
+};
+
+export type SubmitWeighInResponseDto = {
+    weighinId: string;
+    status: 'pending' | 'blocked' | 'in_review' | 'approved' | 'rejected' | 'recapture';
+    lossPerWeekKg: number | null;
 };
 
 export type ReviewQueueEntryDto = {
@@ -177,8 +202,10 @@ export type WeighInControllerSubmitData = {
 };
 
 export type WeighInControllerSubmitResponses = {
-    201: unknown;
+    200: SubmitWeighInResponseDto;
 };
+
+export type WeighInControllerSubmitResponse = WeighInControllerSubmitResponses[keyof WeighInControllerSubmitResponses];
 
 export type WeighInControllerStartData = {
     body: StartWeighInDto;
@@ -188,8 +215,10 @@ export type WeighInControllerStartData = {
 };
 
 export type WeighInControllerStartResponses = {
-    201: unknown;
+    200: StartWeighInResponseDto;
 };
+
+export type WeighInControllerStartResponse = WeighInControllerStartResponses[keyof WeighInControllerStartResponses];
 
 export type ReviewControllerQueueData = {
     body?: never;

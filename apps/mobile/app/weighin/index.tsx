@@ -12,10 +12,8 @@
  * enviar").
  */
 import { useEffect } from "react";
-import { Platform, View } from "react-native";
+import { View } from "react-native";
 import { useRouter } from "expo-router";
-import { CapturePayload } from "@charya/schemas";
-import Constants from "expo-constants";
 
 import { Button, Screen, Text } from "@/shared/ui";
 import { useStartWeighIn, useSubmitWeighIn, useUploadVideo } from "@/features/weighin/api";
@@ -62,29 +60,16 @@ export default function WeighInCaptureScreen() {
       // Upload direto p/ R2 com retry (não toca o backend).
       await upload.mutateAsync({ video, uploadUrl: session.upload.url });
 
-      // Monta e VALIDA o payload com o schema compartilhado antes de enviar.
-      // O parse falha cedo se algo estiver fora do contrato (ex.: peso inválido).
-      const capture = CapturePayload.parse({
-        challengeId: challenge.id,
-        // Referência ao objeto que acabou de subir no R2 (URL pública/derivada).
-        videoRef: publicUrlFor(session.upload.objectKey),
-        displayedNonce: challenge.nonce,
-        // TODO: capturar o peso lido pelo usuário no visor antes do submit.
-        declaredWeight: 0,
-        deviceMeta: {
-          platform: Platform.OS === "ios" ? "ios" : "android",
-          osVersion: String(Platform.Version),
-          appVersion: Constants.expoConfig?.version ?? "0.0.0",
-          capturedInApp: true,
-        },
-        recordedAt: new Date().toISOString(),
-      });
-
-      // Registra a pesagem (regra dura de sanidade roda no backend).
+      // Registra a pesagem (regra dura de sanidade + validacao do payload rodam
+      // no backend, via SubmitWeighInDto). O backend referencia o video pela
+      // objectKey que devolvemos do start.
       await submit.mutateAsync({
         betId: "TODO-bet-id",
         capturePoint,
-        capture,
+        // TODO: capturar o peso lido pelo usuário no visor antes do submit.
+        weightKg: 0,
+        nonce: challenge.nonce,
+        videoObjectKey: session.upload.objectKey,
       });
       router.replace("/weighin/result");
     } catch {
@@ -136,10 +121,4 @@ export default function WeighInCaptureScreen() {
       onError={setError}
     />
   );
-}
-
-/** Deriva a URL pública do objeto no R2 a partir da chave. */
-function publicUrlFor(objectKey: string): string {
-  const base = process.env.EXPO_PUBLIC_R2_PUBLIC_URL ?? "";
-  return `${base.replace(/\/$/, "")}/${objectKey}`;
 }

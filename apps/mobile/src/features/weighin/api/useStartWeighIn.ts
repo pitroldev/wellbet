@@ -9,9 +9,9 @@
  * Usa a camada `client.ts` (que envolve o SDK tipado de @charya/contracts).
  */
 import { useMutation } from "@tanstack/react-query";
-import type { CapturePoint } from "@charya/schemas";
 
 import { startWeighIn, type StartWeighInResponse } from "./client";
+import type { CapturePoint } from "../model/types";
 
 export type { StartWeighInResponse };
 

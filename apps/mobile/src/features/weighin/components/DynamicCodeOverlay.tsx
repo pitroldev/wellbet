@@ -16,15 +16,15 @@ import { Text } from "@/shared/ui";
 import { pulse, useMotionDuration } from "@/shared/motion";
 import { durations } from "@/theme/tokens";
 
-import type { Challenge, ChallengeGesture } from "../model/types";
+import type { Challenge } from "../model/types";
 
-/** Rótulos legíveis dos gestos (o enum vem de @charya/schemas). */
-const GESTURE_LABEL: Record<ChallengeGesture, string> = {
+/** Rótulos legíveis dos gestos da api (challenge.gesture é string no contrato). */
+const GESTURE_LABEL: Record<string, string> = {
   thumbs_up: "joinha (polegar para cima)",
   open_palm: "palma da mão aberta",
   peace_sign: "sinal de paz (dois dedos)",
-  touch_nose: "tocar o nariz",
   wave: "acenar",
+  point_up: "apontar para cima",
 };
 
 export interface DynamicCodeOverlayProps {
@@ -47,7 +47,7 @@ export function DynamicCodeOverlay({ challenge }: DynamicCodeOverlayProps) {
           {challenge.word} · {challenge.code}
         </Text>
         <Text variant="caption" className="mt-1 text-white">
-          Gesto: {GESTURE_LABEL[challenge.gesture]}
+          Gesto: {GESTURE_LABEL[challenge.gesture] ?? challenge.gesture}
         </Text>
       </Animated.View>
     </View>
