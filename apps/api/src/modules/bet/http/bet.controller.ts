@@ -76,6 +76,7 @@ export class BetController {
 
   @Get(":id")
   @ApiOperation({ summary: "Detalhe de uma aposta (BR Code se pendente de pagamento)." })
+  @ApiOkResponse({ type: BetDetailDto })
   async detail(@Req() req: AuthenticatedRequest, @Param("id") id: string): Promise<BetDetailDto> {
     return this.getBet.execute({ betId: id, userId: req.user!.id });
   }
@@ -89,6 +90,7 @@ export class BetController {
     description: "Chave de idempotência (escrita financeira).",
   })
   @ApiOperation({ summary: "Cria uma aposta (idempotente)." })
+  @ApiOkResponse({ type: BetResponseDto })
   async place(@Req() req: AuthenticatedRequest, @Body() dto: PlaceBetDto): Promise<BetResponseDto> {
     return this.placeBet.execute({
       userId: req.user!.id,

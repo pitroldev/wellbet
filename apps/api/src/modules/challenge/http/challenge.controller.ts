@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { AuthGuard, type AuthenticatedRequest } from "@/shared/guards/auth.guard.js";
 import { IssueChallengeUseCase } from "@/modules/challenge/application/issue-challenge.use-case.js";
@@ -19,6 +19,7 @@ export class ChallengeController {
 
   @Post()
   @ApiOperation({ summary: "Emite um código dinâmico para a captura." })
+  @ApiOkResponse({ type: ChallengeResponseDto })
   async issue(
     @Req() req: AuthenticatedRequest,
     @Body() _dto: IssueChallengeDto,

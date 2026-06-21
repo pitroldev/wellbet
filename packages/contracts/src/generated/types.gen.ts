@@ -4,6 +4,15 @@ export type ClientOptions = {
     baseUrl: string;
 };
 
+export type MeResponseDto = {
+    id: string;
+    email: string;
+    name: string | null;
+    role: 'user' | 'reviewer' | 'admin';
+    taxId: string | null;
+    pixKey: string | null;
+};
+
 export type UpdateProfileDto = {
     taxId: string;
     pixKey: string;
@@ -11,6 +20,15 @@ export type UpdateProfileDto = {
 
 export type IssueChallengeDto = {
     [key: string]: unknown;
+};
+
+export type ChallengeResponseDto = {
+    challengeId: string;
+    word: string;
+    number: number;
+    gesture: string;
+    nonce: string;
+    expiresAt: string;
 };
 
 export type WeighInSummaryDto = {
@@ -141,11 +159,33 @@ export type AdminBetRowDto = {
     createdAt: string;
 };
 
+export type BetDetailDto = {
+    betId: string;
+    status: 'pending_payment' | 'open' | 'settling' | 'won' | 'lost' | 'voided';
+    targetWeightKg: number;
+    startWeightKg: number | null;
+    stakeAmount: string;
+    payoutAmount: string | null;
+    currency: string;
+    pixCharge: {
+        brcode: string;
+        status: string;
+        expiresAt: string;
+    } | null;
+};
+
 export type PlaceBetDto = {
     targetWeightKg: number;
     startWeightKg?: number | null;
     stakeAmount: string;
     currency?: string;
+};
+
+export type BetResponseDto = {
+    betId: string;
+    status: 'pending_payment' | 'open' | 'settling' | 'won' | 'lost' | 'voided';
+    brcode: string;
+    chargeExpiresAt: string;
 };
 
 export type HealthControllerCheckData = {
@@ -167,8 +207,10 @@ export type IdentityControllerMeData = {
 };
 
 export type IdentityControllerMeResponses = {
-    200: unknown;
+    200: MeResponseDto;
 };
+
+export type IdentityControllerMeResponse = IdentityControllerMeResponses[keyof IdentityControllerMeResponses];
 
 export type IdentityControllerSetProfileData = {
     body: UpdateProfileDto;
@@ -178,8 +220,10 @@ export type IdentityControllerSetProfileData = {
 };
 
 export type IdentityControllerSetProfileResponses = {
-    200: unknown;
+    200: MeResponseDto;
 };
+
+export type IdentityControllerSetProfileResponse = IdentityControllerSetProfileResponses[keyof IdentityControllerSetProfileResponses];
 
 export type ChallengeControllerIssueData = {
     body: IssueChallengeDto;
@@ -189,8 +233,10 @@ export type ChallengeControllerIssueData = {
 };
 
 export type ChallengeControllerIssueResponses = {
-    201: unknown;
+    200: ChallengeResponseDto;
 };
+
+export type ChallengeControllerIssueResponse = ChallengeControllerIssueResponses[keyof ChallengeControllerIssueResponses];
 
 export type WeighInControllerListData = {
     body?: never;
@@ -304,8 +350,10 @@ export type BetControllerPlaceData = {
 };
 
 export type BetControllerPlaceResponses = {
-    201: unknown;
+    200: BetResponseDto;
 };
+
+export type BetControllerPlaceResponse = BetControllerPlaceResponses[keyof BetControllerPlaceResponses];
 
 export type BetControllerListAllData = {
     body?: never;
@@ -334,5 +382,7 @@ export type BetControllerDetailData = {
 };
 
 export type BetControllerDetailResponses = {
-    200: unknown;
+    200: BetDetailDto;
 };
+
+export type BetControllerDetailResponse = BetControllerDetailResponses[keyof BetControllerDetailResponses];

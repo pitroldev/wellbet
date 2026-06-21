@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Put, Req, UseGuards } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { AuthGuard, type AuthenticatedRequest } from "@/shared/guards/auth.guard.js";
 import { GetOrCreateUserUseCase } from "@/modules/identity/application/get-or-create-user.use-case.js";
@@ -24,6 +24,7 @@ export class IdentityController {
 
   @Get("me")
   @ApiOperation({ summary: "Perfil do usuário autenticado." })
+  @ApiOkResponse({ type: MeResponseDto })
   async me(@Req() req: AuthenticatedRequest): Promise<MeResponseDto> {
     const session = req.user!;
     const user = await this.getOrCreate.execute({
@@ -37,6 +38,7 @@ export class IdentityController {
   @ApiOperation({
     summary: "Define CPF/CNPJ e chave Pix (necessários para apostar e sacar).",
   })
+  @ApiOkResponse({ type: MeResponseDto })
   async setProfile(
     @Req() req: AuthenticatedRequest,
     @Body() dto: UpdateProfileDto,
