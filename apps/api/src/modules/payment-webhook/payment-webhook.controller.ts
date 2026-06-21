@@ -1,9 +1,21 @@
-import { Controller, HttpCode, Inject, Post, type RawBodyRequest, Req } from "@nestjs/common";
+import {
+  Controller,
+  HttpCode,
+  Inject,
+  Post,
+  type RawBodyRequest,
+  Req,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { ApiExcludeEndpoint } from "@nestjs/swagger";
 import { SkipThrottle } from "@nestjs/throttler";
 import type { Request } from "express";
 
-import { PAYMENT, type PaymentPort } from "@/infra/payment/payment.port.js";
+import {
+  PAYMENT,
+  type PaymentPort,
+  type PaymentWebhookEvent,
+} from "@/infra/payment/payment.port.js";
 import { Public } from "@/shared/guards/auth.guard.js";
 import { ProcessPaymentEventUseCase } from "./process-payment-event.use-case.js";
 
@@ -33,7 +45,15 @@ export class PaymentWebhookController {
     const signature = Array.isArray(header) ? (header[0] ?? "") : (header ?? "");
     const rawBody = req.rawBody?.toString() ?? "";
 
-    const event = await this.payment.verifyAndParseWebhook(rawBody, signature);
+    // A assinatura É a autenticação do PSP. Falha de verificação = requisição
+    // não-confiável (forjada/corrompida) → 401, sem processar nem vazar 500.
+    let event: PaymentWebhookEvent;
+    try {
+      event = await this.payment.verifyAndParseWebhook(rawBody, signature);
+    } catch {
+      throw new UnauthorizedException("Webhook não verificado (assinatura inválida).");
+    }
+
     await this.process.execute(event);
     return { ok: true };
   }

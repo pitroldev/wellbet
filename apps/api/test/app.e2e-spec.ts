@@ -13,6 +13,7 @@ import {
 } from "@/shared/idempotency/idempotency.port.js";
 import { USER_REPOSITORY } from "@/modules/identity/application/user.repository.port.js";
 import { BET_REPOSITORY } from "@/modules/bet/application/bet.repository.port.js";
+import { Bet } from "@/modules/bet/domain/bet.entity.js";
 import { User } from "@/modules/identity/domain/user.entity.js";
 
 /**
@@ -55,10 +56,33 @@ const fakeUserRepo = {
   save: () => Promise.resolve(),
 };
 
+// Aposta aguardando pagamento, vinculada à cobrança `charge-test-1`.
+function pendingBet(): Bet {
+  return Bet.create({
+    id: "bet-webhook-1",
+    userId: TEST_USER.id,
+    startWeightKg: 85,
+    targetWeightKg: 75,
+    stakeAmount: "100.00",
+    payoutAmount: "100.00",
+    currency: "BRL",
+    status: "pending_payment",
+    stakeChargeId: "charge-test-1",
+    payoutTransferId: null,
+    settledAt: null,
+  });
+}
+
+// Captura das apostas salvas — para conferir a transição de estado no webhook.
+const savedBets: Bet[] = [];
+
 const fakeBetRepo = {
-  save: () => Promise.resolve(),
+  save: (bet: Bet) => {
+    savedBets.push(bet);
+    return Promise.resolve();
+  },
   findById: () => Promise.resolve(undefined),
-  findByStakeChargeId: () => Promise.resolve(undefined),
+  findByStakeChargeId: () => Promise.resolve(pendingBet()),
   listByUser: () => Promise.resolve([]),
   listAll: () => Promise.resolve([]),
 };
@@ -70,6 +94,11 @@ const fakePayment = {
       brcode: "00020101br-code-de-teste-5204",
       expiresAt: new Date("2026-12-31T23:59:59.000Z"),
     }),
+  // A assinatura É a auth do PSP: só `valid-sig` "verifica" e devolve o evento.
+  verifyAndParseWebhook: (_rawBody: string, signature: string) =>
+    signature === "valid-sig"
+      ? Promise.resolve({ kind: "charge.paid" as const, providerId: "charge-test-1" })
+      : Promise.reject(new Error("invalid signature")),
 };
 
 // Store de idempotência in-memory: cobre o replay (mesma chave → mesma resposta).
@@ -189,5 +218,26 @@ describe("App (e2e)", () => {
     const firstBody = first.body as { betId: string };
     const secondBody = second.body as { betId: string };
     expect(secondBody.betId).toBe(firstBody.betId);
+  });
+
+  it("POST /api/webhooks/starkbank charge.paid (assinatura válida) → 200 + aposta aberta", async () => {
+    savedBets.length = 0;
+    const res = await request(server())
+      .post("/api/webhooks/starkbank")
+      .set("digital-signature", "valid-sig")
+      .send({ event: { log: { invoice: { id: 1 } } } });
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ ok: true });
+    expect(savedBets.some((b) => b.status === "open")).toBe(true);
+  });
+
+  it("POST /api/webhooks/starkbank com assinatura inválida → 401 (rejeitado, não processa)", async () => {
+    savedBets.length = 0;
+    const res = await request(server())
+      .post("/api/webhooks/starkbank")
+      .set("digital-signature", "forjada")
+      .send({ event: {} });
+    expect(res.status).toBe(401);
+    expect(savedBets).toHaveLength(0);
   });
 });
