@@ -42,6 +42,19 @@ async function authenticatedFetch(input: RequestInfo | URL, init?: RequestInit):
   return fetch(input, { ...init, headers });
 }
 
-// TODO: tratar 401 (refresh de token) e mapear a taxonomia de erro do backend
-// ({ code, message, details } — ver ApiError de @charya/contracts) para erros
-// tipados consumíveis pelos hooks de TanStack Query.
+/**
+ * Extrai a mensagem de erro do backend de um erro lançado pelo SDK
+ * (`throwOnError`). O cliente do contrato lança o corpo de erro JÁ parseado da
+ * api — `{ code, message, details }` (ver all-exceptions.filter) — então aqui só
+ * pegamos `message`. Retorna null quando ausente: o chamador usa um fallback.
+ */
+export function apiErrorMessage(error: unknown): string | null {
+  if (error != null && typeof error === "object" && "message" in error) {
+    const message = (error as { message: unknown }).message;
+    if (typeof message === "string" && message.length > 0) return message;
+  }
+  return null;
+}
+
+// TODO: tratar 401 com refresh do token (renovar a sessão Better Auth e repetir
+// a request) antes de propagar o erro aos hooks.

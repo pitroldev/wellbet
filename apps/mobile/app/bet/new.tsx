@@ -8,6 +8,7 @@ import { View } from "react-native";
 import { Link, router } from "expo-router";
 
 import { Button, Input, Screen, Text } from "@/shared/ui";
+import { apiErrorMessage } from "@/shared/lib/http";
 import { usePlaceBet } from "@/features/bet/api/usePlaceBet";
 import { uuidV4 } from "@/shared/lib/uuid";
 
@@ -83,9 +84,10 @@ export default function NewBetScreen() {
         idempotencyKey,
         body: { targetWeightKg: target, startWeightKg: start, stakeAmount, currency: "BRL" },
       });
-    } catch {
+    } catch (e) {
       setError(
-        "Não foi possível criar a aposta. Confira se seu perfil (CPF/Pix) está completo e tente de novo.",
+        apiErrorMessage(e) ??
+          "Não foi possível criar a aposta. Confira se seu perfil (CPF/Pix) está completo e tente de novo.",
       );
     }
   }

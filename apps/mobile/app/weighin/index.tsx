@@ -15,6 +15,7 @@ import { View } from "react-native";
 import { Link, useRouter } from "expo-router";
 
 import { Button, Input, Screen, Text } from "@/shared/ui";
+import { apiErrorMessage } from "@/shared/lib/http";
 import {
   useActiveWeighInTarget,
   useStartWeighIn,
@@ -35,6 +36,7 @@ export default function WeighInCaptureScreen() {
   const begin = useWeighInStore((s) => s.begin);
   const setVideo = useWeighInStore((s) => s.setVideo);
   const setError = useWeighInStore((s) => s.setError);
+  const errorMsg = useWeighInStore((s) => s.error);
 
   const start = useStartWeighIn();
   const upload = useUploadVideo();
@@ -89,8 +91,8 @@ export default function WeighInCaptureScreen() {
         videoObjectKey: session.upload.objectKey,
       });
       router.replace("/weighin/result");
-    } catch {
-      setError("Falha no envio. Tente novamente.");
+    } catch (e) {
+      setError(apiErrorMessage(e) ?? "Falha no envio. Tente novamente.");
     }
   }
 
@@ -136,8 +138,15 @@ export default function WeighInCaptureScreen() {
   if (phase === "error") {
     return (
       <Screen>
-        <View className="flex-1 items-center justify-center gap-4">
-          <Text variant="heading">Algo deu errado</Text>
+        <View className="flex-1 items-center justify-center gap-4 px-6">
+          <Text variant="heading" className="text-center">
+            Algo deu errado
+          </Text>
+          {errorMsg != null ? (
+            <Text variant="caption" className="text-center text-muted">
+              {errorMsg}
+            </Text>
+          ) : null}
           <Button label="Tentar de novo" onPress={() => router.replace("/weighin")} />
         </View>
       </Screen>

@@ -7,6 +7,7 @@ import { View } from "react-native";
 import { router } from "expo-router";
 
 import { Button, Input, Screen, Text } from "@/shared/ui";
+import { apiErrorMessage } from "@/shared/lib/http";
 import { useMe } from "@/features/profile/api/useMe";
 import { useUpdateProfile } from "@/features/profile/api/useUpdateProfile";
 
@@ -38,8 +39,8 @@ export default function ProfileScreen() {
     try {
       await update.mutateAsync({ taxId: tax, pixKey: pix });
       router.back();
-    } catch {
-      setError("Não foi possível salvar. Tente novamente.");
+    } catch (e) {
+      setError(apiErrorMessage(e) ?? "Não foi possível salvar. Tente novamente.");
     }
   }
 
