@@ -74,8 +74,10 @@ export class SubmitVerdictUseCase {
     weighin.applyVerdict(cmd.verdict);
     await this.weighins.save(weighin);
 
-    // Settlement só dispara em aprovação de pesagem ligada a aposta.
-    if (cmd.verdict === "approved") {
+    // Settlement só dispara na aprovação da pesagem FINAL (T2) ligada a uma
+    // aposta. Aprovar baseline/mid NÃO liquida — senão a aposta seria decidida
+    // contra o peso errado (doc de Validação §3/§7).
+    if (cmd.verdict === "approved" && weighin.kind === "final") {
       const betId = weighin.toJSON().betId;
       if (betId) {
         await this.queue.publish(
