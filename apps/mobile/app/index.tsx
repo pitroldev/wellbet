@@ -7,20 +7,16 @@ import { Link, Redirect } from "expo-router";
 
 import { Button, Screen, Text } from "@/shared/ui";
 import { kv, StorageKeys } from "@/shared/lib/storage";
-import {
-  WeighInHistoryList,
-  type WeighInHistoryItem,
-} from "@/features/home/components/WeighInHistoryList";
+import { useWeighInHistory } from "@/features/home/api/useWeighInHistory";
+import { WeighInHistoryList } from "@/features/home/components/WeighInHistoryList";
 
 export default function HomeScreen() {
   const onboardingDone = kv.getBool(StorageKeys.onboardingDone) ?? false;
+  const { data: history = [] } = useWeighInHistory();
 
   if (!onboardingDone) {
     return <Redirect href="/(onboarding)" />;
   }
-
-  // TODO: carregar via hook TanStack Query (useWeighInHistory) usando contracts.
-  const history: readonly WeighInHistoryItem[] = [];
 
   return (
     <Screen>

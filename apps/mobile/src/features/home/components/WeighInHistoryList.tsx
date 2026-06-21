@@ -5,7 +5,7 @@
  * listas são o maior matador de FPS do RN). FlashList v2 tem auto-sizing, então
  * NÃO passamos `estimatedItemSize`.
  */
-import type { CapturePoint, WeighInStatus } from "@charya/schemas";
+import type { WeighInStatus } from "@charya/schemas";
 import { View } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 
@@ -13,12 +13,20 @@ import { Text } from "@/shared/ui";
 
 export interface WeighInHistoryItem {
   id: string;
-  capturePoint: CapturePoint;
+  /** Captura — `kind` do contrato (api): baseline/mid/final. */
+  kind: "baseline" | "mid" | "final";
   weightKg: number;
   // Status canônico de @charya/schemas (fonte única) — sem literais ad-hoc.
   status: WeighInStatus;
   dateLabel: string;
 }
+
+/** Rótulo de display da captura (T0/T1/T2) a partir do `kind` do contrato. */
+const KIND_LABEL: Record<WeighInHistoryItem["kind"], string> = {
+  baseline: "T0",
+  mid: "T1",
+  final: "T2",
+};
 
 const STATUS_LABEL: Record<WeighInStatus, string> = {
   pending: "Recebida",
@@ -43,7 +51,7 @@ export function WeighInHistoryList({ data }: WeighInHistoryListProps) {
         <View className="flex-row items-center justify-between rounded-xl bg-surface px-4 py-3">
           <View>
             <Text variant="body">
-              {item.capturePoint} · {item.weightKg.toFixed(1)} kg
+              {KIND_LABEL[item.kind]} · {item.weightKg.toFixed(1)} kg
             </Text>
             <Text variant="caption" className="text-muted">
               {item.dateLabel}
