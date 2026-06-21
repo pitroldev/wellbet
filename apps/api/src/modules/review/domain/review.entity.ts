@@ -7,27 +7,23 @@
  */
 export type Verdict = "approved" | "pending" | "rejected";
 
-/** Itens do checklist do revisor (doc de Validação §5). */
-export type ChecklistFlag =
-  | "freshness" // frescor / anti-replay (código + gesto)
-  | "continuous_video" // take único, sem corte
-  | "scale_zero" // balança zerada (âncora do instrumento)
-  | "floor_scene" // piso/cena plano e nivelado
-  | "no_body_trick" // sobe sem apoio, mãos visíveis
-  | "display_integrity" // visor íntegro, sem sobreposição
-  | "same_person" // mesma pessoa entre T0/T1/T2
-  | "plausibility"; // perda faz sentido fisiológico
+/**
+ * Itens do checklist do revisor (doc de Validação §5). Fonte única (tupla
+ * `const`) — o tipo é DERIVADO dela, então `z.enum(CHECKLIST_FLAGS)` preserva os
+ * literais sem cast forçado.
+ */
+export const CHECKLIST_FLAGS = [
+  "freshness", // frescor / anti-replay (código + gesto)
+  "continuous_video", // take único, sem corte
+  "scale_zero", // balança zerada (âncora do instrumento)
+  "floor_scene", // piso/cena plano e nivelado
+  "no_body_trick", // sobe sem apoio, mãos visíveis
+  "display_integrity", // visor íntegro, sem sobreposição
+  "same_person", // mesma pessoa entre T0/T1/T2
+  "plausibility", // perda faz sentido fisiológico
+] as const;
 
-export const CHECKLIST_FLAGS: readonly ChecklistFlag[] = [
-  "freshness",
-  "continuous_video",
-  "scale_zero",
-  "floor_scene",
-  "no_body_trick",
-  "display_integrity",
-  "same_person",
-  "plausibility",
-];
+export type ChecklistFlag = (typeof CHECKLIST_FLAGS)[number];
 
 /** Resultado tristate de um item do checklist (dataset granular da Fase 2). */
 export type ChecklistResult = "ok" | "fail" | "na";

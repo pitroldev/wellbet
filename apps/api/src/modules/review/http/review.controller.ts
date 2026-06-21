@@ -6,7 +6,6 @@ import { Roles, RolesGuard } from "@/shared/guards/roles.guard.js";
 import { GetReviewDetailUseCase } from "@/modules/review/application/get-review-detail.use-case.js";
 import { ListReviewQueueUseCase } from "@/modules/review/application/list-review-queue.use-case.js";
 import { SubmitVerdictUseCase } from "@/modules/review/application/submit-verdict.use-case.js";
-import type { ChecklistFlag } from "@/modules/review/domain/review.entity.js";
 import {
   ListReviewQueueDto,
   ReviewDetailDto,
@@ -61,7 +60,7 @@ export class ReviewController {
       weighinId: dto.weighinId,
       verdict: dto.verdict,
       reason: dto.reason,
-      failedChecks: (dto.failedChecks as ChecklistFlag[] | null | undefined) ?? null,
+      failedChecks: dto.failedChecks ?? null,
       checklist: dto.checklist ?? null,
     });
   }

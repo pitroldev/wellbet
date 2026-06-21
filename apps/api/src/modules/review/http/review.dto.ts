@@ -5,7 +5,7 @@ import { z } from "zod";
 import { CHECKLIST_FLAGS } from "@/modules/review/domain/review.entity.js";
 
 /** Flags do checklist do revisor (doc de Validação §5). */
-const checklistFlag = z.enum(CHECKLIST_FLAGS as unknown as [string, ...string[]]);
+const checklistFlag = z.enum(CHECKLIST_FLAGS);
 
 export const ListReviewQueueSchema = z.object({
   limit: z.coerce.number().int().min(1).max(200).default(50),

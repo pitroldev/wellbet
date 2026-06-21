@@ -53,7 +53,8 @@ export function ChecklistForm({ sessionId, onSubmitted }: ChecklistFormProps): R
   } = useForm<VerdictFormValues>({
     resolver: zodResolver(verdictFormSchema),
     defaultValues: {
-      verdict: undefined as unknown as Verdict,
+      // `verdict` começa sem seleção; DefaultValues<T> permite undefined.
+      verdict: undefined,
       reason: "",
       items: defaultItems(),
     },
