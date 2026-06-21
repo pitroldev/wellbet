@@ -6,6 +6,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
+    // Pula a validação de env (@charya/env/t3-env) nos testes: módulos que
+    // importam config.module avaliam o schema no load e exigiriam DATABASE_URL
+    // etc. Os testes injetam env fake nos adapters diretamente.
+    env: { SKIP_ENV_VALIDATION: "true" },
     include: ["src/**/*.{spec,test}.ts", "test/**/*.e2e-spec.ts"],
     coverage: {
       provider: "v8",
