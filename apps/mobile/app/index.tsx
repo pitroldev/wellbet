@@ -39,6 +39,9 @@ export default function HomeScreen() {
           <Link href="/weighin" asChild>
             <Button label="Nova pesagem" />
           </Link>
+          <Link href="/profile" asChild>
+            <Button label="Meu perfil" tone="secondary" />
+          </Link>
           <Link href="/(onboarding)" asChild>
             <Button label="Como funciona" tone="ghost" />
           </Link>
