@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { BetControllerDetailData, BetControllerDetailResponses, BetControllerListData, BetControllerListResponses, BetControllerPlaceData, BetControllerPlaceResponses, ChallengeControllerIssueData, ChallengeControllerIssueResponses, HealthControllerCheckData, HealthControllerCheckResponses, IdentityControllerMeData, IdentityControllerMeResponses, IdentityControllerSetProfileData, IdentityControllerSetProfileResponses, ReviewControllerQueueData, ReviewControllerQueueResponses, ReviewControllerVerdictData, ReviewControllerVerdictResponses, WeighInControllerListData, WeighInControllerListResponses, WeighInControllerStartData, WeighInControllerStartResponses, WeighInControllerSubmitData, WeighInControllerSubmitResponses } from './types.gen';
+import type { BetControllerDetailData, BetControllerDetailResponses, BetControllerListData, BetControllerListResponses, BetControllerPlaceData, BetControllerPlaceResponses, ChallengeControllerIssueData, ChallengeControllerIssueResponses, HealthControllerCheckData, HealthControllerCheckResponses, IdentityControllerMeData, IdentityControllerMeResponses, IdentityControllerSetProfileData, IdentityControllerSetProfileResponses, ReviewControllerDetailData, ReviewControllerDetailResponses, ReviewControllerQueueData, ReviewControllerQueueResponses, ReviewControllerVerdictData, ReviewControllerVerdictResponses, WeighInControllerListData, WeighInControllerListResponses, WeighInControllerStartData, WeighInControllerStartResponses, WeighInControllerSubmitData, WeighInControllerSubmitResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -85,6 +85,11 @@ export const weighInControllerStart = <ThrowOnError extends boolean = false>(opt
  * Fila de revisão humana (pesagens in_review).
  */
 export const reviewControllerQueue = <ThrowOnError extends boolean = false>(options?: Options<ReviewControllerQueueData, ThrowOnError>): RequestResult<ReviewControllerQueueResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ReviewControllerQueueResponses, unknown, ThrowOnError>({ url: '/api/reviews/queue', ...options });
+
+/**
+ * Detalhe de uma pesagem para revisão.
+ */
+export const reviewControllerDetail = <ThrowOnError extends boolean = false>(options: Options<ReviewControllerDetailData, ThrowOnError>): RequestResult<ReviewControllerDetailResponses, unknown, ThrowOnError> => (options.client ?? client).get<ReviewControllerDetailResponses, unknown, ThrowOnError>({ url: '/api/reviews/{weighinId}', ...options });
 
 /**
  * Registra o veredito da revisão humana.

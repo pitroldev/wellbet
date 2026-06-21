@@ -1,3 +1,4 @@
+import { WeighInStatus } from "@charya/schemas";
 import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
 
@@ -53,3 +54,24 @@ export const ReviewQueueEntrySchema = z.object({
   videoUrl: z.string(),
 });
 export class ReviewQueueEntryDto extends createZodDto(ReviewQueueEntrySchema) {}
+
+/** Detalhe de uma pesagem para a sessão de revisão (GET /reviews/:weighinId). */
+export const ReviewDetailSchema = z.object({
+  weighinId: z.string(),
+  userId: z.string(),
+  userName: z.string().nullable(),
+  kind: z.enum(["baseline", "mid", "final"]),
+  weightKg: z.number(),
+  lossPerWeekKg: z.number().nullable(),
+  status: WeighInStatus,
+  capturedAt: z.iso.datetime(),
+  videoUrl: z.string(),
+  /** Código dinâmico esperado (o revisor confere com o vídeo). */
+  expectedCode: z
+    .object({ word: z.string(), number: z.number().int(), gesture: z.string() })
+    .nullable(),
+  verdict: z.enum(["approved", "pending", "rejected"]).nullable(),
+  reason: z.string().nullable(),
+  failedChecks: z.array(z.string()).nullable(),
+});
+export class ReviewDetailDto extends createZodDto(ReviewDetailSchema) {}

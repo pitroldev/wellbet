@@ -216,6 +216,37 @@
         ]
       }
     },
+    "/api/reviews/{weighinId}": {
+      "get": {
+        "operationId": "ReviewController_detail",
+        "parameters": [
+          {
+            "name": "weighinId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Detalhe de uma pesagem para revisão.",
+        "tags": [
+          "review"
+        ]
+      }
+    },
     "/api/reviews/verdict": {
       "post": {
         "operationId": "ReviewController_verdict",
@@ -537,6 +568,113 @@
           "capturedAt",
           "reviewId",
           "videoUrl"
+        ]
+      },
+      "ReviewDetailDto": {
+        "type": "object",
+        "properties": {
+          "weighinId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "baseline",
+              "mid",
+              "final"
+            ]
+          },
+          "weightKg": {
+            "type": "number"
+          },
+          "lossPerWeekKg": {
+            "type": "number",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "blocked",
+              "in_review",
+              "approved",
+              "rejected",
+              "recapture"
+            ]
+          },
+          "capturedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "videoUrl": {
+            "type": "string"
+          },
+          "expectedCode": {
+            "type": "object",
+            "properties": {
+              "word": {
+                "type": "string"
+              },
+              "number": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "gesture": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "word",
+              "number",
+              "gesture"
+            ],
+            "nullable": true
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "pending",
+              "rejected",
+              null
+            ],
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "failedChecks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "required": [
+          "weighinId",
+          "userId",
+          "userName",
+          "kind",
+          "weightKg",
+          "lossPerWeekKg",
+          "status",
+          "capturedAt",
+          "videoUrl",
+          "expectedCode",
+          "verdict",
+          "reason",
+          "failedChecks"
         ]
       },
       "SubmitVerdictDto": {

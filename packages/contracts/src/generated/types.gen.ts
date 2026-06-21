@@ -49,6 +49,26 @@ export type ReviewQueueEntryDto = {
     videoUrl: string;
 };
 
+export type ReviewDetailDto = {
+    weighinId: string;
+    userId: string;
+    userName: string | null;
+    kind: 'baseline' | 'mid' | 'final';
+    weightKg: number;
+    lossPerWeekKg: number | null;
+    status: 'pending' | 'blocked' | 'in_review' | 'approved' | 'rejected' | 'recapture';
+    capturedAt: string;
+    videoUrl: string;
+    expectedCode: {
+        word: string;
+        number: number;
+        gesture: string;
+    } | null;
+    verdict: 'approved' | 'pending' | 'rejected' | null;
+    reason: string | null;
+    failedChecks: Array<string> | null;
+};
+
 export type SubmitVerdictDto = {
     weighinId: string;
     verdict: 'approved' | 'pending' | 'rejected';
@@ -175,6 +195,21 @@ export type ReviewControllerQueueResponses = {
 };
 
 export type ReviewControllerQueueResponse = ReviewControllerQueueResponses[keyof ReviewControllerQueueResponses];
+
+export type ReviewControllerDetailData = {
+    body?: never;
+    path: {
+        weighinId: string;
+    };
+    query?: never;
+    url: '/api/reviews/{weighinId}';
+};
+
+export type ReviewControllerDetailResponses = {
+    200: ReviewDetailDto;
+};
+
+export type ReviewControllerDetailResponse = ReviewControllerDetailResponses[keyof ReviewControllerDetailResponses];
 
 export type ReviewControllerVerdictData = {
     body: SubmitVerdictDto;

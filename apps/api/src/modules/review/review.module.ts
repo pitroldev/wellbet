@@ -1,6 +1,9 @@
 import { Module } from "@nestjs/common";
 
+import { ChallengeModule } from "@/modules/challenge/challenge.module.js";
+import { IdentityModule } from "@/modules/identity/identity.module.js";
 import { WeighInModule } from "@/modules/weighin/weighin.module.js";
+import { GetReviewDetailUseCase } from "./application/get-review-detail.use-case.js";
 import { ListReviewQueueUseCase } from "./application/list-review-queue.use-case.js";
 import { REVIEW_REPOSITORY } from "./application/review.repository.port.js";
 import { SubmitVerdictUseCase } from "./application/submit-verdict.use-case.js";
@@ -14,10 +17,11 @@ import { ReviewController } from "./http/review.controller.js";
  * status da pesagem). Queue/Storage vêm dos módulos @Global de infra.
  */
 @Module({
-  imports: [WeighInModule],
+  imports: [WeighInModule, ChallengeModule, IdentityModule],
   controllers: [ReviewController],
   providers: [
     ListReviewQueueUseCase,
+    GetReviewDetailUseCase,
     SubmitVerdictUseCase,
     {
       provide: REVIEW_REPOSITORY,

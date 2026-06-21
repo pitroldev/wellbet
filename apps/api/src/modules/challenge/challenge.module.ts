@@ -22,6 +22,6 @@ import { ChallengeController } from "./http/challenge.controller.js";
       useClass: DrizzleChallengeRepository,
     },
   ],
-  exports: [ValidateChallengeUseCase, IssueChallengeUseCase],
+  exports: [ValidateChallengeUseCase, IssueChallengeUseCase, CHALLENGE_REPOSITORY],
 })
 export class ChallengeModule {}

@@ -1,13 +1,15 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { AuthGuard, type AuthenticatedRequest } from "@/shared/guards/auth.guard.js";
 import { Roles, RolesGuard } from "@/shared/guards/roles.guard.js";
+import { GetReviewDetailUseCase } from "@/modules/review/application/get-review-detail.use-case.js";
 import { ListReviewQueueUseCase } from "@/modules/review/application/list-review-queue.use-case.js";
 import { SubmitVerdictUseCase } from "@/modules/review/application/submit-verdict.use-case.js";
 import type { ChecklistFlag } from "@/modules/review/domain/review.entity.js";
 import {
   ListReviewQueueDto,
+  ReviewDetailDto,
   ReviewQueueEntryDto,
   SubmitVerdictDto,
   VerdictResponseDto,
@@ -16,8 +18,9 @@ import {
 /**
  * Controller de revisão (console interno).
  *
- *  GET  /reviews/queue  — fila única de pesagens aguardando veredito.
- *  POST /reviews/verdict — registra APROVADO/PENDENTE/REPROVADO + motivo/flags.
+ *  GET  /reviews/queue      — fila única de pesagens aguardando veredito.
+ *  GET  /reviews/:weighinId  — detalhe (vídeo + código esperado + veredito).
+ *  POST /reviews/verdict     — registra APROVADO/PENDENTE/REPROVADO + motivo/flags.
  *
  * Restrito a `reviewer`/`admin` (RolesGuard).
  */
@@ -28,6 +31,7 @@ import {
 export class ReviewController {
   constructor(
     private readonly listQueue: ListReviewQueueUseCase,
+    private readonly getReviewDetail: GetReviewDetailUseCase,
     private readonly submitVerdict: SubmitVerdictUseCase,
   ) {}
 
@@ -36,6 +40,13 @@ export class ReviewController {
   @ApiOkResponse({ type: [ReviewQueueEntryDto] })
   async queue(@Query() dto: ListReviewQueueDto): Promise<ReviewQueueEntryDto[]> {
     return this.listQueue.execute({ limit: dto.limit, offset: dto.offset });
+  }
+
+  @Get(":weighinId")
+  @ApiOperation({ summary: "Detalhe de uma pesagem para revisão." })
+  @ApiOkResponse({ type: ReviewDetailDto })
+  async detail(@Param("weighinId") weighinId: string): Promise<ReviewDetailDto> {
+    return this.getReviewDetail.execute(weighinId);
   }
 
   @Post("verdict")
