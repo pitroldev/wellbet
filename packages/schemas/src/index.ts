@@ -1,14 +1,12 @@
 /**
- * @charya/schemas — fonte única da verdade de validação (Zod 4).
+ * @charya/schemas — primitivos e validação COMPARTILHADOS (Zod 4).
  *
- * Compartilhado por api / admin / mobile. Cada módulo exporta seus schemas
- * Zod e o `z.infer` correspondente. Nada de lógica de runtime além das
- * funções puras de domínio (ex.: `checkPlausibility`).
+ * O contrato do fio (DTOs de request/response) vive em `@charya/contracts`,
+ * gerado do OpenAPI da api (SSoT único). Aqui ficam só: primitivos comuns
+ * (`common`), o enum canônico de status de pesagem (`weighin`) e a regra dura
+ * de plausibilidade (`plausibility`) — coisas que a própria api consome.
  */
 
 export * from "./common.js";
-export * from "./identity.js";
-export * from "./bet.js";
 export * from "./weighin.js";
-export * from "./review.js";
 export * from "./plausibility.js";
