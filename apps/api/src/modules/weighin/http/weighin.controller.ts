@@ -1,21 +1,25 @@
-import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { AuthGuard, type AuthenticatedRequest } from "@/shared/guards/auth.guard.js";
 import { ValidateChallengeUseCase } from "@/modules/challenge/application/validate-challenge.use-case.js";
 import { IssueChallengeUseCase } from "@/modules/weighin/application/issue-challenge.use-case.js";
+import { ListWeighInsUseCase } from "@/modules/weighin/application/list-weighins.use-case.js";
 import { SubmitWeighInUseCase } from "@/modules/weighin/application/submit-weighin.use-case.js";
 import {
+  ListWeighInsQueryDto,
   StartWeighInDto,
   StartWeighInResponseDto,
   SubmitWeighInDto,
   SubmitWeighInResponseDto,
+  WeighInSummaryDto,
 } from "./weighin.dto.js";
 import { toStartResponse, toSubmitResponse } from "./weighin.mapper.js";
 
 /**
  * Controller de pesagem.
  *
+ *  GET  /weighins         — histórico de pesagens do usuário (status incluído).
  *  POST /weighins/start   — abre sessão: código dinâmico + URL de upload R2.
  *  POST /weighins         — submete a pesagem: valida o nonce (anti-replay),
  *                            aplica a regra dura e enfileira para revisão.
@@ -28,7 +32,18 @@ export class WeighInController {
     private readonly issueChallenge: IssueChallengeUseCase,
     private readonly validateChallenge: ValidateChallengeUseCase,
     private readonly submitWeighIn: SubmitWeighInUseCase,
+    private readonly listWeighIns: ListWeighInsUseCase,
   ) {}
+
+  @Get()
+  @ApiOperation({ summary: "Histórico de pesagens do usuário autenticado." })
+  @ApiOkResponse({ type: [WeighInSummaryDto] })
+  async list(
+    @Req() req: AuthenticatedRequest,
+    @Query() query: ListWeighInsQueryDto,
+  ): Promise<WeighInSummaryDto[]> {
+    return this.listWeighIns.execute({ userId: req.user!.id, kind: query.kind });
+  }
 
   @Post("start")
   @ApiOperation({

@@ -56,3 +56,21 @@ export const SubmitWeighInResponseSchema = z.object({
   lossPerWeekKg: z.number().nullable(),
 });
 export class SubmitWeighInResponseDto extends createZodDto(SubmitWeighInResponseSchema) {}
+
+/** Filtro opcional do histórico de pesagens (GET /weighins). */
+export const ListWeighInsQuerySchema = z.object({
+  kind: weighinKind.optional(),
+});
+export class ListWeighInsQueryDto extends createZodDto(ListWeighInsQuerySchema) {}
+
+/** Resumo de uma pesagem no histórico do usuário. */
+export const WeighInSummarySchema = z.object({
+  weighinId: z.string(),
+  kind: weighinKind,
+  weightKg: z.number(),
+  status: WeighInStatus,
+  lossPerWeekKg: z.number().nullable(),
+  betId: z.string().nullable(),
+  capturedAt: z.iso.datetime(),
+});
+export class WeighInSummaryDto extends createZodDto(WeighInSummarySchema) {}

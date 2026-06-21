@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 
 import { ChallengeModule } from "@/modules/challenge/challenge.module.js";
 import { IssueChallengeUseCase } from "./application/issue-challenge.use-case.js";
+import { ListWeighInsUseCase } from "./application/list-weighins.use-case.js";
 import { SubmitWeighInUseCase } from "./application/submit-weighin.use-case.js";
 import { WEIGHIN_REPOSITORY } from "./application/weighin.repository.port.js";
 import { DrizzleWeighInRepository } from "./infra/drizzle-weighin.repository.js";
@@ -18,6 +19,7 @@ import { WeighInController } from "./http/weighin.controller.js";
   controllers: [WeighInController],
   providers: [
     IssueChallengeUseCase,
+    ListWeighInsUseCase,
     SubmitWeighInUseCase,
     {
       provide: WEIGHIN_REPOSITORY,
