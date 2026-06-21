@@ -78,16 +78,10 @@ jobs:
           install: true
       - name: Install deps
         run: pnpm install --frozen-lockfile
-      - name: Build api
-        run: pnpm --filter @charya/api build
-      - name: Emit openapi.json (fonte da verdade = a api)
-        run: pnpm --filter @charya/api openapi:emit
-      - name: Regenera o cliente tipado a partir do spec
-        run: pnpm --filter @charya/contracts generate
-      - name: Falha se houver drift (spec ou cliente gerado fora de sincronia)
+      - name: Verifica drift de contrato (build + emit DB-free + generate + diff)
         run: |
-          if ! git diff --exit-code -- apps/api/openapi.json packages/contracts/src/generated; then
-            echo "::error::Drift de contrato detectado. Rode 'pnpm --filter @charya/api openapi:emit && pnpm --filter @charya/contracts generate' e commite o resultado."
+          if ! pnpm run contracts:check; then
+            echo "::error::Drift de contrato detectado. Rode 'pnpm contracts:check' localmente e commite o cliente/spec regenerado."
             exit 1
           fi
 

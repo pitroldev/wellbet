@@ -23,6 +23,7 @@
     "db:migrate": "pnpm --filter @charya/api db:migrate",
     "db:studio": "pnpm --filter @charya/api db:studio",
     "contracts:generate": "pnpm --filter @charya/contracts generate",
+    "contracts:check": "pnpm --filter @charya/api run build && pnpm --filter @charya/api run openapi:emit && pnpm contracts:generate && git diff --exit-code -- apps/api/openapi.json packages/contracts/src/generated",
     "lint": "turbo run lint",
     "lint:fast": "oxlint",
     "typecheck": "turbo run typecheck",
