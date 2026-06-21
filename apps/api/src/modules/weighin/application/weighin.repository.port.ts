@@ -20,6 +20,9 @@ export interface WeighInRepositoryPort {
 
   /** Lista pesagens de um usuário, opcionalmente por tipo (T0/T1/T2). */
   listByUser(args: { userId: string; kind?: WeighInKind }): Promise<WeighIn[]>;
+
+  /** Lista as pesagens de uma aposta (T0/T1/T2), p/ comparação de identidade. */
+  listByBet(betId: string): Promise<WeighIn[]>;
 }
 
 export const WEIGHIN_REPOSITORY = Symbol("WEIGHIN_REPOSITORY");

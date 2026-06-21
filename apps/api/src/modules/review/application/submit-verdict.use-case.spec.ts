@@ -32,6 +32,7 @@ function makeDeps() {
     findById: vi.fn(),
     findPrevious: vi.fn(),
     listByUser: vi.fn(),
+    listByBet: vi.fn(),
   };
   const queue = { publish: vi.fn(), subscribe: vi.fn() };
   const uc = new SubmitVerdictUseCase(reviews, weighins, queue);

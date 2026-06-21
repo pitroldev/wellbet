@@ -37,7 +37,13 @@ function challenge(): Challenge {
 }
 
 function makeDeps() {
-  const weighins = { save: vi.fn(), findById: vi.fn(), findPrevious: vi.fn(), listByUser: vi.fn() };
+  const weighins = {
+    save: vi.fn(),
+    findById: vi.fn(),
+    findPrevious: vi.fn(),
+    listByUser: vi.fn(),
+    listByBet: vi.fn(),
+  };
   const reviews = { listQueue: vi.fn(), save: vi.fn(), findById: vi.fn(), findByWeighin: vi.fn() };
   const challenges = {
     save: vi.fn(),
@@ -68,6 +74,11 @@ function arrange(d: ReturnType<typeof makeDeps>): void {
   );
   d.challenges.findById.mockResolvedValue(challenge());
   d.reviews.findByWeighin.mockResolvedValue(undefined);
+  d.weighins.listByBet.mockResolvedValue([
+    weighin({ id: "w-base", kind: "baseline", videoObjectKey: "k-base" }),
+    weighin({ id: "w-mid", kind: "mid", videoObjectKey: "k-mid" }),
+    weighin({ id: "w-1", kind: "final", videoObjectKey: "weighins/u-1/final.mp4" }),
+  ]);
 }
 
 describe("GetReviewDetailUseCase", () => {
@@ -83,9 +94,25 @@ describe("GetReviewDetailUseCase", () => {
       userName: "Fulano",
       kind: "final",
       videoUrl: "https://signed/v",
+      comparison: {
+        baseline: "https://signed/v",
+        mid: "https://signed/v",
+        final: "https://signed/v",
+      },
       expectedCode: { word: "azul", number: 42, gesture: "thumbs_up" },
       verdict: null,
     });
+  });
+
+  it("pesagem sem aposta (adhoc) → comparação só com o próprio vídeo no slot do kind", async () => {
+    const d = makeDeps();
+    arrange(d);
+    d.weighins.findById.mockResolvedValue(weighin({ betId: null }));
+
+    const result = await d.uc.execute("w-1");
+
+    expect(d.weighins.listByBet).not.toHaveBeenCalled();
+    expect(result.comparison).toEqual({ baseline: null, mid: null, final: "https://signed/v" });
   });
 
   it("inclui o veredito quando a pesagem já foi decidida", async () => {

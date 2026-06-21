@@ -617,6 +617,28 @@
           "videoUrl": {
             "type": "string"
           },
+          "comparison": {
+            "type": "object",
+            "properties": {
+              "baseline": {
+                "type": "string",
+                "nullable": true
+              },
+              "mid": {
+                "type": "string",
+                "nullable": true
+              },
+              "final": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": [
+              "baseline",
+              "mid",
+              "final"
+            ]
+          },
           "expectedCode": {
             "type": "object",
             "properties": {
@@ -671,6 +693,7 @@
           "status",
           "capturedAt",
           "videoUrl",
+          "comparison",
           "expectedCode",
           "verdict",
           "reason",

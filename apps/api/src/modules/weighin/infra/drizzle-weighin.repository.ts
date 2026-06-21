@@ -70,6 +70,16 @@ export class DrizzleWeighInRepository implements WeighInRepositoryPort {
     return rows.map((r) => this.toDomain(r));
   }
 
+  async listByBet(betId: string): Promise<WeighIn[]> {
+    // Ordem ascendente: ao mapear por kind, a captura mais recente sobrescreve.
+    const rows = await this.handle.db
+      .select()
+      .from(weighins)
+      .where(eq(weighins.betId, betId))
+      .orderBy(weighins.capturedAt);
+    return rows.map((r) => this.toDomain(r));
+  }
+
   private toDomain(row: typeof weighins.$inferSelect): WeighIn {
     return WeighIn.create({
       id: row.id,

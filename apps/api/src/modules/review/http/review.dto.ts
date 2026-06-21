@@ -66,6 +66,12 @@ export const ReviewDetailSchema = z.object({
   status: WeighInStatus,
   capturedAt: z.iso.datetime(),
   videoUrl: z.string(),
+  /** Vídeos das 3 capturas (T0/T1/T2) da aposta, p/ comparação de identidade. */
+  comparison: z.object({
+    baseline: z.string().nullable(),
+    mid: z.string().nullable(),
+    final: z.string().nullable(),
+  }),
   /** Código dinâmico esperado (o revisor confere com o vídeo). */
   expectedCode: z
     .object({ word: z.string(), number: z.number().int(), gesture: z.string() })

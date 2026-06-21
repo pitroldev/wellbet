@@ -59,6 +59,11 @@ export type ReviewDetailDto = {
     status: 'pending' | 'blocked' | 'in_review' | 'approved' | 'rejected' | 'recapture';
     capturedAt: string;
     videoUrl: string;
+    comparison: {
+        baseline: string | null;
+        mid: string | null;
+        final: string | null;
+    };
     expectedCode: {
         word: string;
         number: number;

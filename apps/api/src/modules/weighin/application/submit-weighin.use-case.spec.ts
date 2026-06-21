@@ -15,7 +15,13 @@ import type { Env } from "@/config/config.module.js";
 import { SubmitWeighInUseCase } from "./submit-weighin.use-case.js";
 
 function makeDeps() {
-  const repo = { save: vi.fn(), findById: vi.fn(), findPrevious: vi.fn(), listByUser: vi.fn() };
+  const repo = {
+    save: vi.fn(),
+    findById: vi.fn(),
+    findPrevious: vi.fn(),
+    listByUser: vi.fn(),
+    listByBet: vi.fn(),
+  };
   const queue = { publish: vi.fn(), subscribe: vi.fn() };
   const env = { WEIGHT_HARD_LIMIT_KG_PER_WEEK: 2 } as unknown as Env;
   const uc = new SubmitWeighInUseCase(repo, queue, env);

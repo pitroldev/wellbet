@@ -35,6 +35,8 @@ export interface ReviewDetail {
   readonly status: WeighInStatus;
   readonly capturedAt: string;
   readonly videoUrl: string;
+  /** Vídeos das 3 capturas (T0/T1/T2) da aposta, p/ comparação de identidade. */
+  readonly comparison: { baseline: string | null; mid: string | null; final: string | null };
   /** Código dinâmico esperado (anti-replay) — null se a pesagem não tem desafio. */
   readonly expectedCode: ExpectedCode | null;
   /** Veredito já registrado (null se ainda não decidida). */
@@ -77,6 +79,29 @@ export class GetReviewDetailUseCase {
       }
     }
 
+    // Comparação de identidade: vídeos das 3 capturas (T0/T1/T2) da aposta.
+    const comparison: { baseline: string | null; mid: string | null; final: string | null } = {
+      baseline: null,
+      mid: null,
+      final: null,
+    };
+    if (w.betId) {
+      const captures = await this.weighins.listByBet(w.betId);
+      const urls = await Promise.all(
+        captures.map(async (capture) => {
+          const cp = capture.toJSON();
+          const url = (await this.storage.presignDownload({ key: cp.videoObjectKey })).url;
+          return { kind: cp.kind, url };
+        }),
+      );
+      // listByBet vem em ordem asc → a captura mais recente de cada tipo sobrescreve.
+      for (const { kind, url } of urls) {
+        comparison[kind] = url;
+      }
+    } else {
+      comparison[w.kind] = presigned.url;
+    }
+
     const review = await this.reviews.findByWeighin(weighinId);
     const r = review?.toJSON();
 
@@ -90,6 +115,7 @@ export class GetReviewDetailUseCase {
       status: w.status,
       capturedAt: w.capturedAt.toISOString(),
       videoUrl: presigned.url,
+      comparison,
       expectedCode,
       verdict: r?.verdict ?? null,
       reason: r?.reason ?? null,
