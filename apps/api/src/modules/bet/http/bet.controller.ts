@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Req, UseGuards, UseInterceptors } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+  UseInterceptors,
+} from "@nestjs/common";
 import { ApiHeader, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { AuthGuard, type AuthenticatedRequest } from "@/shared/guards/auth.guard.js";
@@ -6,15 +15,17 @@ import {
   Idempotent,
   IdempotencyInterceptor,
 } from "@/shared/idempotency/idempotency.interceptor.js";
+import { GetBetUseCase } from "@/modules/bet/application/get-bet.use-case.js";
 import { ListBetsUseCase } from "@/modules/bet/application/list-bets.use-case.js";
 import { PlaceBetUseCase } from "@/modules/bet/application/place-bet.use-case.js";
-import { BetResponseDto, BetSummaryDto, PlaceBetDto } from "./bet.dto.js";
+import { BetDetailDto, BetResponseDto, BetSummaryDto, PlaceBetDto } from "./bet.dto.js";
 
 /**
  * Controller de apostas.
  *
- *  GET  /bets — lista as apostas do usuário autenticado.
- *  POST /bets — cria uma aposta. ESCRITA FINANCEIRA → idempotente:
+ *  GET  /bets     — lista as apostas do usuário autenticado.
+ *  GET  /bets/:id — detalhe (com BR Code se a aposta aguarda pagamento).
+ *  POST /bets     — cria uma aposta. ESCRITA FINANCEIRA → idempotente:
  *  exige header `Idempotency-Key` (IdempotencyInterceptor + @Idempotent).
  *
  * O settlement NÃO tem endpoint: roda no worker da fila após o veredito
@@ -27,6 +38,7 @@ export class BetController {
   constructor(
     private readonly placeBet: PlaceBetUseCase,
     private readonly listBets: ListBetsUseCase,
+    private readonly getBet: GetBetUseCase,
   ) {}
 
   @Get()
@@ -34,6 +46,12 @@ export class BetController {
   @ApiOkResponse({ type: [BetSummaryDto] })
   async list(@Req() req: AuthenticatedRequest): Promise<BetSummaryDto[]> {
     return this.listBets.execute(req.user!.id);
+  }
+
+  @Get(":id")
+  @ApiOperation({ summary: "Detalhe de uma aposta (BR Code se pendente de pagamento)." })
+  async detail(@Req() req: AuthenticatedRequest, @Param("id") id: string): Promise<BetDetailDto> {
+    return this.getBet.execute({ betId: id, userId: req.user!.id });
   }
 
   @Post()

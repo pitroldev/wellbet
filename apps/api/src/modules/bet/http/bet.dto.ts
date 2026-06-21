@@ -36,3 +36,9 @@ export const BetSummarySchema = z.object({
   currency: z.string(),
 });
 export class BetSummaryDto extends createZodDto(BetSummarySchema) {}
+
+/** Detalhe de uma aposta (GET /bets/:id), com a cobrança Pix viva se pendente. */
+export const BetDetailSchema = BetSummarySchema.extend({
+  pixCharge: z.object({ brcode: z.string(), status: z.string(), expiresAt: z.string() }).nullable(),
+});
+export class BetDetailDto extends createZodDto(BetDetailSchema) {}
