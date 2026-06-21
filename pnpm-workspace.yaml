@@ -6,10 +6,12 @@ packages:
 # true = roda o build do pacote; false = bloqueia (telemetria etc.).
 allowBuilds:
   "@scarf/scarf": false # telemetria de analytics — não precisa rodar nada
+  cpu-features: false # otimização opcional do ssh2; desnecessária p/ docker local
   esbuild: true # binário de bundling (Vitest/tsx)
   lefthook: true # instala os git hooks
   protobufjs: true # usado pelo exporter OTLP
   sharp: true # otimização de imagem do next/image (admin)
+  ssh2: false # dep do testcontainers; build nativo só p/ docker REMOTO (SSH) — local usa npipe
   unrs-resolver: true # resolver nativo do oxlint/eslint
 
 # Catálogo central de versões compartilhadas (pnpm catalogs).
