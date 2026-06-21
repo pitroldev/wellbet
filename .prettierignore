@@ -9,6 +9,8 @@
 
 # Código gerado (não editar à mão)
 packages/contracts/src/generated/
+# Contrato OpenAPI emitido pela api (artefato gerado)
+**/openapi.json
 
 # Lockfiles e artefatos
 pnpm-lock.yaml

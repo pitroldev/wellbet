@@ -3,6 +3,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
+    // O cliente gerado (Hey API/client-fetch) usa APIs web (fetch, Request,
+    // Headers, AbortController, TextDecoderStream) — disponíveis em web (admin)
+    // e RN (mobile) e no Node 18+. Precisamos das declarações DOM para tipá-las.
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

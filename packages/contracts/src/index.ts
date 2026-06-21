@@ -2,7 +2,7 @@
  * @charya/contracts — ponto de entrada público do CONTRATO entre apps.
  *
  * Fluxo (ver README e docs/Charya_Arquitetura_Tecnica.md §5):
- *   apps/api build → emite `apps/api/openapi.json`
+ *   apps/api → emite `apps/api/openapi.json` (DB-free: `openapi:emit`)
  *     → `pnpm --filter @charya/contracts generate` (Hey API → `src/generated`)
  *       → mobile/admin importam funções/tipos daqui, tipados de ponta a ponta.
  *
@@ -11,84 +11,45 @@
  * consumidores) quebra no CI. É essa quebra que impede o drift de contrato.
  */
 
-import { createClient, createConfig } from "@hey-api/client-fetch";
-import type { Config } from "@hey-api/client-fetch";
+import { createClient, createConfig, type Config } from "./generated/client";
+import { client } from "./generated/client.gen";
 
-/**
- * Cliente HTTP SINGLETON do contrato. As funções de SDK geradas (`src/generated`)
- * consomem este cliente após {@link configureCharyaClient}. Substitui o antigo
- * singleton global do `@hey-api/client-fetch` (removido na lib): agora criamos o
- * nosso com `createClient()` e o configuramos no boot do app.
- */
-export const client = createClient();
+// SDK tipado (funções por operação) + tipos (DTOs) gerados do OpenAPI da api.
+export * from "./generated";
 
-// -----------------------------------------------------------------------------
-// Re-export do cliente gerado
-// -----------------------------------------------------------------------------
-// TODO: rodar `pnpm --filter @charya/contracts generate` e então descomentar.
-//       Até gerar, `src/generated` só tem `.gitkeep` e o re-export abaixo
-//       quebraria o type-check — por isso fica comentado de propósito.
-//
-// export * from './generated';
-//
-// O Hey API (client-fetch) gera um singleton `client` em `src/generated/client.gen.ts`
-// e funções de SDK por operação (ex.: `getWeighinById`, `createWeighin`). Os
-// consumidores configuram o singleton via `configureCharyaClient` (abaixo) e
-// chamam as funções de SDK diretamente.
+// Singleton do client-fetch que as funções de SDK geradas consomem.
+export { client };
 
-// -----------------------------------------------------------------------------
-// Tipos placeholder (substituídos pelos tipos REAIS de `./generated` ao gerar)
-// -----------------------------------------------------------------------------
-// TODO: remover estes placeholders após `generate` — passam a vir do spec da api.
-//       Mantidos só para o pacote tipar antes do primeiro build da api.
-
-/** Qual das três capturas do MVP (T0 baseline · T1 intermediária · T2 final). */
-export type WeighinCapture = "T0" | "T1" | "T2";
-
-/** Veredito do revisor humano (§7 do doc de validação). */
-export type ReviewVerdict = "PENDENTE" | "APROVADO" | "REPROVADO";
-
-/** Resposta de erro padronizada da api. */
+/** Resposta de erro padronizada da api (envelope `{ code, message, details }`). */
 export interface ApiError {
   code: string;
   message: string;
   details?: Record<string, unknown>;
 }
 
-// -----------------------------------------------------------------------------
-// Configuração do cliente
-// -----------------------------------------------------------------------------
-
 /** Opções de configuração do cliente Charya, expostas a mobile/admin. */
 export interface CharyaClientOptions {
   /** Base URL da api (ex.: `https://api.charya.bet` ou `http://localhost:3000`). */
   baseUrl: string;
-  /**
-   * Headers estáticos ou resolvidos por request (ex.: `Authorization`).
-   * O token de auth (Better Auth) é injetado aqui pelo app consumidor.
-   */
+  /** Headers estáticos ou resolvidos por request (ex.: `Authorization`). */
   headers?: Config["headers"];
   /** Permite injetar um `fetch` custom (RN/retry/instrumentação). */
   fetch?: Config["fetch"];
 }
 
 /**
- * Cria uma INSTÂNCIA isolada do cliente fetch (não toca no singleton global).
- * Útil para testes ou múltiplos hosts. A maioria dos apps usa
- * {@link configureCharyaClient} para configurar o singleton que as funções
- * de SDK geradas consomem.
+ * Cria uma INSTÂNCIA isolada do cliente (testes ou múltiplos hosts). A maioria
+ * dos apps usa {@link configureCharyaClient} no singleton que o SDK consome.
  */
 export function createCharyaClient(options: CharyaClientOptions): ReturnType<typeof createClient> {
   return createClient(toConfig(options));
 }
 
 /**
- * Configura o cliente SINGLETON usado pelas funções de SDK geradas
- * (`src/generated`). Chamar uma vez no boot do app (mobile/admin):
+ * Configura o cliente SINGLETON usado pelas funções de SDK geradas. Chamar uma
+ * vez no boot do app (mobile/admin):
  *
  * ```ts
- * import { configureCharyaClient } from '@charya/contracts';
- *
  * configureCharyaClient({
  *   baseUrl: env.API_URL,
  *   headers: () => ({ Authorization: `Bearer ${getToken()}` }),
@@ -96,10 +57,6 @@ export function createCharyaClient(options: CharyaClientOptions): ReturnType<typ
  * ```
  */
 export function configureCharyaClient(options: CharyaClientOptions): void {
-  // O Hey API gera funções de SDK que, por padrão, usam este `client` singleton
-  // do client-fetch. Configurá-lo aqui é equivalente a configurar `./generated`.
-  // TODO: após `generate`, opcionalmente re-exportar o `client` de `./generated`
-  //       (é o mesmo singleton) para os apps importarem de um lugar só.
   client.setConfig(toConfig(options));
 }
 
@@ -112,4 +69,4 @@ function toConfig(options: CharyaClientOptions): Config {
   });
 }
 
-export type { Config as CharyaFetchConfig } from "@hey-api/client-fetch";
+export type { Config as CharyaFetchConfig } from "./generated/client";
