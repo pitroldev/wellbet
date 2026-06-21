@@ -8,9 +8,11 @@ import { createDb, type DbHandle } from "@/infra/db/client.js";
 import { Bet } from "@/modules/bet/domain/bet.entity.js";
 import { User } from "@/modules/identity/domain/user.entity.js";
 import { WeighIn } from "@/modules/weighin/domain/weighin.entity.js";
+import { CHECKLIST_FLAGS, Review } from "@/modules/review/domain/review.entity.js";
 import { DrizzleBetRepository } from "@/modules/bet/infra/drizzle-bet.repository.js";
 import { DrizzleUserRepository } from "@/modules/identity/infra/drizzle-user.repository.js";
 import { DrizzleWeighInRepository } from "@/modules/weighin/infra/drizzle-weighin.repository.js";
+import { DrizzleReviewRepository } from "@/modules/review/infra/drizzle-review.repository.js";
 
 const MIGRATIONS_DIR = join(process.cwd(), "src/infra/db/migrations");
 
@@ -20,6 +22,8 @@ const BET_ID = "22222222-2222-4222-8222-222222222222";
 const CHARGE_ID = "charge-int-1"; // stake_charge_id é texto (id do Stark Bank)
 const W0_ID = "33333333-3333-4333-8333-333333333333";
 const W1_ID = "44444444-4444-4444-8444-444444444444";
+const W2_ID = "55555555-5555-4555-8555-555555555555";
+const REVIEW_ID = "66666666-6666-4666-8666-666666666666";
 
 function weighinAt(
   id: string,
@@ -58,6 +62,7 @@ describe("Repositórios Drizzle (integração — Postgres real via Testcontaine
   let bets: DrizzleBetRepository;
   let users: DrizzleUserRepository;
   let weighins: DrizzleWeighInRepository;
+  let reviewRepo: DrizzleReviewRepository;
 
   beforeAll(async () => {
     container = await new PostgreSqlContainer("postgres:16-alpine").start();
@@ -66,6 +71,7 @@ describe("Repositórios Drizzle (integração — Postgres real via Testcontaine
     bets = new DrizzleBetRepository(handle);
     users = new DrizzleUserRepository(handle);
     weighins = new DrizzleWeighInRepository(handle);
+    reviewRepo = new DrizzleReviewRepository(handle);
   }, 120_000);
 
   afterAll(async () => {
@@ -171,5 +177,48 @@ describe("Repositórios Drizzle (integração — Postgres real via Testcontaine
   it("WeighIn: listByBet retorna as capturas em ordem cronológica", async () => {
     const list = await weighins.listByBet(BET_ID);
     expect(list.map((w) => w.id)).toEqual([W0_ID, W1_ID]);
+  });
+
+  it("ReviewRepository: listQueue retorna pesagens in_review com o nome do usuário (joins)", async () => {
+    await weighins.save(
+      WeighIn.create({
+        id: W2_ID,
+        userId: USER_ID,
+        betId: BET_ID,
+        challengeId: null,
+        kind: "final",
+        weightKg: 82,
+        videoObjectKey: "k.mp4",
+        status: "in_review",
+        lossPerWeekKg: 1.2,
+        capturedAt: new Date("2026-06-10T08:00:00.000Z"),
+      }),
+    );
+
+    const queue = await reviewRepo.listQueue({ limit: 50, offset: 0 });
+    const entry = queue.find((q) => q.weighinId === W2_ID);
+    expect(entry?.userName).toBe("Integração");
+    expect(entry?.kind).toBe("final");
+    expect(entry?.reviewId).toBeNull(); // left join: ainda sem veredito
+  });
+
+  it("ReviewRepository: save → findByWeighin round-trip (verdict + checklist JSONB)", async () => {
+    const flag = CHECKLIST_FLAGS[0];
+    await reviewRepo.save(
+      Review.create({
+        id: REVIEW_ID,
+        weighinId: W2_ID,
+        reviewerId: USER_ID,
+        verdict: "approved",
+        reason: "Confere.",
+        failedChecks: null,
+        checklist: { [flag]: "ok" },
+        decidedAt: new Date("2026-06-11T10:00:00.000Z"),
+      }),
+    );
+
+    const found = await reviewRepo.findByWeighin(W2_ID);
+    expect(found?.toJSON().verdict).toBe("approved");
+    expect(found?.toJSON().checklist).toEqual({ [flag]: "ok" });
   });
 });
