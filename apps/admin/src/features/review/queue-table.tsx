@@ -12,63 +12,54 @@ import {
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
+import { type ReviewQueueEntryDto } from "@charya/contracts";
 import { useReviewQueue } from "@/shared/api/review";
-import { Badge, Button, Input } from "@/shared/ui";
-import type { ReviewQueueItem } from "./types";
+import { Button, Input } from "@/shared/ui";
 
-function statusBadge(status: ReviewQueueItem["status"]): React.JSX.Element {
-  switch (status) {
-    case "APROVADO":
-      return <Badge variant="approved">Aprovado</Badge>;
-    case "PENDENTE":
-      return <Badge variant="pending">Pendente</Badge>;
-    case "REPROVADO":
-      return <Badge variant="rejected">Reprovado</Badge>;
-    default:
-      return <Badge>Aguardando</Badge>;
-  }
-}
+const KIND_LABEL: Record<ReviewQueueEntryDto["kind"], string> = {
+  baseline: "Inicial (T0)",
+  mid: "Meio (T1)",
+  final: "Final (T2)",
+};
 
-const columns: ColumnDef<ReviewQueueItem>[] = [
+const columns: ColumnDef<ReviewQueueEntryDto>[] = [
   {
     accessorKey: "userName",
     header: "Usuário",
+    cell: ({ getValue }) => getValue<string | null>() ?? "—",
   },
   {
-    accessorKey: "capture",
+    accessorKey: "kind",
     header: "Captura",
+    cell: ({ getValue }) => KIND_LABEL[getValue<ReviewQueueEntryDto["kind"]>()],
   },
   {
     accessorKey: "weightKg",
     header: "Peso (kg)",
-    cell: ({ getValue }) => (getValue<number>() ?? 0).toFixed(1),
+    cell: ({ getValue }) => getValue<number>().toFixed(1),
   },
   {
-    accessorKey: "sanityPassed",
-    header: "Sanidade",
-    cell: ({ getValue }) =>
-      getValue<boolean>() ? (
-        <Badge variant="approved">OK</Badge>
-      ) : (
-        // Regra dura de sanidade falhou (§6) — bloqueio automático.
-        <Badge variant="rejected">Bloqueado</Badge>
-      ),
+    accessorKey: "lossPerWeekKg",
+    header: "Perda/sem (kg)",
+    cell: ({ getValue }) => {
+      const v = getValue<number | null>();
+      return v == null ? "—" : v.toFixed(2);
+    },
   },
   {
-    accessorKey: "submittedAt",
-    header: "Enviado em",
+    accessorKey: "capturedAt",
+    header: "Capturado em",
     cell: ({ getValue }) => new Date(getValue<string>()).toLocaleString("pt-BR"),
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ getValue }) => statusBadge(getValue<ReviewQueueItem["status"]>()),
   },
   {
     id: "actions",
     header: "",
     cell: ({ row }) => (
-      <Button variant="outline" size="sm" render={<Link href={`/review/${row.original.id}`} />}>
+      <Button
+        variant="outline"
+        size="sm"
+        render={<Link href={`/review/${row.original.weighinId}`} />}
+      >
         Revisar
       </Button>
     ),

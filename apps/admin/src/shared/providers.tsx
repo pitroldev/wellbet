@@ -2,7 +2,12 @@
 
 import * as React from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { setupApiClient } from "@/shared/api/http";
 import { getQueryClient } from "@/lib/query-client";
+
+// Configura o cliente tipado de @charya/contracts no carregamento do módulo
+// (client boundary). Idempotente.
+setupApiClient();
 
 /**
  * Providers globais do app (Client boundary).

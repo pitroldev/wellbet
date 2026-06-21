@@ -7,8 +7,9 @@ import {
   type UseMutationResult,
   type UseQueryResult,
 } from "@tanstack/react-query";
+import { reviewControllerQueue, type ReviewQueueEntryDto } from "@charya/contracts";
 import { apiFetch } from "./http";
-import type { ReviewQueueItem, ReviewSession, VerdictSubmission } from "@/features/review/types";
+import type { ReviewSession, VerdictSubmission } from "@/features/review/types";
 
 /**
  * Hooks de TanStack Query da feature de revisão.
@@ -24,11 +25,13 @@ export const reviewKeys = {
   session: (id: string) => [...reviewKeys.all, "session", id] as const,
 };
 
-export function useReviewQueue(): UseQueryResult<ReviewQueueItem[]> {
+export function useReviewQueue(): UseQueryResult<ReviewQueueEntryDto[]> {
   return useQuery({
     queryKey: reviewKeys.queue(),
-    // TODO(contracts): substituir por getReviewQueue() de @charya/contracts.
-    queryFn: () => apiFetch<ReviewQueueItem[]>("/review/queue"),
+    queryFn: async () => {
+      const { data } = await reviewControllerQueue({ throwOnError: true });
+      return data;
+    },
   });
 }
 

@@ -20,9 +20,28 @@
 //
 // e reexportar as funções tipadas (getReviewQueue, postVerdict, ...).
 
+import { configureCharyaClient } from "@charya/contracts";
+
 import { env } from "@/shared/env";
 
 export const API_URL = env.NEXT_PUBLIC_API_URL;
+
+let clientConfigured = false;
+
+/**
+ * Configura o cliente tipado de `@charya/contracts` (o singleton que as funções
+ * de SDK geradas consomem). Idempotente. `credentials: "include"` envia o cookie
+ * de sessão do Better Auth. Chamar uma vez no boot (Providers).
+ */
+export function setupApiClient(): void {
+  if (clientConfigured) return;
+  clientConfigured = true;
+  configureCharyaClient({
+    baseUrl: API_URL,
+    fetch: (input: RequestInfo | URL, init?: RequestInit) =>
+      fetch(input, { ...init, credentials: "include" }),
+  });
+}
 
 /**
  * Fetch fino com defaults do admin (cookies de sessão + JSON).

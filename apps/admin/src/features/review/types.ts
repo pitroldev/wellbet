@@ -75,19 +75,8 @@ export type ChecklistItemKey = (typeof CHECKLIST_ITEMS)[number]["key"];
 /** Resultado por item: ok | reprova | n/a (frame faltando → tende a PENDENTE). */
 export type ItemResult = "ok" | "fail" | "na";
 
-/** Linha da fila de revisão. */
-export interface ReviewQueueItem {
-  id: string;
-  userId: string;
-  userName: string;
-  capture: CaptureKind;
-  /** Peso aferido nesta captura (kg). */
-  weightKg: number;
-  /** Resultado da regra dura de sanidade (§6): true = passou. */
-  sanityPassed: boolean;
-  submittedAt: string;
-  status: Verdict | "AGUARDANDO";
-}
+// A linha da fila de revisão (ReviewQueueEntryDto) vem de @charya/contracts —
+// gerada do OpenAPI da api, fonte única do contrato.
 
 /** Sessão de revisão completa (player + 3 vídeos para comparação). */
 export interface ReviewSession {

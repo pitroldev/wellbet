@@ -11,7 +11,6 @@ export {
   type CaptureKind,
   type ChecklistItemKey,
   type ItemResult,
-  type ReviewQueueItem,
   type ReviewSession,
   type VerdictSubmission,
 } from "./types";
