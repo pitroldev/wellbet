@@ -1,28 +1,33 @@
 /**
  * Tela de captura da pesagem.
  *
- * Orquestra: iniciar sessão (gera código dinâmico + URL pré-assinada R2) →
- * gravar take contínuo → enviar direto ao R2 com retry → registrar a pesagem
- * (backend aplica a regra dura de sanidade e enfileira a revisão humana).
+ * Orquestra: resolver a aposta ativa + o ponto de captura (T0/T1/T2) → declarar
+ * o peso → iniciar sessão (código dinâmico + URL pré-assinada R2) → gravar take
+ * contínuo → enviar ao R2 com retry → registrar a pesagem (o backend aplica a
+ * regra dura de sanidade e enfileira a revisão humana).
  *
- * SÓBRIA por design (Orçamento de performance): nada de dopamina aqui.
- *
- * O payload é VALIDADO com o schema Zod compartilhado (`CapturePayload`) antes
- * de enviar (§3 "Schemas Zod compartilhados validam ... payload antes de
- * enviar").
+ * SÓBRIA por design (Orçamento de performance): nada de dopamina aqui. O payload
+ * é validado no backend (SubmitWeighInDto); o vídeo é referenciado pela objectKey
+ * devolvida no start.
  */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 
-import { Button, Screen, Text } from "@/shared/ui";
-import { useStartWeighIn, useSubmitWeighIn, useUploadVideo } from "@/features/weighin/api";
+import { Button, Input, Screen, Text } from "@/shared/ui";
+import {
+  useActiveWeighInTarget,
+  useStartWeighIn,
+  useSubmitWeighIn,
+  useUploadVideo,
+} from "@/features/weighin/api";
 import { CameraCapture } from "@/features/weighin/camera/CameraCapture";
 import { useWeighInStore } from "@/features/weighin/model/store";
 import type { RecordedVideo } from "@/features/weighin/model/types";
 
 export default function WeighInCaptureScreen() {
   const router = useRouter();
+  const target = useActiveWeighInTarget();
 
   const phase = useWeighInStore((s) => s.phase);
   const challenge = useWeighInStore((s) => s.challenge);
@@ -35,24 +40,39 @@ export default function WeighInCaptureScreen() {
   const upload = useUploadVideo();
   const submit = useSubmitWeighIn();
 
-  // Inicia a sessão ao abrir a tela (busca o código dinâmico + URL de upload).
+  const [weight, setWeight] = useState("");
+  const [weightConfirmed, setWeightConfirmed] = useState(false);
+  const [weightError, setWeightError] = useState<string | null>(null);
+
+  // Inicia a sessão assim que sabemos a aposta + o ponto de captura.
   useEffect(() => {
     if (phase !== "idle") return;
+    if (target.status !== "ready") return;
+    const { betId, capturePoint: point } = target;
     start.mutate(
-      // TODO: derivar betId e o ponto de captura (T0/T1/T2) do estado da aposta.
-      { betId: "TODO-bet-id", capturePoint: "T0" },
+      { betId, capturePoint: point },
       {
-        onSuccess: (res) => begin("T0", res.challenge),
+        onSuccess: (res) => begin(point, res.challenge),
         onError: () => setError("Não foi possível iniciar a pesagem."),
       },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [target.status, phase]);
 
-  async function handleRecordingFinished(video: RecordedVideo) {
+  function confirmWeight(): void {
+    setWeightError(null);
+    const kg = Number(weight.replace(",", ".").trim());
+    if (!Number.isFinite(kg) || kg <= 0) {
+      setWeightError("Informe o peso que a balança mostra (kg).");
+      return;
+    }
+    setWeightConfirmed(true);
+  }
+
+  async function handleRecordingFinished(video: RecordedVideo): Promise<void> {
     setVideo(video);
     const session = start.data;
-    if (session == null || challenge == null) {
+    if (session == null || challenge == null || target.status !== "ready") {
       setError("Sessão inválida.");
       return;
     }
@@ -60,14 +80,11 @@ export default function WeighInCaptureScreen() {
       // Upload direto p/ R2 com retry (não toca o backend).
       await upload.mutateAsync({ video, uploadUrl: session.upload.url });
 
-      // Registra a pesagem (regra dura de sanidade + validacao do payload rodam
-      // no backend, via SubmitWeighInDto). O backend referencia o video pela
-      // objectKey que devolvemos do start.
+      // Registra a pesagem (regra dura + validação rodam no backend).
       await submit.mutateAsync({
-        betId: "TODO-bet-id",
+        betId: target.betId,
         capturePoint,
-        // TODO: capturar o peso lido pelo usuário no visor antes do submit.
-        weightKg: 0,
+        weightKg: Number(weight.replace(",", ".").trim()),
         nonce: challenge.nonce,
         videoObjectKey: session.upload.objectKey,
       });
@@ -77,14 +94,40 @@ export default function WeighInCaptureScreen() {
     }
   }
 
-  if (start.isPending || challenge == null) {
+  // --- destino da pesagem (antes de qualquer captura) ---
+  if (target.status === "loading") {
+    return <CenteredMessage heading="Carregando…" />;
+  }
+  if (target.status === "no-bet") {
     return (
       <Screen>
-        <View className="flex-1 items-center justify-center gap-3">
-          <Text variant="heading">Preparando a pesagem…</Text>
-          <Text variant="caption" className="text-center text-muted">
-            Gerando o código de verificação.
+        <View className="flex-1 items-center justify-center gap-4 px-6">
+          <Text variant="heading" className="text-center">
+            Nenhuma aposta ativa
           </Text>
+          <Text variant="caption" className="text-center text-muted">
+            Crie uma aposta e pague o stake para começar a pesar.
+          </Text>
+          <Link href="/bet/new" asChild>
+            <Button label="Criar aposta" />
+          </Link>
+        </View>
+      </Screen>
+    );
+  }
+  if (target.status === "done") {
+    return (
+      <Screen>
+        <View className="flex-1 items-center justify-center gap-4 px-6">
+          <Text variant="heading" className="text-center">
+            Pesagens concluídas
+          </Text>
+          <Text variant="caption" className="text-center text-muted">
+            Você já fez as 3 pesagens desta aposta. Aguarde o resultado.
+          </Text>
+          <Link href="/" asChild>
+            <Button label="Voltar ao início" />
+          </Link>
         </View>
       </Screen>
     );
@@ -103,14 +146,43 @@ export default function WeighInCaptureScreen() {
 
   if (upload.isPending || submit.isPending) {
     return (
+      <CenteredMessage
+        heading="Enviando o vídeo…"
+        caption="Mantemos tentando mesmo com a conexão instável."
+      />
+    );
+  }
+
+  // Gate de peso: o usuário DECLARA o peso antes de gravar (prova no vídeo).
+  if (!weightConfirmed) {
+    return (
       <Screen>
-        <View className="flex-1 items-center justify-center gap-3">
-          <Text variant="heading">Enviando o vídeo…</Text>
-          <Text variant="caption" className="text-center text-muted">
-            Mantemos tentando mesmo com a conexão instável.
-          </Text>
+        <View className="flex-1 gap-8 py-6">
+          <View className="gap-2">
+            <Text variant="title">Qual o seu peso?</Text>
+            <Text variant="body" className="text-muted">
+              Informe o peso que a balança mostra. Você vai prová-lo no vídeo a seguir.
+            </Text>
+          </View>
+          <Input
+            label="Peso (kg)"
+            value={weight}
+            onChangeText={setWeight}
+            placeholder="ex.: 82,5"
+            keyboardType="decimal-pad"
+            error={weightError ?? undefined}
+          />
+          <View className="mt-auto">
+            <Button label="Continuar para a gravação" onPress={confirmWeight} />
+          </View>
         </View>
       </Screen>
+    );
+  }
+
+  if (start.isPending || challenge == null) {
+    return (
+      <CenteredMessage heading="Preparando a pesagem…" caption="Gerando o código de verificação." />
     );
   }
 
@@ -120,5 +192,20 @@ export default function WeighInCaptureScreen() {
       onRecordingFinished={handleRecordingFinished}
       onError={setError}
     />
+  );
+}
+
+function CenteredMessage({ heading, caption }: { heading: string; caption?: string }) {
+  return (
+    <Screen>
+      <View className="flex-1 items-center justify-center gap-3">
+        <Text variant="heading">{heading}</Text>
+        {caption != null ? (
+          <Text variant="caption" className="text-center text-muted">
+            {caption}
+          </Text>
+        ) : null}
+      </View>
+    </Screen>
   );
 }
