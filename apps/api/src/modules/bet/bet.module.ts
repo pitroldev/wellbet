@@ -3,6 +3,7 @@ import { Module } from "@nestjs/common";
 import { IdentityModule } from "@/modules/identity/identity.module.js";
 import { WeighInModule } from "@/modules/weighin/weighin.module.js";
 import { BET_REPOSITORY } from "./application/bet.repository.port.js";
+import { ListBetsUseCase } from "./application/list-bets.use-case.js";
 import { PlaceBetUseCase } from "./application/place-bet.use-case.js";
 import { SettleBetUseCase } from "./application/settle-bet.use-case.js";
 import { SettlementWorker } from "./application/settlement.worker.js";
@@ -20,6 +21,7 @@ import { BetController } from "./http/bet.controller.js";
   controllers: [BetController],
   providers: [
     PlaceBetUseCase,
+    ListBetsUseCase,
     SettleBetUseCase,
     SettlementWorker,
     {

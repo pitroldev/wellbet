@@ -1,17 +1,19 @@
-import { Body, Controller, Post, Req, UseGuards, UseInterceptors } from "@nestjs/common";
-import { ApiHeader, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, Post, Req, UseGuards, UseInterceptors } from "@nestjs/common";
+import { ApiHeader, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { AuthGuard, type AuthenticatedRequest } from "@/shared/guards/auth.guard.js";
 import {
   Idempotent,
   IdempotencyInterceptor,
 } from "@/shared/idempotency/idempotency.interceptor.js";
+import { ListBetsUseCase } from "@/modules/bet/application/list-bets.use-case.js";
 import { PlaceBetUseCase } from "@/modules/bet/application/place-bet.use-case.js";
-import { BetResponseDto, PlaceBetDto } from "./bet.dto.js";
+import { BetResponseDto, BetSummaryDto, PlaceBetDto } from "./bet.dto.js";
 
 /**
  * Controller de apostas.
  *
+ *  GET  /bets — lista as apostas do usuário autenticado.
  *  POST /bets — cria uma aposta. ESCRITA FINANCEIRA → idempotente:
  *  exige header `Idempotency-Key` (IdempotencyInterceptor + @Idempotent).
  *
@@ -22,7 +24,17 @@ import { BetResponseDto, PlaceBetDto } from "./bet.dto.js";
 @Controller("bets")
 @UseGuards(AuthGuard)
 export class BetController {
-  constructor(private readonly placeBet: PlaceBetUseCase) {}
+  constructor(
+    private readonly placeBet: PlaceBetUseCase,
+    private readonly listBets: ListBetsUseCase,
+  ) {}
+
+  @Get()
+  @ApiOperation({ summary: "Lista as apostas do usuário autenticado." })
+  @ApiOkResponse({ type: [BetSummaryDto] })
+  async list(@Req() req: AuthenticatedRequest): Promise<BetSummaryDto[]> {
+    return this.listBets.execute(req.user!.id);
+  }
 
   @Post()
   @UseInterceptors(IdempotencyInterceptor)
