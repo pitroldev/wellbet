@@ -45,6 +45,11 @@ export class User {
     return this.props.pixKey ?? null;
   }
 
+  /** Define os dados de pagamento (CPF/CNPJ + chave Pix). */
+  setPaymentProfile(taxId: string, pixKey: string): void {
+    this.props = { ...this.props, taxId, pixKey };
+  }
+
   isReviewer(): boolean {
     return this.props.role === "reviewer" || this.props.role === "admin";
   }

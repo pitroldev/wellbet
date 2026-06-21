@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 
 import { GetOrCreateUserUseCase } from "./application/get-or-create-user.use-case.js";
+import { UpdateMyProfileUseCase } from "./application/update-my-profile.use-case.js";
 import { USER_REPOSITORY } from "./application/user.repository.port.js";
 import { DrizzleUserRepository } from "./infra/drizzle-user.repository.js";
 import { IdentityController } from "./http/identity.controller.js";
@@ -12,6 +13,7 @@ import { IdentityController } from "./http/identity.controller.js";
   controllers: [IdentityController],
   providers: [
     GetOrCreateUserUseCase,
+    UpdateMyProfileUseCase,
     {
       provide: USER_REPOSITORY,
       useClass: DrizzleUserRepository,
