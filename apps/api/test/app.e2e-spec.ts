@@ -44,8 +44,13 @@ const fakeAuth = {
   // toNodeHandler(this.auth) é montado em /api/auth/* (não exercitado aqui).
   handler: (): Response => new Response(null, { status: 404 }),
   api: {
-    getSession: ({ headers }: { headers: Headers }) =>
-      Promise.resolve(headers.get("x-test-auth") ? { user: TEST_USER } : null),
+    // Sessão presente sse há `x-test-auth`; o papel vem de `x-test-role`
+    // (default `user`) — para exercitar o RolesGuard.
+    getSession: ({ headers }: { headers: Headers }) => {
+      if (!headers.get("x-test-auth")) return Promise.resolve(null);
+      const role = (headers.get("x-test-role") ?? "user") as "user" | "reviewer" | "admin";
+      return Promise.resolve({ user: { ...TEST_USER, role } });
+    },
   },
 };
 
@@ -239,5 +244,27 @@ describe("App (e2e)", () => {
       .send({ event: {} });
     expect(res.status).toBe(401);
     expect(savedBets).toHaveLength(0);
+  });
+
+  it("GET /api/reviews/queue como usuário comum → 403 (RolesGuard)", async () => {
+    const res = await request(server()).get("/api/reviews/queue").set("x-test-auth", TEST_USER.id);
+    expect(res.status).toBe(403);
+  });
+
+  it("POST /api/reviews/verdict como usuário comum → 403 (papel insuficiente)", async () => {
+    const res = await request(server())
+      .post("/api/reviews/verdict")
+      .set("x-test-auth", TEST_USER.id)
+      .send({ weighinId: "w-1", verdict: "APROVADO" });
+    expect(res.status).toBe(403);
+  });
+
+  it("POST /api/reviews/verdict como reviewer + body inválido → 400 (passou o RolesGuard)", async () => {
+    const res = await request(server())
+      .post("/api/reviews/verdict")
+      .set("x-test-auth", TEST_USER.id)
+      .set("x-test-role", "reviewer")
+      .send({});
+    expect(res.status).toBe(400);
   });
 });
