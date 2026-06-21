@@ -58,6 +58,19 @@ export class StarkBankPaymentAdapter implements PaymentPort, OnModuleInit {
 
   async createPixCharge(input: CreatePixChargeInput): Promise<PixCharge> {
     const user = this.requireProject();
+
+    // Idempotência: o Invoice do Stark Bank NÃO tem `externalId` (ao contrário
+    // do Transfer), então deduplicamos por TAG (= externalId). Se já existe uma
+    // cobrança viva para esta aposta, reaproveita em vez de criar duplicata
+    // (retry-safe — sem cobrar o usuário duas vezes).
+    const existing = await invoice.query({ tags: [input.externalId], user });
+    const reusable = existing.find(
+      (i) => i.status === "created" || i.status === "registered" || i.status === "paid",
+    );
+    if (reusable) {
+      return this.toPixCharge(reusable);
+    }
+
     const expiration = input.expiresInSeconds ?? this.env.STARKBANK_INVOICE_EXPIRATION_SECONDS;
 
     // `due = agora` + `expiration` (segundos) ⇒ janela curta de pagamento do
@@ -120,7 +133,7 @@ export class StarkBankPaymentAdapter implements PaymentPort, OnModuleInit {
           bankCode: key.ispb,
           branchCode: key.branchCode,
           accountNumber: key.accountNumber,
-          accountType: key.accountType,
+          accountType: mapAccountType(key.accountType),
           externalId: input.externalId,
           description: input.description,
           tags: [input.externalId],
@@ -269,6 +282,15 @@ function transferEventKind(type: string | undefined): PaymentEventKind {
     default:
       return "unknown";
   }
+}
+
+/**
+ * O DICT (`dictKey`) retorna `accountType` como `'saving'` (singular), mas o
+ * `Transfer` espera `'savings'` (plural). Normaliza para o vocabulário do
+ * Transfer; os demais valores ('checking'/'salary'/'payment') passam direto.
+ */
+function mapAccountType(accountType: string): string {
+  return accountType === "saving" ? "savings" : accountType;
 }
 
 /** Remove formatação de CPF/CNPJ para comparar só os dígitos. */
