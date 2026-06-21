@@ -37,11 +37,29 @@ export type SubmitWeighInDto = {
     videoObjectKey: string;
 };
 
+export type ReviewQueueEntryDto = {
+    weighinId: string;
+    userId: string;
+    userName: string | null;
+    kind: 'baseline' | 'mid' | 'final';
+    weightKg: number;
+    lossPerWeekKg: number | null;
+    capturedAt: string;
+    reviewId: string | null;
+    videoUrl: string;
+};
+
 export type SubmitVerdictDto = {
     weighinId: string;
     verdict: 'approved' | 'pending' | 'rejected';
     reason?: string | null;
     failedChecks?: Array<'freshness' | 'continuous_video' | 'scale_zero' | 'floor_scene' | 'no_body_trick' | 'display_integrity' | 'same_person' | 'plausibility'> | null;
+};
+
+export type VerdictResponseDto = {
+    reviewId: string;
+    weighinId: string;
+    verdict: 'approved' | 'pending' | 'rejected';
 };
 
 export type BetSummaryDto = {
@@ -153,8 +171,10 @@ export type ReviewControllerQueueData = {
 };
 
 export type ReviewControllerQueueResponses = {
-    200: unknown;
+    200: Array<ReviewQueueEntryDto>;
 };
+
+export type ReviewControllerQueueResponse = ReviewControllerQueueResponses[keyof ReviewControllerQueueResponses];
 
 export type ReviewControllerVerdictData = {
     body: SubmitVerdictDto;
@@ -164,8 +184,10 @@ export type ReviewControllerVerdictData = {
 };
 
 export type ReviewControllerVerdictResponses = {
-    201: unknown;
+    200: VerdictResponseDto;
 };
+
+export type ReviewControllerVerdictResponse = ReviewControllerVerdictResponses[keyof ReviewControllerVerdictResponses];
 
 export type BetControllerListData = {
     body?: never;

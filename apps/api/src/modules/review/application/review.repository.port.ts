@@ -2,13 +2,14 @@
  * Port do repositório de revisões (camada application).
  */
 import type { Review } from "@/modules/review/domain/review.entity.js";
+import type { WeighInKind } from "@/modules/weighin/domain/weighin.entity.js";
 
 export interface ReviewQueueItem {
   readonly weighinId: string;
   readonly userId: string;
   /** Nome do usuário que enviou a pesagem (o revisor precisa saber QUEM). */
   readonly userName: string | null;
-  readonly kind: string;
+  readonly kind: WeighInKind;
   readonly weightKg: number;
   readonly videoObjectKey: string;
   readonly lossPerWeekKg: number | null;

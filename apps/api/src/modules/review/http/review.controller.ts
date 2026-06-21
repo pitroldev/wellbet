@@ -1,12 +1,17 @@
 import { Body, Controller, Get, Post, Query, Req, UseGuards } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { AuthGuard, type AuthenticatedRequest } from "@/shared/guards/auth.guard.js";
 import { Roles, RolesGuard } from "@/shared/guards/roles.guard.js";
 import { ListReviewQueueUseCase } from "@/modules/review/application/list-review-queue.use-case.js";
 import { SubmitVerdictUseCase } from "@/modules/review/application/submit-verdict.use-case.js";
 import type { ChecklistFlag } from "@/modules/review/domain/review.entity.js";
-import { ListReviewQueueDto, SubmitVerdictDto, VerdictResponseDto } from "./review.dto.js";
+import {
+  ListReviewQueueDto,
+  ReviewQueueEntryDto,
+  SubmitVerdictDto,
+  VerdictResponseDto,
+} from "./review.dto.js";
 
 /**
  * Controller de revisão (console interno).
@@ -28,12 +33,14 @@ export class ReviewController {
 
   @Get("queue")
   @ApiOperation({ summary: "Fila de revisão humana (pesagens in_review)." })
-  async queue(@Query() dto: ListReviewQueueDto) {
+  @ApiOkResponse({ type: [ReviewQueueEntryDto] })
+  async queue(@Query() dto: ListReviewQueueDto): Promise<ReviewQueueEntryDto[]> {
     return this.listQueue.execute({ limit: dto.limit, offset: dto.offset });
   }
 
   @Post("verdict")
   @ApiOperation({ summary: "Registra o veredito da revisão humana." })
+  @ApiOkResponse({ type: VerdictResponseDto })
   async verdict(
     @Req() req: AuthenticatedRequest,
     @Body() dto: SubmitVerdictDto,

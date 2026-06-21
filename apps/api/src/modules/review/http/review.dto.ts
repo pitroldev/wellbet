@@ -38,3 +38,18 @@ export const VerdictResponseSchema = z.object({
   verdict: z.enum(["approved", "pending", "rejected"]),
 });
 export class VerdictResponseDto extends createZodDto(VerdictResponseSchema) {}
+
+/** Item da fila de revisão (resposta de GET /reviews/queue). */
+export const ReviewQueueEntrySchema = z.object({
+  weighinId: z.string(),
+  userId: z.string(),
+  userName: z.string().nullable(),
+  kind: z.enum(["baseline", "mid", "final"]),
+  weightKg: z.number(),
+  lossPerWeekKg: z.number().nullable(),
+  capturedAt: z.iso.datetime(),
+  reviewId: z.string().nullable(),
+  /** URL pré-assinada do vídeo (o revisor reproduz). */
+  videoUrl: z.string(),
+});
+export class ReviewQueueEntryDto extends createZodDto(ReviewQueueEntrySchema) {}

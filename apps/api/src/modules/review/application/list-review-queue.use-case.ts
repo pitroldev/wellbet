@@ -1,18 +1,24 @@
 import { Inject, Injectable } from "@nestjs/common";
 
 import { STORAGE, type StoragePort } from "@/infra/storage/storage.port.js";
-import {
-  REVIEW_REPOSITORY,
-  type ReviewQueueItem,
-  type ReviewRepositoryPort,
-} from "./review.repository.port.js";
+import type { WeighInKind } from "@/modules/weighin/domain/weighin.entity.js";
+import { REVIEW_REPOSITORY, type ReviewRepositoryPort } from "./review.repository.port.js";
 
 export interface ListReviewQueueCommand {
   readonly limit?: number;
   readonly offset?: number;
 }
 
-export interface ReviewQueueEntry extends ReviewQueueItem {
+/** Item da fila como o console de revisão consome (contrato HTTP). */
+export interface ReviewQueueEntry {
+  readonly weighinId: string;
+  readonly userId: string;
+  readonly userName: string | null;
+  readonly kind: WeighInKind;
+  readonly weightKg: number;
+  readonly lossPerWeekKg: number | null;
+  readonly capturedAt: string;
+  readonly reviewId: string | null;
   /** URL pré-assinada para o revisor assistir o vídeo. */
   readonly videoUrl: string;
 }
@@ -20,8 +26,8 @@ export interface ReviewQueueEntry extends ReviewQueueItem {
 /**
  * ListReviewQueueUseCase — fila única de revisão humana (doc §5/§8).
  *
- * Lista as pesagens `in_review` e anexa a URL pré-assinada de download do
- * vídeo (StoragePort) para o console de revisão reproduzir.
+ * Lista as pesagens `in_review` e anexa a URL pré-assinada de download do vídeo
+ * (StoragePort). A `videoObjectKey` interna NÃO vai para o cliente — só a URL.
  */
 @Injectable()
 export class ListReviewQueueUseCase {
@@ -39,10 +45,18 @@ export class ListReviewQueueUseCase {
 
     return Promise.all(
       items.map(async (item) => {
-        const presigned = await this.storage.presignDownload({
-          key: item.videoObjectKey,
-        });
-        return { ...item, videoUrl: presigned.url };
+        const presigned = await this.storage.presignDownload({ key: item.videoObjectKey });
+        return {
+          weighinId: item.weighinId,
+          userId: item.userId,
+          userName: item.userName,
+          kind: item.kind,
+          weightKg: item.weightKg,
+          lossPerWeekKg: item.lossPerWeekKg,
+          capturedAt: item.capturedAt.toISOString(),
+          reviewId: item.reviewId ?? null,
+          videoUrl: presigned.url,
+        };
       }),
     );
   }

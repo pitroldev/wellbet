@@ -197,7 +197,17 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReviewQueueEntryDto"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Fila de revisão humana (pesagens in_review).",
@@ -221,8 +231,15 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerdictResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Registra o veredito da revisão humana.",
@@ -469,6 +486,59 @@
           "videoObjectKey"
         ]
       },
+      "ReviewQueueEntryDto": {
+        "type": "object",
+        "properties": {
+          "weighinId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "baseline",
+              "mid",
+              "final"
+            ]
+          },
+          "weightKg": {
+            "type": "number"
+          },
+          "lossPerWeekKg": {
+            "type": "number",
+            "nullable": true
+          },
+          "capturedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "reviewId": {
+            "type": "string",
+            "nullable": true
+          },
+          "videoUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "weighinId",
+          "userId",
+          "userName",
+          "kind",
+          "weightKg",
+          "lossPerWeekKg",
+          "capturedAt",
+          "reviewId",
+          "videoUrl"
+        ]
+      },
       "SubmitVerdictDto": {
         "type": "object",
         "properties": {
@@ -509,6 +579,30 @@
           }
         },
         "required": [
+          "weighinId",
+          "verdict"
+        ]
+      },
+      "VerdictResponseDto": {
+        "type": "object",
+        "properties": {
+          "reviewId": {
+            "type": "string"
+          },
+          "weighinId": {
+            "type": "string"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "pending",
+              "rejected"
+            ]
+          }
+        },
+        "required": [
+          "reviewId",
           "weighinId",
           "verdict"
         ]
