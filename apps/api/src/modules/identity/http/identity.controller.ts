@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Put, Req, UseGuards } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
-import { AuthGuard, type AuthenticatedRequest } from "../../../shared/guards/auth.guard.js";
-import { GetOrCreateUserUseCase } from "../application/get-or-create-user.use-case.js";
-import { UpdateMyProfileUseCase } from "../application/update-my-profile.use-case.js";
-import type { User } from "../domain/user.entity.js";
+import { AuthGuard, type AuthenticatedRequest } from "@/shared/guards/auth.guard.js";
+import { GetOrCreateUserUseCase } from "@/modules/identity/application/get-or-create-user.use-case.js";
+import { UpdateMyProfileUseCase } from "@/modules/identity/application/update-my-profile.use-case.js";
+import type { User } from "@/modules/identity/domain/user.entity.js";
 import { MeResponseDto, UpdateProfileDto } from "./identity.dto.js";
 
 /**

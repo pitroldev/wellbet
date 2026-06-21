@@ -2,7 +2,7 @@ import { trace } from "@opentelemetry/api";
 import { Module } from "@nestjs/common";
 import { LoggerModule } from "nestjs-pino";
 
-import { env } from "../config/env.js";
+import { env } from "@/config/env.js";
 
 /**
  * Módulo de observabilidade.

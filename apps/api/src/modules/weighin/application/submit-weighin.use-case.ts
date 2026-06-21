@@ -2,11 +2,11 @@ import { randomUUID } from "node:crypto";
 
 import { Inject, Injectable } from "@nestjs/common";
 
-import { ENV, type Env } from "../../../config/config.module.js";
-import { WeightImplausibleError } from "../../../shared/errors.js";
-import { QUEUE, QueueName, type QueuePort } from "../../../infra/queue/queue.port.js";
-import { checkSanity } from "../domain/sanity.js";
-import { WeighIn, type WeighInKind } from "../domain/weighin.entity.js";
+import { ENV, type Env } from "@/config/config.module.js";
+import { WeightImplausibleError } from "@/shared/errors.js";
+import { QUEUE, QueueName, type QueuePort } from "@/infra/queue/queue.port.js";
+import { checkSanity } from "@/modules/weighin/domain/sanity.js";
+import { WeighIn, type WeighInKind } from "@/modules/weighin/domain/weighin.entity.js";
 import { WEIGHIN_REPOSITORY, type WeighInRepositoryPort } from "./weighin.repository.port.js";
 
 export interface SubmitWeighInCommand {

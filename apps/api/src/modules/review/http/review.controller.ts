@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
-import { AuthGuard, type AuthenticatedRequest } from "../../../shared/guards/auth.guard.js";
-import { Roles, RolesGuard } from "../../../shared/guards/roles.guard.js";
-import { ListReviewQueueUseCase } from "../application/list-review-queue.use-case.js";
-import { SubmitVerdictUseCase } from "../application/submit-verdict.use-case.js";
-import type { ChecklistFlag } from "../domain/review.entity.js";
+import { AuthGuard, type AuthenticatedRequest } from "@/shared/guards/auth.guard.js";
+import { Roles, RolesGuard } from "@/shared/guards/roles.guard.js";
+import { ListReviewQueueUseCase } from "@/modules/review/application/list-review-queue.use-case.js";
+import { SubmitVerdictUseCase } from "@/modules/review/application/submit-verdict.use-case.js";
+import type { ChecklistFlag } from "@/modules/review/domain/review.entity.js";
 import { ListReviewQueueDto, SubmitVerdictDto, VerdictResponseDto } from "./review.dto.js";
 
 /**

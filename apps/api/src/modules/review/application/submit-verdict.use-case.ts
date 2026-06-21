@@ -2,13 +2,13 @@ import { randomUUID } from "node:crypto";
 
 import { Inject, Injectable } from "@nestjs/common";
 
-import { ConflictError, ErrorCode, NotFoundError } from "../../../shared/errors.js";
-import { QUEUE, QueueName, type QueuePort } from "../../../infra/queue/queue.port.js";
+import { ConflictError, ErrorCode, NotFoundError } from "@/shared/errors.js";
+import { QUEUE, QueueName, type QueuePort } from "@/infra/queue/queue.port.js";
 import {
   WEIGHIN_REPOSITORY,
   type WeighInRepositoryPort,
-} from "../../weighin/application/weighin.repository.port.js";
-import { type ChecklistFlag, Review, type Verdict } from "../domain/review.entity.js";
+} from "@/modules/weighin/application/weighin.repository.port.js";
+import { type ChecklistFlag, Review, type Verdict } from "@/modules/review/domain/review.entity.js";
 import { REVIEW_REPOSITORY, type ReviewRepositoryPort } from "./review.repository.port.js";
 
 export interface SubmitVerdictCommand {

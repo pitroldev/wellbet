@@ -3,8 +3,8 @@ import { ApiExcludeEndpoint } from "@nestjs/swagger";
 import { SkipThrottle } from "@nestjs/throttler";
 import type { Request } from "express";
 
-import { PAYMENT, type PaymentPort } from "../../infra/payment/payment.port.js";
-import { Public } from "../../shared/guards/auth.guard.js";
+import { PAYMENT, type PaymentPort } from "@/infra/payment/payment.port.js";
+import { Public } from "@/shared/guards/auth.guard.js";
 import { ProcessPaymentEventUseCase } from "./process-payment-event.use-case.js";
 
 /**

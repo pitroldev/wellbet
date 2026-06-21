@@ -2,7 +2,7 @@
  * Port do repositório de desafios (camada application).
  * Interface aqui; adapter Drizzle na infra.
  */
-import type { Challenge } from "../domain/challenge.entity.js";
+import type { Challenge } from "@/modules/challenge/domain/challenge.entity.js";
 
 export interface ChallengeRepositoryPort {
   save(challenge: Challenge): Promise<void>;

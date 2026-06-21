@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 
-import { BetModule } from "../bet/bet.module.js";
+import { BetModule } from "@/modules/bet/bet.module.js";
 import { PaymentWebhookController } from "./payment-webhook.controller.js";
 import { ProcessPaymentEventUseCase } from "./process-payment-event.use-case.js";
 

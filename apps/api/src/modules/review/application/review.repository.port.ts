@@ -1,7 +1,7 @@
 /**
  * Port do repositório de revisões (camada application).
  */
-import type { Review } from "../domain/review.entity.js";
+import type { Review } from "@/modules/review/domain/review.entity.js";
 
 export interface ReviewQueueItem {
   readonly weighinId: string;

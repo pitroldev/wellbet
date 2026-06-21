@@ -13,7 +13,7 @@ import type { Request } from "express";
 import { type Observable, of } from "rxjs";
 import { tap } from "rxjs/operators";
 
-import { ConflictError, ErrorCode, ValidationError } from "../errors.js";
+import { ConflictError, ErrorCode, ValidationError } from "@/shared/errors.js";
 import { IDEMPOTENCY_STORE, type IdempotencyStorePort } from "./idempotency.port.js";
 
 export const IDEMPOTENT_KEY = "charya:idempotent";

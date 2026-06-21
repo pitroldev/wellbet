@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 
-import { WeighInModule } from "../weighin/weighin.module.js";
+import { WeighInModule } from "@/modules/weighin/weighin.module.js";
 import { ListReviewQueueUseCase } from "./application/list-review-queue.use-case.js";
 import { REVIEW_REPOSITORY } from "./application/review.repository.port.js";
 import { SubmitVerdictUseCase } from "./application/submit-verdict.use-case.js";

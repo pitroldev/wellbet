@@ -1,12 +1,12 @@
 import { Body, Controller, Post, Req, UseGuards, UseInterceptors } from "@nestjs/common";
 import { ApiHeader, ApiOperation, ApiTags } from "@nestjs/swagger";
 
-import { AuthGuard, type AuthenticatedRequest } from "../../../shared/guards/auth.guard.js";
+import { AuthGuard, type AuthenticatedRequest } from "@/shared/guards/auth.guard.js";
 import {
   Idempotent,
   IdempotencyInterceptor,
-} from "../../../shared/idempotency/idempotency.interceptor.js";
-import { PlaceBetUseCase } from "../application/place-bet.use-case.js";
+} from "@/shared/idempotency/idempotency.interceptor.js";
+import { PlaceBetUseCase } from "@/modules/bet/application/place-bet.use-case.js";
 import { BetResponseDto, PlaceBetDto } from "./bet.dto.js";
 
 /**

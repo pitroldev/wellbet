@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 
-import { ChallengeModule } from "../challenge/challenge.module.js";
+import { ChallengeModule } from "@/modules/challenge/challenge.module.js";
 import { IssueChallengeUseCase } from "./application/issue-challenge.use-case.js";
 import { SubmitWeighInUseCase } from "./application/submit-weighin.use-case.js";
 import { WEIGHIN_REPOSITORY } from "./application/weighin.repository.port.js";

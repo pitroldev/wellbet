@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import {
   type IdempotencyRecord,
   type IdempotencyStorePort,
-} from "../../shared/idempotency/idempotency.port.js";
+} from "@/shared/idempotency/idempotency.port.js";
 import { DATABASE, type DbHandle } from "./client.js";
 import { idempotencyKeys } from "./schema.js";
 

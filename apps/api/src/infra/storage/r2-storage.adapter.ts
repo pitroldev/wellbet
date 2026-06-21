@@ -2,7 +2,7 @@ import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Inject, Injectable } from "@nestjs/common";
 
-import { ENV, type Env } from "../../config/config.module.js";
+import { ENV, type Env } from "@/config/config.module.js";
 import {
   type PresignDownloadInput,
   type PresignedUrl,

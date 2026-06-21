@@ -2,9 +2,9 @@ import { randomBytes, randomInt } from "node:crypto";
 
 import { Inject, Injectable } from "@nestjs/common";
 
-import { ENV, type Env } from "../../../config/config.module.js";
-import { Challenge } from "../domain/challenge.entity.js";
-import { generateCode, type RandomSource } from "../domain/code-generator.js";
+import { ENV, type Env } from "@/config/config.module.js";
+import { Challenge } from "@/modules/challenge/domain/challenge.entity.js";
+import { generateCode, type RandomSource } from "@/modules/challenge/domain/code-generator.js";
 import { CHALLENGE_REPOSITORY, type ChallengeRepositoryPort } from "./challenge.repository.port.js";
 
 export interface IssueChallengeCommand {

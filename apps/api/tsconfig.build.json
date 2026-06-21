@@ -5,6 +5,17 @@
     "noEmit": false,
     "rootDir": "./src",
     "outDir": "./dist",
+    // Declarados aqui também (não só herdados): o tsc-alias não resolve
+    // baseUrl/paths via `extends`, e precisa deles para reescrever os aliases
+    // @/ no dist para caminhos relativos resolvíveis pelo Node em runtime.
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    // Buildinfo DENTRO do dist: o `deleteOutDir: true` (nest-cli) o apaga junto,
+    // evitando que o build incremental pule o emit após o dist ser limpo
+    // (senão o dist sai vazio e o tsc-alias não tem o que reescrever).
+    "tsBuildInfoFile": "./dist/tsconfig.build.tsbuildinfo",
     "declaration": false,
     "removeComments": true,
     // Specs/e2e podem ter vars não usadas em fixtures; não bloquear o build.

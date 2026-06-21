@@ -4,7 +4,7 @@
  * Interface na application, adapter Drizzle na infra (§2 do doc). O use-case
  * depende SÓ deste contrato — trocar a persistência não muda o use-case.
  */
-import type { WeighIn, WeighInKind } from "../domain/weighin.entity.js";
+import type { WeighIn, WeighInKind } from "@/modules/weighin/domain/weighin.entity.js";
 
 export interface WeighInRepositoryPort {
   save(weighin: WeighIn): Promise<void>;

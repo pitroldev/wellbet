@@ -1,8 +1,8 @@
 import { Inject, Injectable, Logger, type OnModuleInit } from "@nestjs/common";
 import { dictKey, event, Invoice, invoice, Project, Transfer, transfer } from "starkbank";
 
-import { ENV, type Env } from "../../config/config.module.js";
-import { ValidationError } from "../../shared/errors.js";
+import { ENV, type Env } from "@/config/config.module.js";
+import { ValidationError } from "@/shared/errors.js";
 import type {
   CreatePayoutInput,
   CreatePixChargeInput,

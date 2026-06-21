@@ -2,10 +2,10 @@ import { randomUUID } from "node:crypto";
 
 import { Inject, Injectable } from "@nestjs/common";
 
-import { ENV, type Env } from "../../../config/config.module.js";
-import { STORAGE, type StoragePort } from "../../../infra/storage/storage.port.js";
-import { IssueChallengeUseCase as IssueChallengeCodeUseCase } from "../../challenge/application/issue-challenge.use-case.js";
-import type { WeighInKind } from "../domain/weighin.entity.js";
+import { ENV, type Env } from "@/config/config.module.js";
+import { STORAGE, type StoragePort } from "@/infra/storage/storage.port.js";
+import { IssueChallengeUseCase as IssueChallengeCodeUseCase } from "@/modules/challenge/application/issue-challenge.use-case.js";
+import type { WeighInKind } from "@/modules/weighin/domain/weighin.entity.js";
 
 export interface IssueWeighInChallengeCommand {
   readonly userId: string;

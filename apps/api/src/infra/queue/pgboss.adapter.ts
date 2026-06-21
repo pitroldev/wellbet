@@ -1,7 +1,7 @@
 import { Inject, Injectable, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common";
 import { PgBoss, type Job } from "pg-boss";
 
-import { ENV, type Env } from "../../config/config.module.js";
+import { ENV, type Env } from "@/config/config.module.js";
 import { type JobHandler, type PublishOptions, type QueuePort } from "./queue.port.js";
 
 /**

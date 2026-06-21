@@ -1,10 +1,10 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { and, eq, isNull } from "drizzle-orm";
 
-import { DATABASE, type DbHandle } from "../../../infra/db/client.js";
-import { challenges } from "../../../infra/db/schema.js";
-import { Challenge, type Gesture } from "../domain/challenge.entity.js";
-import type { ChallengeRepositoryPort } from "../application/challenge.repository.port.js";
+import { DATABASE, type DbHandle } from "@/infra/db/client.js";
+import { challenges } from "@/infra/db/schema.js";
+import { Challenge, type Gesture } from "@/modules/challenge/domain/challenge.entity.js";
+import type { ChallengeRepositoryPort } from "@/modules/challenge/application/challenge.repository.port.js";
 
 /** Adapter Drizzle/Postgres do ChallengeRepositoryPort. */
 @Injectable()

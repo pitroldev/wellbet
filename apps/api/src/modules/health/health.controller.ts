@@ -2,7 +2,7 @@ import { Controller, Get } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { SkipThrottle } from "@nestjs/throttler";
 
-import { Public } from "../../shared/guards/auth.guard.js";
+import { Public } from "@/shared/guards/auth.guard.js";
 
 /**
  * Liveness/readiness mínimo.

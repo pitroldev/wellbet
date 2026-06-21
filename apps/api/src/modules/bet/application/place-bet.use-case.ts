@@ -2,14 +2,14 @@ import { randomUUID } from "node:crypto";
 
 import { Inject, Injectable } from "@nestjs/common";
 
-import { PAYMENT, type PaymentPort } from "../../../infra/payment/payment.port.js";
-import { NotFoundError, ValidationError } from "../../../shared/errors.js";
-import { decimalToCents } from "../../../shared/money.js";
+import { PAYMENT, type PaymentPort } from "@/infra/payment/payment.port.js";
+import { NotFoundError, ValidationError } from "@/shared/errors.js";
+import { decimalToCents } from "@/shared/money.js";
 import {
   USER_REPOSITORY,
   type UserRepositoryPort,
-} from "../../identity/application/user.repository.port.js";
-import { Bet } from "../domain/bet.entity.js";
+} from "@/modules/identity/application/user.repository.port.js";
+import { Bet } from "@/modules/bet/domain/bet.entity.js";
 import { BET_REPOSITORY, type BetRepositoryPort } from "./bet.repository.port.js";
 
 export interface PlaceBetCommand {

@@ -1,10 +1,10 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { desc, eq } from "drizzle-orm";
 
-import { DATABASE, type DbHandle } from "../../../infra/db/client.js";
-import { bets } from "../../../infra/db/schema.js";
-import { Bet } from "../domain/bet.entity.js";
-import type { BetRepositoryPort } from "../application/bet.repository.port.js";
+import { DATABASE, type DbHandle } from "@/infra/db/client.js";
+import { bets } from "@/infra/db/schema.js";
+import { Bet } from "@/modules/bet/domain/bet.entity.js";
+import type { BetRepositoryPort } from "@/modules/bet/application/bet.repository.port.js";
 
 /** Adapter Drizzle/Postgres do BetRepositoryPort. */
 @Injectable()

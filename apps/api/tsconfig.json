@@ -17,6 +17,9 @@
     "isolatedModules": false,
     "moduleDetection": "auto",
     "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "sourceMap": true,
     "incremental": true,
     "skipLibCheck": true,

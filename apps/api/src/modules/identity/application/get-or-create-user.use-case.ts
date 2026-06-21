@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 
 import { Inject, Injectable } from "@nestjs/common";
 
-import { User } from "../domain/user.entity.js";
+import { User } from "@/modules/identity/domain/user.entity.js";
 import { USER_REPOSITORY, type UserRepositoryPort } from "./user.repository.port.js";
 
 export interface GetOrCreateUserCommand {

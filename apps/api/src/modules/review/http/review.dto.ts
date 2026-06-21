@@ -1,7 +1,7 @@
 import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
 
-import { CHECKLIST_FLAGS } from "../domain/review.entity.js";
+import { CHECKLIST_FLAGS } from "@/modules/review/domain/review.entity.js";
 
 /** Flags do checklist do revisor (doc de Validação §5). */
 const checklistFlag = z.enum(CHECKLIST_FLAGS as unknown as [string, ...string[]]);

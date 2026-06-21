@@ -4,8 +4,8 @@
  * Mantêm o controller fino: convertem o resultado dos use-cases (Date, etc.)
  * para o shape serializável do DTO de resposta.
  */
-import type { IssueWeighInChallengeResult } from "../application/issue-challenge.use-case.js";
-import type { SubmitWeighInResult } from "../application/submit-weighin.use-case.js";
+import type { IssueWeighInChallengeResult } from "@/modules/weighin/application/issue-challenge.use-case.js";
+import type { SubmitWeighInResult } from "@/modules/weighin/application/submit-weighin.use-case.js";
 import type { StartWeighInResponseDto, SubmitWeighInResponseDto } from "./weighin.dto.js";
 
 export function toStartResponse(r: IssueWeighInChallengeResult): StartWeighInResponseDto {

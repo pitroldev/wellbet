@@ -1,7 +1,7 @@
 /**
  * Port do repositório de apostas (camada application).
  */
-import type { Bet } from "../domain/bet.entity.js";
+import type { Bet } from "@/modules/bet/domain/bet.entity.js";
 
 export interface BetRepositoryPort {
   save(bet: Bet): Promise<void>;

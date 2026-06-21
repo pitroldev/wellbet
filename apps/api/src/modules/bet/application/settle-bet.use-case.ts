@@ -1,17 +1,17 @@
 import { Inject, Injectable } from "@nestjs/common";
 
-import { PAYMENT, type PaymentPort } from "../../../infra/payment/payment.port.js";
-import { ConflictError, ErrorCode, NotFoundError } from "../../../shared/errors.js";
-import { decimalToCents } from "../../../shared/money.js";
+import { PAYMENT, type PaymentPort } from "@/infra/payment/payment.port.js";
+import { ConflictError, ErrorCode, NotFoundError } from "@/shared/errors.js";
+import { decimalToCents } from "@/shared/money.js";
 import {
   USER_REPOSITORY,
   type UserRepositoryPort,
-} from "../../identity/application/user.repository.port.js";
+} from "@/modules/identity/application/user.repository.port.js";
 import {
   WEIGHIN_REPOSITORY,
   type WeighInRepositoryPort,
-} from "../../weighin/application/weighin.repository.port.js";
-import type { BetStatus } from "../domain/bet.entity.js";
+} from "@/modules/weighin/application/weighin.repository.port.js";
+import type { BetStatus } from "@/modules/bet/domain/bet.entity.js";
 import { BET_REPOSITORY, type BetRepositoryPort } from "./bet.repository.port.js";
 
 export interface SettleBetCommand {

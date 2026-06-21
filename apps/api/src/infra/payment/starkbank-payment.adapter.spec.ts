@@ -25,8 +25,8 @@ vi.mock("starkbank", () => ({
 
 import { dictKey, event, invoice, transfer } from "starkbank";
 
-import type { Env } from "../../config/config.module.js";
-import { ValidationError } from "../../shared/errors.js";
+import type { Env } from "@/config/config.module.js";
+import { ValidationError } from "@/shared/errors.js";
 import { StarkBankPaymentAdapter } from "./starkbank-payment.adapter.js";
 
 type InvoiceT = Awaited<ReturnType<typeof invoice.get>>;

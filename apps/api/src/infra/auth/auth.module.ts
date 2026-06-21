@@ -2,9 +2,9 @@ import { Global, Inject, type MiddlewareConsumer, Module, type NestModule } from
 import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
 import type { NextFunction, Request, Response } from "express";
 
-import { ENV, type Env } from "../../config/config.module.js";
-import type { AuthenticatedRequest, AuthenticatedUser } from "../../shared/guards/auth.guard.js";
-import { DATABASE, type DbHandle } from "../db/client.js";
+import { ENV, type Env } from "@/config/config.module.js";
+import type { AuthenticatedRequest, AuthenticatedUser } from "@/shared/guards/auth.guard.js";
+import { DATABASE, type DbHandle } from "@/infra/db/client.js";
 import { AUTH, type Auth, buildAuth } from "./auth.js";
 
 /**

@@ -1,7 +1,10 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 
-import type { PaymentWebhookEvent } from "../../infra/payment/payment.port.js";
-import { BET_REPOSITORY, type BetRepositoryPort } from "../bet/application/bet.repository.port.js";
+import type { PaymentWebhookEvent } from "@/infra/payment/payment.port.js";
+import {
+  BET_REPOSITORY,
+  type BetRepositoryPort,
+} from "@/modules/bet/application/bet.repository.port.js";
 
 /**
  * Processa um evento de pagamento JÁ VERIFICADO e reflete na aposta:

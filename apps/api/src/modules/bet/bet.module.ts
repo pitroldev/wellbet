@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 
-import { IdentityModule } from "../identity/identity.module.js";
-import { WeighInModule } from "../weighin/weighin.module.js";
+import { IdentityModule } from "@/modules/identity/identity.module.js";
+import { WeighInModule } from "@/modules/weighin/weighin.module.js";
 import { BET_REPOSITORY } from "./application/bet.repository.port.js";
 import { PlaceBetUseCase } from "./application/place-bet.use-case.js";
 import { SettleBetUseCase } from "./application/settle-bet.use-case.js";

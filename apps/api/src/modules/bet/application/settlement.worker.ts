@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger, type OnModuleInit } from "@nestjs/common";
 
-import { QUEUE, QueueName, type QueuePort } from "../../../infra/queue/queue.port.js";
+import { QUEUE, QueueName, type QueuePort } from "@/infra/queue/queue.port.js";
 import { SettleBetUseCase } from "./settle-bet.use-case.js";
 
 interface SettleJob {

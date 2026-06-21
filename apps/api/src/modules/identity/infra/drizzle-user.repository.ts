@@ -1,10 +1,10 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 
-import { DATABASE, type DbHandle } from "../../../infra/db/client.js";
-import { users } from "../../../infra/db/schema.js";
-import { User } from "../domain/user.entity.js";
-import type { UserRepositoryPort } from "../application/user.repository.port.js";
+import { DATABASE, type DbHandle } from "@/infra/db/client.js";
+import { users } from "@/infra/db/schema.js";
+import { User } from "@/modules/identity/domain/user.entity.js";
+import type { UserRepositoryPort } from "@/modules/identity/application/user.repository.port.js";
 
 /** Adapter Drizzle/Postgres do UserRepositoryPort. */
 @Injectable()

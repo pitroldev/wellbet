@@ -1,10 +1,10 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { and, desc, eq, lt } from "drizzle-orm";
 
-import { DATABASE, type DbHandle } from "../../../infra/db/client.js";
-import { weighins } from "../../../infra/db/schema.js";
-import { WeighIn, type WeighInKind } from "../domain/weighin.entity.js";
-import type { WeighInRepositoryPort } from "../application/weighin.repository.port.js";
+import { DATABASE, type DbHandle } from "@/infra/db/client.js";
+import { weighins } from "@/infra/db/schema.js";
+import { WeighIn, type WeighInKind } from "@/modules/weighin/domain/weighin.entity.js";
+import type { WeighInRepositoryPort } from "@/modules/weighin/application/weighin.repository.port.js";
 
 /** Adapter Drizzle/Postgres do WeighInRepositoryPort. */
 @Injectable()

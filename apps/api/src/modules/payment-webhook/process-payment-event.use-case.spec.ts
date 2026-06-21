@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
-import type { PaymentWebhookEvent } from "../../infra/payment/payment.port.js";
-import { Bet, type BetProps } from "../bet/domain/bet.entity.js";
+import type { PaymentWebhookEvent } from "@/infra/payment/payment.port.js";
+import { Bet, type BetProps } from "@/modules/bet/domain/bet.entity.js";
 import { ProcessPaymentEventUseCase } from "./process-payment-event.use-case.js";
 
 function makeBet(over: Partial<BetProps> = {}): Bet {

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 
-import { STORAGE, type StoragePort } from "../../../infra/storage/storage.port.js";
+import { STORAGE, type StoragePort } from "@/infra/storage/storage.port.js";
 import {
   REVIEW_REPOSITORY,
   type ReviewQueueItem,

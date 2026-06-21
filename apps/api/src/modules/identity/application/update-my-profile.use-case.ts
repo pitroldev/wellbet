@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 
-import type { User } from "../domain/user.entity.js";
+import type { User } from "@/modules/identity/domain/user.entity.js";
 import { GetOrCreateUserUseCase } from "./get-or-create-user.use-case.js";
 import { USER_REPOSITORY, type UserRepositoryPort } from "./user.repository.port.js";
 

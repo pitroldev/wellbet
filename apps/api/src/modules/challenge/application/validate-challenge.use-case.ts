@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 
-import { ErrorCode, UnprocessableError } from "../../../shared/errors.js";
+import { ErrorCode, UnprocessableError } from "@/shared/errors.js";
 import { CHALLENGE_REPOSITORY, type ChallengeRepositoryPort } from "./challenge.repository.port.js";
 
 export interface ValidateChallengeCommand {

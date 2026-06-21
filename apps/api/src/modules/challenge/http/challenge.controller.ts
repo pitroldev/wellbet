@@ -1,8 +1,8 @@
 import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
-import { AuthGuard, type AuthenticatedRequest } from "../../../shared/guards/auth.guard.js";
-import { IssueChallengeUseCase } from "../application/issue-challenge.use-case.js";
+import { AuthGuard, type AuthenticatedRequest } from "@/shared/guards/auth.guard.js";
+import { IssueChallengeUseCase } from "@/modules/challenge/application/issue-challenge.use-case.js";
 import { ChallengeResponseDto, IssueChallengeDto } from "./challenge.dto.js";
 
 /**

@@ -1,10 +1,10 @@
 import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
-import { AuthGuard, type AuthenticatedRequest } from "../../../shared/guards/auth.guard.js";
-import { ValidateChallengeUseCase } from "../../challenge/application/validate-challenge.use-case.js";
-import { IssueChallengeUseCase } from "../application/issue-challenge.use-case.js";
-import { SubmitWeighInUseCase } from "../application/submit-weighin.use-case.js";
+import { AuthGuard, type AuthenticatedRequest } from "@/shared/guards/auth.guard.js";
+import { ValidateChallengeUseCase } from "@/modules/challenge/application/validate-challenge.use-case.js";
+import { IssueChallengeUseCase } from "@/modules/weighin/application/issue-challenge.use-case.js";
+import { SubmitWeighInUseCase } from "@/modules/weighin/application/submit-weighin.use-case.js";
 import {
   StartWeighInDto,
   StartWeighInResponseDto,

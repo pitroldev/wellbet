@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 
-import type { Payout } from "../../../infra/payment/payment.port.js";
-import { User, type UserProps } from "../../identity/domain/user.entity.js";
-import type { WeighInRepositoryPort } from "../../weighin/application/weighin.repository.port.js";
-import { Bet, type BetProps } from "../domain/bet.entity.js";
+import type { Payout } from "@/infra/payment/payment.port.js";
+import { User, type UserProps } from "@/modules/identity/domain/user.entity.js";
+import type { WeighInRepositoryPort } from "@/modules/weighin/application/weighin.repository.port.js";
+import { Bet, type BetProps } from "@/modules/bet/domain/bet.entity.js";
 import { SettleBetUseCase } from "./settle-bet.use-case.js";
 
 type WeighInT = Awaited<ReturnType<WeighInRepositoryPort["findById"]>>;

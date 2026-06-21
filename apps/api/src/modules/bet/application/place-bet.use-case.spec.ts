@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 
-import type { PixCharge } from "../../../infra/payment/payment.port.js";
-import { NotFoundError, ValidationError } from "../../../shared/errors.js";
-import { User, type UserProps } from "../../identity/domain/user.entity.js";
+import type { PixCharge } from "@/infra/payment/payment.port.js";
+import { NotFoundError, ValidationError } from "@/shared/errors.js";
+import { User, type UserProps } from "@/modules/identity/domain/user.entity.js";
 import { PlaceBetUseCase } from "./place-bet.use-case.js";
 
 function userWith(over: Partial<UserProps> = {}): User {

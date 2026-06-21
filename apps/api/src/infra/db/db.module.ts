@@ -1,7 +1,7 @@
 import { Global, Module, type OnModuleDestroy } from "@nestjs/common";
 
-import { env } from "../../config/env.js";
-import { IDEMPOTENCY_STORE } from "../../shared/idempotency/idempotency.port.js";
+import { env } from "@/config/env.js";
+import { IDEMPOTENCY_STORE } from "@/shared/idempotency/idempotency.port.js";
 import { createDb, DATABASE, type DbHandle } from "./client.js";
 import { DrizzleIdempotencyStore } from "./idempotency.adapter.js";
 

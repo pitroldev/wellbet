@@ -1,8 +1,11 @@
+import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 // Vitest 4 — runner unificado do monorepo para o backend.
 // Cobre o domínio puro (sem Nest) e e2e via Supertest.
+// `vite-tsconfig-paths` resolve os aliases `@/*` (tsconfig) nos testes.
 export default defineConfig({
+  plugins: [tsconfigPaths()],
   test: {
     globals: true,
     environment: "node",

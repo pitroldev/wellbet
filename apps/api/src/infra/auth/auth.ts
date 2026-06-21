@@ -11,8 +11,8 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
-import type { Database } from "../db/client.js";
-import { schema } from "../db/schema.js";
+import type { Database } from "@/infra/db/client.js";
+import { schema } from "@/infra/db/schema.js";
 
 export interface BuildAuthOptions {
   readonly db: Database;

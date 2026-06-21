@@ -1,13 +1,13 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { desc, eq } from "drizzle-orm";
 
-import { DATABASE, type DbHandle } from "../../../infra/db/client.js";
-import { reviews, weighins } from "../../../infra/db/schema.js";
-import { type ChecklistFlag, Review } from "../domain/review.entity.js";
+import { DATABASE, type DbHandle } from "@/infra/db/client.js";
+import { reviews, weighins } from "@/infra/db/schema.js";
+import { type ChecklistFlag, Review } from "@/modules/review/domain/review.entity.js";
 import type {
   ReviewQueueItem,
   ReviewRepositoryPort,
-} from "../application/review.repository.port.js";
+} from "@/modules/review/application/review.repository.port.js";
 
 /** Adapter Drizzle/Postgres do ReviewRepositoryPort. */
 @Injectable()
