@@ -29,6 +29,12 @@ export const CHECKLIST_FLAGS: readonly ChecklistFlag[] = [
   "plausibility",
 ];
 
+/** Resultado tristate de um item do checklist (dataset granular da Fase 2). */
+export type ChecklistResult = "ok" | "fail" | "na";
+
+/** Mapa item→resultado tristate (§9): rótulos granulares por item. */
+export type Checklist = Partial<Record<ChecklistFlag, ChecklistResult>>;
+
 export interface ReviewProps {
   readonly id: string;
   readonly weighinId: string;
@@ -36,6 +42,8 @@ export interface ReviewProps {
   readonly verdict?: Verdict | null;
   readonly reason?: string | null;
   readonly failedChecks?: ChecklistFlag[] | null;
+  /** Resultado item a item (ok/fail/na) — dataset granular da Fase 2. */
+  readonly checklist?: Checklist | null;
   readonly decidedAt?: Date | null;
 }
 
@@ -69,6 +77,7 @@ export class Review {
     verdict: Verdict;
     reason?: string | null;
     failedChecks?: ChecklistFlag[] | null;
+    checklist?: Checklist | null;
     now?: Date;
   }): void {
     this.props = {
@@ -77,6 +86,7 @@ export class Review {
       verdict: args.verdict,
       reason: args.reason ?? null,
       failedChecks: args.failedChecks ?? null,
+      checklist: args.checklist ?? null,
       decidedAt: args.now ?? new Date(),
     };
   }

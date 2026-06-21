@@ -62,6 +62,7 @@ export class ReviewController {
       verdict: dto.verdict,
       reason: dto.reason,
       failedChecks: (dto.failedChecks as ChecklistFlag[] | null | undefined) ?? null,
+      checklist: dto.checklist ?? null,
     });
   }
 }

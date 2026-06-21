@@ -681,6 +681,21 @@
               "type": "string"
             },
             "nullable": true
+          },
+          "checklist": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "fail",
+                "na"
+              ]
+            },
+            "nullable": true
           }
         },
         "required": [
@@ -697,7 +712,8 @@
           "expectedCode",
           "verdict",
           "reason",
-          "failedChecks"
+          "failedChecks",
+          "checklist"
         ]
       },
       "SubmitVerdictDto": {
@@ -736,6 +752,41 @@
                 "plausibility"
               ]
             },
+            "nullable": true
+          },
+          "checklist": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "enum": [
+                "freshness",
+                "continuous_video",
+                "scale_zero",
+                "floor_scene",
+                "no_body_trick",
+                "display_integrity",
+                "same_person",
+                "plausibility"
+              ]
+            },
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "fail",
+                "na"
+              ]
+            },
+            "required": [
+              "freshness",
+              "continuous_video",
+              "scale_zero",
+              "floor_scene",
+              "no_body_trick",
+              "display_integrity",
+              "same_person",
+              "plausibility"
+            ],
             "nullable": true
           }
         },

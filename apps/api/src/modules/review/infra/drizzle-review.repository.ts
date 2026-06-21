@@ -60,6 +60,7 @@ export class DrizzleReviewRepository implements ReviewRepositoryPort {
         verdict: p.verdict ?? null,
         reason: p.reason ?? null,
         failedChecks: p.failedChecks ?? null,
+        checklist: p.checklist ?? null,
         decidedAt: p.decidedAt ?? null,
       })
       .onConflictDoUpdate({
@@ -69,6 +70,7 @@ export class DrizzleReviewRepository implements ReviewRepositoryPort {
           verdict: p.verdict ?? null,
           reason: p.reason ?? null,
           failedChecks: p.failedChecks ?? null,
+          checklist: p.checklist ?? null,
           decidedAt: p.decidedAt ?? null,
         },
       });
@@ -97,6 +99,7 @@ export class DrizzleReviewRepository implements ReviewRepositoryPort {
       verdict: row.verdict ?? null,
       reason: row.reason,
       failedChecks: (row.failedChecks as ChecklistFlag[] | null) ?? null,
+      checklist: row.checklist ?? null,
       decidedAt: row.decidedAt,
     });
   }

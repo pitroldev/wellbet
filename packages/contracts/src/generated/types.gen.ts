@@ -72,6 +72,9 @@ export type ReviewDetailDto = {
     verdict: 'approved' | 'pending' | 'rejected' | null;
     reason: string | null;
     failedChecks: Array<string> | null;
+    checklist: {
+        [key: string]: 'ok' | 'fail' | 'na';
+    } | null;
 };
 
 export type SubmitVerdictDto = {
@@ -79,6 +82,9 @@ export type SubmitVerdictDto = {
     verdict: 'approved' | 'pending' | 'rejected';
     reason?: string | null;
     failedChecks?: Array<'freshness' | 'continuous_video' | 'scale_zero' | 'floor_scene' | 'no_body_trick' | 'display_integrity' | 'same_person' | 'plausibility'> | null;
+    checklist?: {
+        [key: string]: 'ok' | 'fail' | 'na';
+    } | null;
 };
 
 export type VerdictResponseDto = {

@@ -124,6 +124,7 @@ describe("GetReviewDetailUseCase", () => {
       verdict: "rejected",
       reason: "vídeo cortado",
       failedChecks: ["continuous_video"],
+      checklist: { continuous_video: "fail", same_person: "ok" },
     });
     d.reviews.findByWeighin.mockResolvedValue(review);
 
@@ -131,6 +132,7 @@ describe("GetReviewDetailUseCase", () => {
 
     expect(result).toMatchObject({ verdict: "rejected", reason: "vídeo cortado" });
     expect(result.failedChecks).toEqual(["continuous_video"]);
+    expect(result.checklist).toEqual({ continuous_video: "fail", same_person: "ok" });
   });
 
   it("pesagem sem desafio → expectedCode null (sem buscar o challenge)", async () => {

@@ -9,7 +9,7 @@ import {
   USER_REPOSITORY,
   type UserRepositoryPort,
 } from "@/modules/identity/application/user.repository.port.js";
-import type { Verdict } from "@/modules/review/domain/review.entity.js";
+import type { Checklist, Verdict } from "@/modules/review/domain/review.entity.js";
 import {
   WEIGHIN_REPOSITORY,
   type WeighInRepositoryPort,
@@ -43,6 +43,8 @@ export interface ReviewDetail {
   readonly verdict: Verdict | null;
   readonly reason: string | null;
   readonly failedChecks: string[] | null;
+  /** Resultado tristate item a item já registrado (Fase 2). */
+  readonly checklist: Checklist | null;
 }
 
 /**
@@ -120,6 +122,7 @@ export class GetReviewDetailUseCase {
       verdict: r?.verdict ?? null,
       reason: r?.reason ?? null,
       failedChecks: r?.failedChecks ?? null,
+      checklist: r?.checklist ?? null,
     };
   }
 }

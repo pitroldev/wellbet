@@ -143,6 +143,8 @@ export const reviews = pgTable(
     // Quais itens do checklist (§5) falharam — dataset da Fase 2 (§9).
     // ex.: ['freshness', 'continuous_video', 'scale_zero', ...]
     failedChecks: jsonb("failed_checks").$type<string[]>(),
+    // Resultado tristate item a item (ok/fail/na) — dataset granular da Fase 2 (§9).
+    checklist: jsonb("checklist").$type<Record<string, "ok" | "fail" | "na">>(),
     decidedAt: timestamp("decided_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
