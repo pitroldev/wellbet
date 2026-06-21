@@ -36,8 +36,11 @@ export default function HomeScreen() {
         </View>
 
         <View className="gap-3">
+          <Link href="/bet/new" asChild>
+            <Button label="Nova aposta" />
+          </Link>
           <Link href="/weighin" asChild>
-            <Button label="Nova pesagem" />
+            <Button label="Nova pesagem" tone="secondary" />
           </Link>
           <Link href="/profile" asChild>
             <Button label="Meu perfil" tone="secondary" />
