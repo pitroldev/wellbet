@@ -6,22 +6,33 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { AppModule } from "@/app.module.js";
 import { QUEUE } from "@/infra/queue/queue.port.js";
 import { AUTH } from "@/infra/auth/auth.js";
+import { PAYMENT } from "@/infra/payment/payment.port.js";
+import {
+  IDEMPOTENCY_STORE,
+  type IdempotencyRecord,
+} from "@/shared/idempotency/idempotency.port.js";
 import { USER_REPOSITORY } from "@/modules/identity/application/user.repository.port.js";
+import { BET_REPOSITORY } from "@/modules/bet/application/bet.repository.port.js";
+import { User } from "@/modules/identity/domain/user.entity.js";
 
 /**
  * E2E do app REAL: sobe o AppModule INTEIRO (todos os módulos + pipes/guards
- * globais) e exercita a camada HTTP via Supertest. Verifica o que os testes
- * unitários NÃO cobrem: a DI de ponta a ponta (o app inicializa de fato?), o
- * prefixo global, o AuthGuard fail-closed e o caminho AUTENTICADO ponta a ponta
- * (middleware popula req.user → guard → controller → use-case → serialização).
- *
- * Infra fakeada (mínima):
- *  - QUEUE: seu onModuleInit faz `pgboss.start()` (conecta no Postgres).
- *  - AUTH: o middleware chama `auth.api.getSession`; o fake devolve uma sessão
- *    quando há o header `x-test-auth` (e nada sem ele → continua fail-closed).
- *  - USER_REPOSITORY: in-memory, para o GET /me autenticado não tocar o Postgres.
+ * globais) e exercita a camada HTTP via Supertest. Cobre o que os testes
+ * unitários NÃO pegam: a DI de ponta a ponta, o AuthGuard fail-closed, o caminho
+ * autenticado e o caminho FINANCEIRO (criar aposta + idempotência anti-cobrança-
+ * dupla) — tudo sem tocar Postgres (adapters de borda fakeados).
  */
 const TEST_USER = { id: "auth-user-1", email: "tester@charya.app", role: "user" as const };
+
+// Usuário de domínio com perfil COMPLETO (taxId/pixKey) — exigido para apostar.
+const TEST_USER_ENTITY = User.create({
+  id: TEST_USER.id,
+  email: TEST_USER.email,
+  name: "Tester",
+  role: "user",
+  taxId: "12345678909",
+  pixKey: TEST_USER.email,
+});
 
 const fakeQueue = {
   publish: (): Promise<string | null> => Promise.resolve(null),
@@ -39,24 +50,55 @@ const fakeAuth = {
 
 const fakeUserRepo = {
   findByAuthUserId: () => Promise.resolve(undefined),
-  findById: () => Promise.resolve(undefined),
+  findById: () => Promise.resolve(TEST_USER_ENTITY),
   findByEmail: () => Promise.resolve(undefined),
   save: () => Promise.resolve(),
+};
+
+const fakeBetRepo = {
+  save: () => Promise.resolve(),
+  findById: () => Promise.resolve(undefined),
+  findByStakeChargeId: () => Promise.resolve(undefined),
+  listByUser: () => Promise.resolve([]),
+  listAll: () => Promise.resolve([]),
+};
+
+const fakePayment = {
+  createPixCharge: () =>
+    Promise.resolve({
+      providerId: "charge-test-1",
+      brcode: "00020101br-code-de-teste-5204",
+      expiresAt: new Date("2026-12-31T23:59:59.000Z"),
+    }),
+};
+
+// Store de idempotência in-memory: cobre o replay (mesma chave → mesma resposta).
+const idemStore = new Map<string, IdempotencyRecord>();
+const fakeIdempotencyStore = {
+  find: (key: string) => Promise.resolve(idemStore.get(key)),
+  save: (record: IdempotencyRecord) => {
+    idemStore.set(record.key, record);
+    return Promise.resolve();
+  },
 };
 
 describe("App (e2e)", () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    })
+    const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
       .overrideProvider(QUEUE)
       .useValue(fakeQueue)
       .overrideProvider(AUTH)
       .useValue(fakeAuth)
       .overrideProvider(USER_REPOSITORY)
       .useValue(fakeUserRepo)
+      .overrideProvider(BET_REPOSITORY)
+      .useValue(fakeBetRepo)
+      .overrideProvider(PAYMENT)
+      .useValue(fakePayment)
+      .overrideProvider(IDEMPOTENCY_STORE)
+      .useValue(fakeIdempotencyStore)
       .compile();
 
     app = moduleRef.createNestApplication();
@@ -114,5 +156,38 @@ describe("App (e2e)", () => {
       .set("x-test-auth", TEST_USER.id)
       .send({});
     expect(res.status).toBe(400);
+  });
+
+  it("POST /api/bets COM sessão + Idempotency-Key → cria a aposta + BR Code do Pix", async () => {
+    const res = await request(server())
+      .post("/api/bets")
+      .set("x-test-auth", TEST_USER.id)
+      .set("Idempotency-Key", "place-key-1")
+      .send({ targetWeightKg: 75, startWeightKg: 85, stakeAmount: "100.00", currency: "BRL" });
+    expect(res.status).toBe(201);
+    expect(res.body).toMatchObject({
+      status: "pending_payment",
+      brcode: "00020101br-code-de-teste-5204",
+    });
+    expect(typeof (res.body as { betId?: unknown }).betId).toBe("string");
+  });
+
+  it("POST /api/bets repetido com a MESMA Idempotency-Key → replay (mesmo betId, sem cobrar 2x)", async () => {
+    const body = { targetWeightKg: 70, stakeAmount: "50.00" };
+    const first = await request(server())
+      .post("/api/bets")
+      .set("x-test-auth", TEST_USER.id)
+      .set("Idempotency-Key", "idem-key-1")
+      .send(body);
+    const second = await request(server())
+      .post("/api/bets")
+      .set("x-test-auth", TEST_USER.id)
+      .set("Idempotency-Key", "idem-key-1")
+      .send(body);
+
+    expect(first.status).toBe(201);
+    const firstBody = first.body as { betId: string };
+    const secondBody = second.body as { betId: string };
+    expect(secondBody.betId).toBe(firstBody.betId);
   });
 });
