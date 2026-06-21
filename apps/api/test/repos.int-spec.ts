@@ -15,6 +15,8 @@ import { DrizzleWeighInRepository } from "@/modules/weighin/infra/drizzle-weighi
 import { DrizzleReviewRepository } from "@/modules/review/infra/drizzle-review.repository.js";
 import { DrizzleIdempotencyStore } from "@/infra/db/idempotency.adapter.js";
 import type { IdempotencyRecord } from "@/shared/idempotency/idempotency.port.js";
+import { Challenge } from "@/modules/challenge/domain/challenge.entity.js";
+import { DrizzleChallengeRepository } from "@/modules/challenge/infra/drizzle-challenge.repository.js";
 
 const MIGRATIONS_DIR = join(process.cwd(), "src/infra/db/migrations");
 
@@ -26,6 +28,7 @@ const W0_ID = "33333333-3333-4333-8333-333333333333";
 const W1_ID = "44444444-4444-4444-8444-444444444444";
 const W2_ID = "55555555-5555-4555-8555-555555555555";
 const REVIEW_ID = "66666666-6666-4666-8666-666666666666";
+const CH_ID = "77777777-7777-4777-8777-777777777777";
 
 function weighinAt(
   id: string,
@@ -66,6 +69,7 @@ describe("Repositórios Drizzle (integração — Postgres real via Testcontaine
   let weighins: DrizzleWeighInRepository;
   let reviewRepo: DrizzleReviewRepository;
   let idem: DrizzleIdempotencyStore;
+  let challengeRepo: DrizzleChallengeRepository;
 
   beforeAll(async () => {
     container = await new PostgreSqlContainer("postgres:16-alpine").start();
@@ -76,6 +80,7 @@ describe("Repositórios Drizzle (integração — Postgres real via Testcontaine
     weighins = new DrizzleWeighInRepository(handle);
     reviewRepo = new DrizzleReviewRepository(handle);
     idem = new DrizzleIdempotencyStore(handle);
+    challengeRepo = new DrizzleChallengeRepository(handle);
   }, 120_000);
 
   afterAll(async () => {
@@ -262,5 +267,32 @@ describe("Repositórios Drizzle (integração — Postgres real via Testcontaine
 
     const found = await idem.find(key);
     expect(found?.responseBody).toEqual({ v: "primeira" }); // a primeira gravação vence
+  });
+
+  it("ChallengeRepository: findByNonce + markConsumed é uso único (anti-replay)", async () => {
+    await challengeRepo.save(
+      Challenge.create({
+        id: CH_ID,
+        userId: USER_ID,
+        word: "pomar",
+        number: 4827,
+        gesture: "thumbs_up",
+        nonce: "pomar-4827-thumbs_up",
+        issuedAt: new Date("2026-06-12T12:00:00.000Z"),
+        expiresAt: new Date("2026-06-12T12:05:00.000Z"),
+        consumedAt: null,
+      }),
+    );
+
+    const byNonce = await challengeRepo.findByNonce("pomar-4827-thumbs_up");
+    expect(byNonce?.id).toBe(CH_ID);
+
+    // 1ª consumação registra; a 2ª é no-op (guarda isNull → uso único).
+    const firstAt = new Date("2026-06-12T12:01:00.000Z");
+    await challengeRepo.markConsumed(CH_ID, firstAt);
+    await challengeRepo.markConsumed(CH_ID, new Date("2026-06-12T12:02:00.000Z"));
+
+    const reloaded = await challengeRepo.findById(CH_ID);
+    expect(reloaded?.toJSON().consumedAt?.toISOString()).toBe(firstAt.toISOString());
   });
 });
