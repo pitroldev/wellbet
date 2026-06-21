@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ClipboardCheck, Coins, LogOut, Users } from "lucide-react";
+import { ClipboardCheck, Coins, LogOut } from "lucide-react";
 import { signOut } from "@/shared/auth/client";
 import { Button } from "@/shared/ui";
 import { cn } from "@/lib/utils";
@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
   { href: "/review", label: "Fila de revisão", icon: ClipboardCheck },
   { href: "/bets", label: "Apostas", icon: Coins },
-  { href: "/users", label: "Usuários", icon: Users },
 ] as const;
 
 export function SidebarNav(): React.JSX.Element {

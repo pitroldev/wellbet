@@ -6,8 +6,7 @@ import { z } from "zod";
  * DTOs de pesagem via nestjs-zod.
  *
  * `WeighInStatus` vem de `@charya/schemas` (fonte única), mantendo contrato
- * único front↔back. TODO: importar também os schemas base de peso/kind quando
- * o pacote os expuser para reuso no input.
+ * único front↔back.
  */
 
 const weighinKind = z.enum(["baseline", "mid", "final"]);

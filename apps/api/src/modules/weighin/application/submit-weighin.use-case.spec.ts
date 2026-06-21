@@ -8,7 +8,6 @@ vi.mock("@/modules/weighin/domain/sanity.js", () => ({
 
 import { checkSanity, type SanityResult } from "@/modules/weighin/domain/sanity.js";
 
-import { QueueName } from "@/infra/queue/queue.port.js";
 import { WeighIn } from "@/modules/weighin/domain/weighin.entity.js";
 import { WeightImplausibleError } from "@/shared/errors.js";
 import type { Env } from "@/config/config.module.js";
@@ -22,10 +21,9 @@ function makeDeps() {
     listByUser: vi.fn(),
     listByBet: vi.fn(),
   };
-  const queue = { publish: vi.fn(), subscribe: vi.fn() };
   const env = { WEIGHT_HARD_LIMIT_KG_PER_WEEK: 2 } as unknown as Env;
-  const uc = new SubmitWeighInUseCase(repo, queue, env);
-  return { repo, queue, uc };
+  const uc = new SubmitWeighInUseCase(repo, env);
+  return { repo, uc };
 }
 
 const cmd = {
@@ -57,8 +55,8 @@ function savedWeighIn(repo: { save: ReturnType<typeof vi.fn> }): WeighIn {
 }
 
 describe("SubmitWeighInUseCase", () => {
-  it("primeira pesagem (sem anterior) → enfileira para revisão, sem checar sanidade", async () => {
-    const { repo, queue, uc } = makeDeps();
+  it("primeira pesagem (sem anterior) → entra em revisão, sem checar sanidade", async () => {
+    const { repo, uc } = makeDeps();
     repo.findPrevious.mockResolvedValue(undefined);
 
     const result = await uc.execute(cmd);
@@ -67,13 +65,10 @@ describe("SubmitWeighInUseCase", () => {
     expect(result.status).toBe("in_review");
     expect(result.lossPerWeekKg).toBeNull();
     expect(savedWeighIn(repo).status).toBe("in_review");
-    expect(queue.publish).toHaveBeenCalledWith(QueueName.REVIEW_ENQUEUE, {
-      weighinId: result.weighinId,
-    });
   });
 
-  it("perda plausível → enfileira com a perda/semana calculada", async () => {
-    const { repo, queue, uc } = makeDeps();
+  it("perda plausível → entra em revisão com a perda/semana calculada", async () => {
+    const { repo, uc } = makeDeps();
     repo.findPrevious.mockResolvedValue(previousWeighin(82));
     const sanity: SanityResult = { ok: true, lossPerWeekKg: 1.5 };
     vi.mocked(checkSanity).mockReturnValue(sanity);
@@ -82,11 +77,11 @@ describe("SubmitWeighInUseCase", () => {
 
     expect(result.status).toBe("in_review");
     expect(result.lossPerWeekKg).toBe(1.5);
-    expect(queue.publish).toHaveBeenCalledOnce();
+    expect(savedWeighIn(repo).status).toBe("in_review");
   });
 
-  it("perda implausível → BLOQUEIO (status blocked + WeightImplausibleError, sem fila)", async () => {
-    const { repo, queue, uc } = makeDeps();
+  it("perda implausível → BLOQUEIO (status blocked + WeightImplausibleError)", async () => {
+    const { repo, uc } = makeDeps();
     repo.findPrevious.mockResolvedValue(previousWeighin(90));
     const sanity: SanityResult = {
       ok: false,
@@ -99,6 +94,5 @@ describe("SubmitWeighInUseCase", () => {
     await expect(uc.execute(cmd)).rejects.toBeInstanceOf(WeightImplausibleError);
 
     expect(savedWeighIn(repo).status).toBe("blocked");
-    expect(queue.publish).not.toHaveBeenCalled();
   });
 });

@@ -5,8 +5,6 @@ import { z } from "zod";
  * DTOs do desafio via nestjs-zod.
  *
  * O mesmo schema Zod valida o request e alimenta o OpenAPI (§2 do doc).
- * TODO: quando @charya/schemas expuser `challengeIssueResponseSchema`, importar
- * de lá para manter contrato único front↔back.
  */
 
 export const IssueChallengeSchema = z.object({

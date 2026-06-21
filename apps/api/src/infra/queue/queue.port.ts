@@ -34,8 +34,6 @@ export const QUEUE = Symbol("QUEUE");
 
 /** Nomes de fila conhecidos (evita strings soltas pelo código). */
 export const QueueName = {
-  /** Pesagem entrou na fila de revisão humana (§5). */
-  REVIEW_ENQUEUE: "review.enqueue",
   /** Settlement de aposta após veredito APROVADO (§7). */
   BET_SETTLE: "bet.settle",
 } as const;

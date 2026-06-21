@@ -4,7 +4,6 @@ import { Inject, Injectable } from "@nestjs/common";
 
 import { ENV, type Env } from "@/config/config.module.js";
 import { WeightImplausibleError } from "@/shared/errors.js";
-import { QUEUE, QueueName, type QueuePort } from "@/infra/queue/queue.port.js";
 import { checkSanity } from "@/modules/weighin/domain/sanity.js";
 import { WeighIn, type WeighInKind } from "@/modules/weighin/domain/weighin.entity.js";
 import { WEIGHIN_REPOSITORY, type WeighInRepositoryPort } from "./weighin.repository.port.js";
@@ -34,14 +33,13 @@ export interface SubmitWeighInResult {
  *  2. Aplica a regra DURA de sanidade:
  *       - implausível → BLOQUEIO (status `blocked`, lança WeightImplausibleError).
  *       - plausível   → entra na fila de revisão humana (`in_review`).
- *  3. Persiste e publica o job de enfileiramento na revisão.
+ *  3. Persiste. O console de revisão lê a fila do banco (status `in_review`).
  */
 @Injectable()
 export class SubmitWeighInUseCase {
   constructor(
     @Inject(WEIGHIN_REPOSITORY)
     private readonly repo: WeighInRepositoryPort,
-    @Inject(QUEUE) private readonly queue: QueuePort,
     @Inject(ENV) private readonly env: Env,
   ) {}
 
@@ -94,10 +92,6 @@ export class SubmitWeighInUseCase {
     // Plausível (ou primeira pesagem) → fila de revisão humana.
     weighin.enqueueForReview(lossPerWeekKg);
     await this.repo.save(weighin);
-
-    await this.queue.publish(QueueName.REVIEW_ENQUEUE, {
-      weighinId: weighin.id,
-    });
 
     return {
       weighinId: weighin.id,
