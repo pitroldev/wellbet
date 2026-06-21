@@ -13,6 +13,8 @@ import { DrizzleBetRepository } from "@/modules/bet/infra/drizzle-bet.repository
 import { DrizzleUserRepository } from "@/modules/identity/infra/drizzle-user.repository.js";
 import { DrizzleWeighInRepository } from "@/modules/weighin/infra/drizzle-weighin.repository.js";
 import { DrizzleReviewRepository } from "@/modules/review/infra/drizzle-review.repository.js";
+import { DrizzleIdempotencyStore } from "@/infra/db/idempotency.adapter.js";
+import type { IdempotencyRecord } from "@/shared/idempotency/idempotency.port.js";
 
 const MIGRATIONS_DIR = join(process.cwd(), "src/infra/db/migrations");
 
@@ -63,6 +65,7 @@ describe("Repositórios Drizzle (integração — Postgres real via Testcontaine
   let users: DrizzleUserRepository;
   let weighins: DrizzleWeighInRepository;
   let reviewRepo: DrizzleReviewRepository;
+  let idem: DrizzleIdempotencyStore;
 
   beforeAll(async () => {
     container = await new PostgreSqlContainer("postgres:16-alpine").start();
@@ -72,6 +75,7 @@ describe("Repositórios Drizzle (integração — Postgres real via Testcontaine
     users = new DrizzleUserRepository(handle);
     weighins = new DrizzleWeighInRepository(handle);
     reviewRepo = new DrizzleReviewRepository(handle);
+    idem = new DrizzleIdempotencyStore(handle);
   }, 120_000);
 
   afterAll(async () => {
@@ -220,5 +224,43 @@ describe("Repositórios Drizzle (integração — Postgres real via Testcontaine
     const found = await reviewRepo.findByWeighin(W2_ID);
     expect(found?.toJSON().verdict).toBe("approved");
     expect(found?.toJSON().checklist).toEqual({ [flag]: "ok" });
+  });
+
+  it("IdempotencyStore: save → find round-trip (responseBody em JSONB)", async () => {
+    const record: IdempotencyRecord = {
+      key: "idem-int-1",
+      requestHash: "hash-1",
+      responseBody: { betId: BET_ID, status: "pending_payment" },
+      statusCode: 201,
+      createdAt: new Date("2026-06-12T10:00:00.000Z"),
+    };
+    await idem.save(record);
+
+    const found = await idem.find("idem-int-1");
+    expect(found?.statusCode).toBe(201);
+    expect(found?.requestHash).toBe("hash-1");
+    expect(found?.responseBody).toEqual({ betId: BET_ID, status: "pending_payment" });
+  });
+
+  it("IdempotencyStore: chave repetida é no-op (exactly-once → anti-cobrança-dupla)", async () => {
+    const key = "idem-int-2";
+    await idem.save({
+      key,
+      requestHash: "h",
+      responseBody: { v: "primeira" },
+      statusCode: 201,
+      createdAt: new Date("2026-06-12T11:00:00.000Z"),
+    });
+    // Segunda gravação com a MESMA chave (resposta diferente) → onConflictDoNothing.
+    await idem.save({
+      key,
+      requestHash: "h",
+      responseBody: { v: "segunda" },
+      statusCode: 201,
+      createdAt: new Date("2026-06-12T11:05:00.000Z"),
+    });
+
+    const found = await idem.find(key);
+    expect(found?.responseBody).toEqual({ v: "primeira" }); // a primeira gravação vence
   });
 });
