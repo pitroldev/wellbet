@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 
+import { IdentityModule } from "../identity/identity.module.js";
 import { WeighInModule } from "../weighin/weighin.module.js";
 import { BET_REPOSITORY } from "./application/bet.repository.port.js";
 import { PlaceBetUseCase } from "./application/place-bet.use-case.js";
@@ -15,7 +16,7 @@ import { BetController } from "./http/bet.controller.js";
  * settlement consome a fila `bet.settle` publicada pelo módulo review.
  */
 @Module({
-  imports: [WeighInModule],
+  imports: [WeighInModule, IdentityModule],
   controllers: [BetController],
   providers: [
     PlaceBetUseCase,
@@ -26,6 +27,6 @@ import { BetController } from "./http/bet.controller.js";
       useClass: DrizzleBetRepository,
     },
   ],
-  exports: [SettleBetUseCase],
+  exports: [SettleBetUseCase, BET_REPOSITORY],
 })
 export class BetModule {}

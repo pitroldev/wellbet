@@ -20,11 +20,18 @@ export class DrizzleUserRepository implements UserRepositoryPort {
         email: p.email,
         name: p.name ?? null,
         role: p.role,
+        taxId: p.taxId ?? null,
+        pixKey: p.pixKey ?? null,
         authUserId: p.authUserId ?? null,
       })
       .onConflictDoUpdate({
         target: users.id,
-        set: { name: p.name ?? null, role: p.role },
+        set: {
+          name: p.name ?? null,
+          role: p.role,
+          taxId: p.taxId ?? null,
+          pixKey: p.pixKey ?? null,
+        },
       });
   }
 
@@ -53,6 +60,8 @@ export class DrizzleUserRepository implements UserRepositoryPort {
       email: row.email,
       name: row.name,
       role: row.role,
+      taxId: row.taxId,
+      pixKey: row.pixKey,
       authUserId: row.authUserId,
     });
   }

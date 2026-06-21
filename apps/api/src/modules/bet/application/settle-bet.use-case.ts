@@ -1,6 +1,12 @@
 import { Inject, Injectable } from "@nestjs/common";
 
+import { PAYMENT, type PaymentPort } from "../../../infra/payment/payment.port.js";
 import { ConflictError, ErrorCode, NotFoundError } from "../../../shared/errors.js";
+import { decimalToCents } from "../../../shared/money.js";
+import {
+  USER_REPOSITORY,
+  type UserRepositoryPort,
+} from "../../identity/application/user.repository.port.js";
 import {
   WEIGHIN_REPOSITORY,
   type WeighInRepositoryPort,
@@ -34,6 +40,8 @@ export class SettleBetUseCase {
     @Inject(BET_REPOSITORY) private readonly bets: BetRepositoryPort,
     @Inject(WEIGHIN_REPOSITORY)
     private readonly weighins: WeighInRepositoryPort,
+    @Inject(USER_REPOSITORY) private readonly users: UserRepositoryPort,
+    @Inject(PAYMENT) private readonly payment: PaymentPort,
   ) {}
 
   async execute(cmd: SettleBetCommand): Promise<SettleBetResult> {
@@ -62,18 +70,30 @@ export class SettleBetUseCase {
 
     bet.beginSettlement();
     const status = bet.settleWith(weighin.weightKg);
+
+    // Vitória → paga o prêmio via Pix (Transfer). O adapter resolve a chave no
+    // DICT, valida o CPF e emite; o webhook confirma `payout.completed`.
+    // Idempotência: `externalId` estável por aposta.
+    if (status === "won") {
+      const user = await this.users.findById(bet.userId);
+      // Sem chave Pix/CPF, o resultado fica `won` mas o payout aguarda o saque.
+      // TODO(payout): fila de payout pendente + notificação ao usuário.
+      if (user?.pixKey && user.taxId) {
+        const payout = await this.payment.createPayout({
+          externalId: `bet:${bet.id}:payout`,
+          amountCents: decimalToCents(bet.payoutAmount ?? bet.stakeAmount),
+          recipient: {
+            name: user.name ?? user.email,
+            taxId: user.taxId,
+            pixKey: user.pixKey,
+          },
+          description: "Prêmio Charya",
+        });
+        bet.recordPayout(payout.providerId);
+      }
+    }
+
     await this.bets.save(bet);
-
-    // TODO(payment): em caso de vitória, pagar o prêmio via PaymentPort (já
-    // existe: infra/payment, token PAYMENT, adapter Stark Bank):
-    //   await this.payment.createPayout({
-    //     externalId: `bet:${bet.id}`, amountCents: payout,
-    //     recipient: { name, taxId, pixKey }, description: "Prêmio Charya",
-    //   });
-    // Requer no modelo: chave Pix + CPF do vencedor (perfil) e o valor do
-    // prêmio. Idempotência via externalId. O adapter resolve a chave no DICT e
-    // emite a transferência Pix; o webhook confirma o `payout.completed`.
-
     return { betId: bet.id, status };
   }
 }

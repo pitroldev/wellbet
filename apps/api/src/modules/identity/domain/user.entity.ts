@@ -12,6 +12,10 @@ export interface UserProps {
   readonly email: string;
   readonly name?: string | null;
   readonly role: UserRole;
+  /** CPF/CNPJ (só dígitos) — necessário para cobrar/pagar via Pix. */
+  readonly taxId?: string | null;
+  /** Chave Pix para receber o payout. */
+  readonly pixKey?: string | null;
   readonly authUserId?: string | null;
 }
 
@@ -30,6 +34,15 @@ export class User {
   }
   get role(): UserRole {
     return this.props.role;
+  }
+  get name(): string | null {
+    return this.props.name ?? null;
+  }
+  get taxId(): string | null {
+    return this.props.taxId ?? null;
+  }
+  get pixKey(): string | null {
+    return this.props.pixKey ?? null;
   }
 
   isReviewer(): boolean {

@@ -48,7 +48,14 @@ export const reviewVerdict = pgEnum("review_verdict", [
   "rejected", // REPROVADO
 ]);
 
-export const betStatus = pgEnum("bet_status", ["open", "settling", "won", "lost", "voided"]);
+export const betStatus = pgEnum("bet_status", [
+  "pending_payment", // criada, aguardando o pagamento do stake (Pix)
+  "open", // stake pago → aposta ativa
+  "settling", // liquidando (lock lógico)
+  "won", // meta batida → payout
+  "lost", // meta não batida
+  "voided", // cancelada (ex.: cobrança expirou sem pagamento)
+]);
 
 /* -------------------------------- tables ---------------------------------- */
 
@@ -59,6 +66,10 @@ export const users = pgTable(
     email: text("email").notNull(),
     name: text("name"),
     role: userRole("role").notNull().default("user"),
+    // CPF/CNPJ (só dígitos) — pagador da cobrança Pix e titular do payout.
+    taxId: text("tax_id"),
+    // Chave Pix do beneficiário do payout (validada contra o taxId no DICT).
+    pixKey: text("pix_key"),
     // Vínculo com o registro de identidade do Better Auth.
     authUserId: text("auth_user_id"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -152,12 +163,22 @@ export const bets = pgTable(
     startWeightKg: real("start_weight_kg"),
     targetWeightKg: real("target_weight_kg").notNull(),
     stakeAmount: numeric("stake_amount", { precision: 12, scale: 2 }).notNull(),
+    // Valor pago ao vencedor (MVP: = stake, "recupera o que apostou"; engine de
+    // odds/pool é Fase 2). numeric como string p/ precisão.
+    payoutAmount: numeric("payout_amount", { precision: 12, scale: 2 }),
     currency: text("currency").notNull().default("BRL"),
-    status: betStatus("status").notNull().default("open"),
+    status: betStatus("status").notNull().default("pending_payment"),
+    // Pix: id da cobrança do stake (Invoice) e da transferência de payout.
+    stakeChargeId: text("stake_charge_id"),
+    payoutTransferId: text("payout_transfer_id"),
     settledAt: timestamp("settled_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [index("bets_user_idx").on(t.userId), index("bets_status_idx").on(t.status)],
+  (t) => [
+    index("bets_user_idx").on(t.userId),
+    index("bets_status_idx").on(t.status),
+    index("bets_stake_charge_idx").on(t.stakeChargeId),
+  ],
 );
 
 /**

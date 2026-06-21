@@ -27,6 +27,9 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     // Logs do framework também passam pelo Pino (correlacionado a trace).
     bufferLogs: true,
+    // Mantém o corpo CRU (req.rawBody) para a verificação de assinatura do
+    // webhook de pagamento (Stark Bank `event.parse` exige o body cru).
+    rawBody: true,
   });
 
   // Pino como logger do Nest (substitui o logger default).

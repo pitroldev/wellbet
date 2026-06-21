@@ -16,6 +16,9 @@ export class PlaceBetDto extends createZodDto(PlaceBetSchema) {}
 
 export const BetResponseSchema = z.object({
   betId: z.string(),
-  status: z.enum(["open", "settling", "won", "lost", "voided"]),
+  status: z.enum(["pending_payment", "open", "settling", "won", "lost", "voided"]),
+  /** Pix copia-e-cola para pagar o stake (o app exibe o QR). */
+  brcode: z.string(),
+  chargeExpiresAt: z.string(),
 });
 export class BetResponseDto extends createZodDto(BetResponseSchema) {}

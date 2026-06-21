@@ -9,6 +9,7 @@ import { BetModule } from "./modules/bet/bet.module.js";
 import { ChallengeModule } from "./modules/challenge/challenge.module.js";
 import { HealthModule } from "./modules/health/health.module.js";
 import { IdentityModule } from "./modules/identity/identity.module.js";
+import { PaymentWebhookModule } from "./modules/payment-webhook/payment-webhook.module.js";
 import { ReviewModule } from "./modules/review/review.module.js";
 import { WeighInModule } from "./modules/weighin/weighin.module.js";
 import { ObservabilityModule } from "./observability/observability.module.js";
@@ -58,6 +59,7 @@ import { SharedModule } from "./shared/shared.module.js";
     WeighInModule,
     ReviewModule,
     BetModule,
+    PaymentWebhookModule,
   ],
   providers: [
     {

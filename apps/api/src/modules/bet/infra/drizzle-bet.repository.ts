@@ -21,18 +21,36 @@ export class DrizzleBetRepository implements BetRepositoryPort {
         startWeightKg: p.startWeightKg ?? null,
         targetWeightKg: p.targetWeightKg,
         stakeAmount: p.stakeAmount,
+        payoutAmount: p.payoutAmount ?? null,
         currency: p.currency,
         status: p.status,
+        stakeChargeId: p.stakeChargeId ?? null,
+        payoutTransferId: p.payoutTransferId ?? null,
         settledAt: p.settledAt ?? null,
       })
       .onConflictDoUpdate({
         target: bets.id,
-        set: { status: p.status, settledAt: p.settledAt ?? null },
+        set: {
+          status: p.status,
+          stakeChargeId: p.stakeChargeId ?? null,
+          payoutTransferId: p.payoutTransferId ?? null,
+          payoutAmount: p.payoutAmount ?? null,
+          settledAt: p.settledAt ?? null,
+        },
       });
   }
 
   async findById(id: string): Promise<Bet | undefined> {
     const [row] = await this.handle.db.select().from(bets).where(eq(bets.id, id)).limit(1);
+    return row ? this.toDomain(row) : undefined;
+  }
+
+  async findByStakeChargeId(chargeId: string): Promise<Bet | undefined> {
+    const [row] = await this.handle.db
+      .select()
+      .from(bets)
+      .where(eq(bets.stakeChargeId, chargeId))
+      .limit(1);
     return row ? this.toDomain(row) : undefined;
   }
 
@@ -52,8 +70,11 @@ export class DrizzleBetRepository implements BetRepositoryPort {
       startWeightKg: row.startWeightKg,
       targetWeightKg: row.targetWeightKg,
       stakeAmount: row.stakeAmount,
+      payoutAmount: row.payoutAmount,
       currency: row.currency,
       status: row.status,
+      stakeChargeId: row.stakeChargeId,
+      payoutTransferId: row.payoutTransferId,
       settledAt: row.settledAt,
     });
   }
