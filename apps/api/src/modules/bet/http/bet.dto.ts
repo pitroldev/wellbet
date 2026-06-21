@@ -42,3 +42,26 @@ export const BetDetailSchema = BetSummarySchema.extend({
   pixCharge: z.object({ brcode: z.string(), status: z.string(), expiresAt: z.string() }).nullable(),
 });
 export class BetDetailDto extends createZodDto(BetDetailSchema) {}
+
+/** Filtro/paginação da listagem admin de apostas (GET /bets/all). */
+export const AdminBetsQuerySchema = z.object({
+  status: betStatus.optional(),
+  limit: z.coerce.number().int().min(1).max(200).default(50),
+  offset: z.coerce.number().int().min(0).default(0),
+});
+export class AdminBetsQueryDto extends createZodDto(AdminBetsQuerySchema) {}
+
+/** Linha da listagem admin de apostas (com nome do usuário + createdAt). */
+export const AdminBetRowSchema = z.object({
+  betId: z.string(),
+  userId: z.string(),
+  userName: z.string().nullable(),
+  status: betStatus,
+  targetWeightKg: z.number(),
+  startWeightKg: z.number().nullable(),
+  stakeAmount: z.string(),
+  payoutAmount: z.string().nullable(),
+  currency: z.string(),
+  createdAt: z.iso.datetime(),
+});
+export class AdminBetRowDto extends createZodDto(AdminBetRowSchema) {}

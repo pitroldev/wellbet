@@ -351,6 +351,70 @@
         ]
       }
     },
+    "/api/bets/all": {
+      "get": {
+        "operationId": "BetController_listAll",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending_payment",
+                "open",
+                "settling",
+                "won",
+                "lost",
+                "voided"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 9007199254740991,
+              "default": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminBetRowDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Lista TODAS as apostas (ops). Restrito a admin/reviewer.",
+        "tags": [
+          "bet"
+        ]
+      }
+    },
     "/api/bets/{id}": {
       "get": {
         "operationId": "BetController_detail",
@@ -975,6 +1039,66 @@
           "stakeAmount",
           "payoutAmount",
           "currency"
+        ]
+      },
+      "AdminBetRowDto": {
+        "type": "object",
+        "properties": {
+          "betId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_payment",
+              "open",
+              "settling",
+              "won",
+              "lost",
+              "voided"
+            ]
+          },
+          "targetWeightKg": {
+            "type": "number"
+          },
+          "startWeightKg": {
+            "type": "number",
+            "nullable": true
+          },
+          "stakeAmount": {
+            "type": "string"
+          },
+          "payoutAmount": {
+            "type": "string",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          }
+        },
+        "required": [
+          "betId",
+          "userId",
+          "userName",
+          "status",
+          "targetWeightKg",
+          "startWeightKg",
+          "stakeAmount",
+          "payoutAmount",
+          "currency",
+          "createdAt"
         ]
       },
       "PlaceBetDto": {

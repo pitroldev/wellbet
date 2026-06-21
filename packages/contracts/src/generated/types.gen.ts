@@ -128,6 +128,19 @@ export type BetSummaryDto = {
     currency: string;
 };
 
+export type AdminBetRowDto = {
+    betId: string;
+    userId: string;
+    userName: string | null;
+    status: 'pending_payment' | 'open' | 'settling' | 'won' | 'lost' | 'voided';
+    targetWeightKg: number;
+    startWeightKg: number | null;
+    stakeAmount: string;
+    payoutAmount: string | null;
+    currency: string;
+    createdAt: string;
+};
+
 export type PlaceBetDto = {
     targetWeightKg: number;
     startWeightKg?: number | null;
@@ -293,6 +306,23 @@ export type BetControllerPlaceData = {
 export type BetControllerPlaceResponses = {
     201: unknown;
 };
+
+export type BetControllerListAllData = {
+    body?: never;
+    path?: never;
+    query?: {
+        status?: 'pending_payment' | 'open' | 'settling' | 'won' | 'lost' | 'voided';
+        limit?: number;
+        offset?: number;
+    };
+    url: '/api/bets/all';
+};
+
+export type BetControllerListAllResponses = {
+    200: Array<AdminBetRowDto>;
+};
+
+export type BetControllerListAllResponse = BetControllerListAllResponses[keyof BetControllerListAllResponses];
 
 export type BetControllerDetailData = {
     body?: never;

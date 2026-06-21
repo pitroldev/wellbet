@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { BetControllerDetailData, BetControllerDetailResponses, BetControllerListData, BetControllerListResponses, BetControllerPlaceData, BetControllerPlaceResponses, ChallengeControllerIssueData, ChallengeControllerIssueResponses, HealthControllerCheckData, HealthControllerCheckResponses, IdentityControllerMeData, IdentityControllerMeResponses, IdentityControllerSetProfileData, IdentityControllerSetProfileResponses, ReviewControllerDetailData, ReviewControllerDetailResponses, ReviewControllerQueueData, ReviewControllerQueueResponses, ReviewControllerVerdictData, ReviewControllerVerdictResponses, WeighInControllerListData, WeighInControllerListResponses, WeighInControllerStartData, WeighInControllerStartResponses, WeighInControllerSubmitData, WeighInControllerSubmitResponses } from './types.gen';
+import type { BetControllerDetailData, BetControllerDetailResponses, BetControllerListAllData, BetControllerListAllResponses, BetControllerListData, BetControllerListResponses, BetControllerPlaceData, BetControllerPlaceResponses, ChallengeControllerIssueData, ChallengeControllerIssueResponses, HealthControllerCheckData, HealthControllerCheckResponses, IdentityControllerMeData, IdentityControllerMeResponses, IdentityControllerSetProfileData, IdentityControllerSetProfileResponses, ReviewControllerDetailData, ReviewControllerDetailResponses, ReviewControllerQueueData, ReviewControllerQueueResponses, ReviewControllerVerdictData, ReviewControllerVerdictResponses, WeighInControllerListData, WeighInControllerListResponses, WeighInControllerStartData, WeighInControllerStartResponses, WeighInControllerSubmitData, WeighInControllerSubmitResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -119,6 +119,11 @@ export const betControllerPlace = <ThrowOnError extends boolean = false>(options
         ...options.headers
     }
 });
+
+/**
+ * Lista TODAS as apostas (ops). Restrito a admin/reviewer.
+ */
+export const betControllerListAll = <ThrowOnError extends boolean = false>(options?: Options<BetControllerListAllData, ThrowOnError>): RequestResult<BetControllerListAllResponses, unknown, ThrowOnError> => (options?.client ?? client).get<BetControllerListAllResponses, unknown, ThrowOnError>({ url: '/api/bets/all', ...options });
 
 /**
  * Detalhe de uma aposta (BR Code se pendente de pagamento).

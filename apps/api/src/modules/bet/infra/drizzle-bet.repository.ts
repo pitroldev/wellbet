@@ -2,13 +2,17 @@ import { Inject, Injectable } from "@nestjs/common";
 import { desc, eq } from "drizzle-orm";
 
 import { DATABASE, type DbHandle } from "@/infra/db/client.js";
-import { bets } from "@/infra/db/schema.js";
-import { Bet } from "@/modules/bet/domain/bet.entity.js";
+import { bets, users } from "@/infra/db/schema.js";
+import type {
+  AdminBetItem,
+  AdminBetQueryPort,
+} from "@/modules/bet/application/admin-bet-query.port.js";
+import { Bet, type BetStatus } from "@/modules/bet/domain/bet.entity.js";
 import type { BetRepositoryPort } from "@/modules/bet/application/bet.repository.port.js";
 
-/** Adapter Drizzle/Postgres do BetRepositoryPort. */
+/** Adapter Drizzle/Postgres do BetRepositoryPort + AdminBetQueryPort. */
 @Injectable()
-export class DrizzleBetRepository implements BetRepositoryPort {
+export class DrizzleBetRepository implements BetRepositoryPort, AdminBetQueryPort {
   constructor(@Inject(DATABASE) private readonly handle: DbHandle) {}
 
   async save(bet: Bet): Promise<void> {
@@ -61,6 +65,33 @@ export class DrizzleBetRepository implements BetRepositoryPort {
       .where(eq(bets.userId, userId))
       .orderBy(desc(bets.createdAt));
     return rows.map((r) => this.toDomain(r));
+  }
+
+  /** AdminBetQueryPort: lista TODAS as apostas (ops), com nome do usuário. */
+  async listAll(args: {
+    status?: BetStatus;
+    limit: number;
+    offset: number;
+  }): Promise<AdminBetItem[]> {
+    return this.handle.db
+      .select({
+        betId: bets.id,
+        userId: bets.userId,
+        userName: users.name,
+        status: bets.status,
+        targetWeightKg: bets.targetWeightKg,
+        startWeightKg: bets.startWeightKg,
+        stakeAmount: bets.stakeAmount,
+        payoutAmount: bets.payoutAmount,
+        currency: bets.currency,
+        createdAt: bets.createdAt,
+      })
+      .from(bets)
+      .innerJoin(users, eq(users.id, bets.userId))
+      .where(args.status ? eq(bets.status, args.status) : undefined)
+      .orderBy(desc(bets.createdAt))
+      .limit(args.limit)
+      .offset(args.offset);
   }
 
   private toDomain(row: typeof bets.$inferSelect): Bet {

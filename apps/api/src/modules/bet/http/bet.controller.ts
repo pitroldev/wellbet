@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
   UseInterceptors,
@@ -11,19 +12,29 @@ import {
 import { ApiHeader, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { AuthGuard, type AuthenticatedRequest } from "@/shared/guards/auth.guard.js";
+import { Roles, RolesGuard } from "@/shared/guards/roles.guard.js";
 import {
   Idempotent,
   IdempotencyInterceptor,
 } from "@/shared/idempotency/idempotency.interceptor.js";
 import { GetBetUseCase } from "@/modules/bet/application/get-bet.use-case.js";
+import { ListAllBetsUseCase } from "@/modules/bet/application/list-all-bets.use-case.js";
 import { ListBetsUseCase } from "@/modules/bet/application/list-bets.use-case.js";
 import { PlaceBetUseCase } from "@/modules/bet/application/place-bet.use-case.js";
-import { BetDetailDto, BetResponseDto, BetSummaryDto, PlaceBetDto } from "./bet.dto.js";
+import {
+  AdminBetRowDto,
+  AdminBetsQueryDto,
+  BetDetailDto,
+  BetResponseDto,
+  BetSummaryDto,
+  PlaceBetDto,
+} from "./bet.dto.js";
 
 /**
  * Controller de apostas.
  *
  *  GET  /bets     — lista as apostas do usuário autenticado.
+ *  GET  /bets/all — lista TODAS as apostas (ops). Restrito a admin/reviewer.
  *  GET  /bets/:id — detalhe (com BR Code se a aposta aguarda pagamento).
  *  POST /bets     — cria uma aposta. ESCRITA FINANCEIRA → idempotente:
  *  exige header `Idempotency-Key` (IdempotencyInterceptor + @Idempotent).
@@ -39,6 +50,7 @@ export class BetController {
     private readonly placeBet: PlaceBetUseCase,
     private readonly listBets: ListBetsUseCase,
     private readonly getBet: GetBetUseCase,
+    private readonly listAllBets: ListAllBetsUseCase,
   ) {}
 
   @Get()
@@ -46,6 +58,20 @@ export class BetController {
   @ApiOkResponse({ type: [BetSummaryDto] })
   async list(@Req() req: AuthenticatedRequest): Promise<BetSummaryDto[]> {
     return this.listBets.execute(req.user!.id);
+  }
+
+  // Antes de `:id` para a rota estática "all" não cair no parâmetro.
+  @Get("all")
+  @UseGuards(RolesGuard)
+  @Roles("admin", "reviewer")
+  @ApiOperation({ summary: "Lista TODAS as apostas (ops). Restrito a admin/reviewer." })
+  @ApiOkResponse({ type: [AdminBetRowDto] })
+  async listAll(@Query() query: AdminBetsQueryDto): Promise<AdminBetRowDto[]> {
+    return this.listAllBets.execute({
+      status: query.status,
+      limit: query.limit,
+      offset: query.offset,
+    });
   }
 
   @Get(":id")
