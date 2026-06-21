@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { desc, eq } from "drizzle-orm";
 
 import { DATABASE, type DbHandle } from "@/infra/db/client.js";
-import { reviews, weighins } from "@/infra/db/schema.js";
+import { reviews, users, weighins } from "@/infra/db/schema.js";
 import { type ChecklistFlag, Review } from "@/modules/review/domain/review.entity.js";
 import type {
   ReviewQueueItem,
@@ -20,6 +20,7 @@ export class DrizzleReviewRepository implements ReviewRepositoryPort {
       .select({
         weighinId: weighins.id,
         userId: weighins.userId,
+        userName: users.name,
         kind: weighins.kind,
         weightKg: weighins.weightKg,
         videoObjectKey: weighins.videoObjectKey,
@@ -28,6 +29,7 @@ export class DrizzleReviewRepository implements ReviewRepositoryPort {
         reviewId: reviews.id,
       })
       .from(weighins)
+      .innerJoin(users, eq(users.id, weighins.userId))
       .leftJoin(reviews, eq(reviews.weighinId, weighins.id))
       .where(eq(weighins.status, "in_review"))
       .orderBy(weighins.capturedAt)
@@ -37,6 +39,7 @@ export class DrizzleReviewRepository implements ReviewRepositoryPort {
     return rows.map((r) => ({
       weighinId: r.weighinId,
       userId: r.userId,
+      userName: r.userName,
       kind: r.kind,
       weightKg: r.weightKg,
       videoObjectKey: r.videoObjectKey,

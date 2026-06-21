@@ -6,6 +6,8 @@ import type { Review } from "@/modules/review/domain/review.entity.js";
 export interface ReviewQueueItem {
   readonly weighinId: string;
   readonly userId: string;
+  /** Nome do usuário que enviou a pesagem (o revisor precisa saber QUEM). */
+  readonly userName: string | null;
   readonly kind: string;
   readonly weightKg: number;
   readonly videoObjectKey: string;
