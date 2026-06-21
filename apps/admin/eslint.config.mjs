@@ -15,6 +15,13 @@ const eslintConfig = [
   ...nextCoreWebVitals,
   ...nextTypescript,
   {
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
     name: "charya/admin/rules",
     rules: {
       // §7: `any` sem justificativa é erro (o preset do next deixa em warn).

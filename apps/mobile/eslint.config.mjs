@@ -15,6 +15,13 @@ import expo from "eslint-config-expo/flat.js";
 export default [
   ...expo,
   {
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
     name: "charya/mobile/rules",
     files: ["**/*.{ts,tsx}"],
     rules: {
