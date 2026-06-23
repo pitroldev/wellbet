@@ -3,6 +3,7 @@
 Monorepo do **Charya Bet**: apostas sobre metas reais de emagrecimento, com **comprovação de peso por vídeo** e **revisão humana** (abordagem manual-first do MVP).
 
 > Visão técnica completa: [`docs/Charya_Arquitetura_Tecnica.md`](./docs/Charya_Arquitetura_Tecnica.md).
+> Stack adotada (as-built, versões reais): [`docs/Charya_Stack_Adotada.md`](./docs/Charya_Stack_Adotada.md).
 > Mecanismo de validação do MVP: [`docs/Charya_Validacao_Peso_MVP.md`](./docs/Charya_Validacao_Peso_MVP.md).
 
 ## Stack (uma linha por ambiente)
