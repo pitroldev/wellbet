@@ -40,6 +40,11 @@ export const arena = {
   pink: "#FF80E1",
   pinkPale: "#FDC0FF",
 
+  // Erro / perigo — vermelho-neon que lê bem sobre navy e harmoniza com
+  // magenta/pink (a marca não tem dourado/vermelho de aposta barata).
+  danger: "#FF4D6D",
+  dangerDeep: "#E23A57",
+
   // Texto sobre escuro
   white: "#FFFFFF",
   fog: "#B9C0E0", // secundário

@@ -6,18 +6,20 @@
  * contraste com a captura sóbria.
  */
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 import { RewardScreen } from "@/features/reward/RewardScreen";
 import { useWeighInStore } from "@/features/weighin/model/store";
 
 export default function WeighInResultScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const reset = useWeighInStore((s) => s.reset);
 
   return (
     <RewardScreen
-      title="Pesagem enviada!"
-      subtitle="Sua pesagem está em revisão. Avisamos assim que for validada."
+      title={t("weighin.result.title")}
+      subtitle={t("weighin.result.subtitle")}
       onContinue={() => {
         reset();
         router.replace("/");

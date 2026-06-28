@@ -6,6 +6,7 @@
 import { useState } from "react";
 import { View } from "react-native";
 import { Link, router } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 import { Button, Input, Screen, Text } from "@/shared/ui";
 import { apiErrorMessage } from "@/shared/lib/http";
@@ -17,6 +18,7 @@ function parseWeight(v: string): number {
 }
 
 export default function NewBetScreen() {
+  const { t } = useTranslation();
   const place = usePlaceBet();
   // Chave de idempotência fixa por tela (reusada em retries).
   const [idempotencyKey] = useState(() => uuidV4());
@@ -32,28 +34,32 @@ export default function NewBetScreen() {
       <Screen>
         <View className="flex-1 gap-8 py-6">
           <View className="gap-2">
-            <Text variant="title">Pague para ativar</Text>
+            <Text variant="label" className="text-arena-magenta">
+              Pix
+            </Text>
+            <Text variant="title">{t("bet.pay.title")}</Text>
             <Text variant="body" className="text-muted">
-              Copie o código Pix e pague o valor da aposta. Assim que o pagamento cair, sua aposta
-              fica ativa.
+              {t("bet.pay.body")}
             </Text>
           </View>
 
           <View className="gap-2">
-            <Text variant="caption">Pix copia e cola</Text>
+            <Text variant="label">{t("bet.pay.label")}</Text>
             <View className="rounded-2xl border border-border bg-surface px-4 py-3">
               <Text variant="mono" selectable className="text-xs">
                 {bet.brcode}
               </Text>
             </View>
             <Text variant="caption" className="text-muted">
-              Expira em {new Date(bet.chargeExpiresAt).toLocaleString("pt-BR")}.
+              {t("bet.pay.expires", {
+                date: new Date(bet.chargeExpiresAt).toLocaleString("pt-BR"),
+              })}
             </Text>
           </View>
 
           <View className="mt-auto gap-3">
             <Link href="/" asChild>
-              <Button label="Voltar ao início" />
+              <Button label={t("common.backHome")} />
             </Link>
           </View>
         </View>
@@ -68,15 +74,15 @@ export default function NewBetScreen() {
     const stakeAmount = stake.replace(",", ".").trim();
 
     if (!Number.isFinite(target) || target <= 0) {
-      setError("Informe uma meta de peso válida (kg).");
+      setError(t("bet.error.target"));
       return;
     }
     if (start !== null && (!Number.isFinite(start) || start <= target)) {
-      setError("O peso inicial deve ser maior que a meta.");
+      setError(t("bet.error.start"));
       return;
     }
     if (stakeAmount.length === 0 || !Number.isFinite(Number(stakeAmount))) {
-      setError("Informe o valor da aposta (R$).");
+      setError(t("bet.error.stake"));
       return;
     }
     try {
@@ -85,10 +91,7 @@ export default function NewBetScreen() {
         body: { targetWeightKg: target, startWeightKg: start, stakeAmount, currency: "BRL" },
       });
     } catch (e) {
-      setError(
-        apiErrorMessage(e) ??
-          "Não foi possível criar a aposta. Confira se seu perfil (CPF/Pix) está completo e tente de novo.",
-      );
+      setError(apiErrorMessage(e) ?? t("bet.error.create"));
     }
   }
 
@@ -96,36 +99,39 @@ export default function NewBetScreen() {
     <Screen>
       <View className="flex-1 gap-8 py-6">
         <View className="gap-2">
-          <Text variant="title">Nova aposta</Text>
+          <Text variant="label" className="text-arena-magenta">
+            Charya
+          </Text>
+          <Text variant="title">{t("bet.create.title")}</Text>
           <Text variant="body" className="text-muted">
-            Aposte em você: defina sua meta e o valor. Você recupera o valor ao atingir a meta.
+            {t("bet.create.body")}
           </Text>
         </View>
 
         <View className="gap-4">
           <Input
-            label="Meta de peso (kg)"
+            label={t("bet.field.target")}
             value={targetWeight}
             onChangeText={setTargetWeight}
-            placeholder="ex.: 75"
+            placeholder={t("bet.field.targetPlaceholder")}
             keyboardType="decimal-pad"
           />
           <Input
-            label="Peso inicial (kg) — opcional"
+            label={t("bet.field.start")}
             value={startWeight}
             onChangeText={setStartWeight}
-            placeholder="ex.: 85"
+            placeholder={t("bet.field.startPlaceholder")}
             keyboardType="decimal-pad"
           />
           <Input
-            label="Valor da aposta (R$)"
+            label={t("bet.field.stake")}
             value={stake}
             onChangeText={setStake}
-            placeholder="ex.: 100"
+            placeholder={t("bet.field.stakePlaceholder")}
             keyboardType="decimal-pad"
           />
           {error != null ? (
-            <Text variant="caption" className="text-red-500">
+            <Text variant="caption" className="text-danger">
               {error}
             </Text>
           ) : null}
@@ -133,11 +139,11 @@ export default function NewBetScreen() {
 
         <View className="mt-auto gap-3">
           <Button
-            label={place.isPending ? "Criando…" : "Criar aposta"}
+            label={place.isPending ? t("bet.create.submitting") : t("bet.create.submit")}
             onPress={() => void onSubmit()}
             disabled={place.isPending}
           />
-          <Button label="Cancelar" tone="ghost" onPress={() => router.back()} />
+          <Button label={t("common.cancel")} tone="ghost" onPress={() => router.back()} />
         </View>
       </View>
     </Screen>

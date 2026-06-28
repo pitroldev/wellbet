@@ -15,6 +15,7 @@
  * nas telas de resultado/recompensa.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import {
   Camera,
@@ -40,6 +41,7 @@ export interface CameraCaptureProps {
 }
 
 export function CameraCapture({ challenge, onRecordingFinished, onError }: CameraCaptureProps) {
+  const { t } = useTranslation();
   const cameraRef = useRef<CameraRef>(null);
   // Recorder ativo do take corrente (vision-camera v5 grava via Recorder, não
   // mais via `camera.startRecording`). Mantemos em ref para o stop alcançá-lo.
@@ -114,12 +116,12 @@ export function CameraCapture({ challenge, onRecordingFinished, onError }: Camer
     return (
       <Screen>
         <View className="flex-1 items-center justify-center gap-4">
-          <Text variant="heading">Precisamos da câmera e do microfone</Text>
+          <Text variant="heading">{t("weighin.camera.permTitle")}</Text>
           <Text variant="caption" className="text-center">
-            A pesagem é gravada dentro do app. Não é possível enviar vídeo da galeria.
+            {t("weighin.camera.permBody")}
           </Text>
           <Button
-            label="Conceder acesso"
+            label={t("weighin.camera.permCta")}
             onPress={() => {
               void requestPermission();
               void requestMic();
@@ -134,7 +136,7 @@ export function CameraCapture({ challenge, onRecordingFinished, onError }: Camer
     return (
       <Screen>
         <View className="flex-1 items-center justify-center">
-          <Text variant="heading">Câmera indisponível</Text>
+          <Text variant="heading">{t("weighin.camera.unavailable")}</Text>
         </View>
       </Screen>
     );
@@ -158,9 +160,9 @@ export function CameraCapture({ challenge, onRecordingFinished, onError }: Camer
 
       <View className="absolute bottom-10 left-0 right-0 items-center px-6">
         {isRecording ? (
-          <Button label="Encerrar gravação" tone="secondary" onPress={stopRecording} />
+          <Button label={t("weighin.camera.stop")} tone="secondary" onPress={stopRecording} />
         ) : (
-          <Button label="Iniciar gravação" onPress={startRecording} />
+          <Button label={t("weighin.camera.start")} onPress={startRecording} />
         )}
       </View>
     </View>

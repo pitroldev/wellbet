@@ -12,6 +12,7 @@
  */
 import { useEffect, useState } from "react";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
 import Rive from "rive-react-native";
 import * as Haptics from "expo-haptics";
 
@@ -28,6 +29,7 @@ export interface RewardScreenProps {
 }
 
 export function RewardScreen({ title, subtitle, onContinue }: RewardScreenProps) {
+  const { t } = useTranslation();
   const reduced = useReducedMotion();
   const [showConfetti, setShowConfetti] = useState(true);
 
@@ -59,7 +61,7 @@ export function RewardScreen({ title, subtitle, onContinue }: RewardScreenProps)
       ) : null}
 
       <View className="mt-10 w-full">
-        <Button label="Continuar" onPress={onContinue} />
+        <Button label={t("common.continue")} onPress={onContinue} />
       </View>
 
       {/* Confete decorativo que se desmonta ao terminar. */}

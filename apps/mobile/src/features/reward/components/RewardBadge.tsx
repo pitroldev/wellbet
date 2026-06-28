@@ -59,7 +59,7 @@ export function RewardBadge({ emoji = "🏆", label, size = 220 }: RewardBadgePr
           </Text>
         </View>
       </View>
-      <Text variant="heading" className="mt-2 text-center">
+      <Text variant="title" className="mt-3 text-center text-3xl">
         {label}
       </Text>
     </Animated.View>

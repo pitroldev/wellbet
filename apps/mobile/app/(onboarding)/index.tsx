@@ -4,6 +4,7 @@
  */
 import { View } from "react-native";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import Rive from "rive-react-native";
 
 import { Button, Screen, Text } from "@/shared/ui";
@@ -12,6 +13,7 @@ import { useReducedMotion } from "@/shared/motion";
 export default function OnboardingWelcome() {
   const router = useRouter();
   const reduced = useReducedMotion();
+  const { t } = useTranslation();
 
   return (
     <Screen>
@@ -27,18 +29,20 @@ export default function OnboardingWelcome() {
             />
           </View>
           <View className="gap-2">
+            <Text variant="label" className="text-center text-arena-magenta">
+              Charya
+            </Text>
             <Text variant="title" className="text-center">
-              Bem-vindo ao Charya
+              {t("onboarding.welcome.title")}
             </Text>
             <Text variant="body" className="text-center text-muted">
-              Você aposta no seu próprio emagrecimento. A pesagem é gravada no app e revisada por
-              uma pessoa.
+              {t("onboarding.welcome.body")}
             </Text>
           </View>
         </View>
 
         <Button
-          label="Como gravar a pesagem"
+          label={t("onboarding.welcome.cta")}
           onPress={() => router.push("/(onboarding)/capture-guide")}
         />
       </View>

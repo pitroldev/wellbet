@@ -15,11 +15,9 @@ export interface InputProps extends TextInputProps {
   error?: string;
 }
 
-const DANGER = "#d24c3e";
-
 export function Input({ label, error, className, onFocus, onBlur, ...props }: InputProps) {
   const [focused, setFocused] = useState(false);
-  const borderColor = error != null ? DANGER : focused ? arena.magenta : arena.navyLine;
+  const borderColor = error != null ? arena.danger : focused ? arena.magenta : arena.navyLine;
 
   return (
     <View className="gap-1.5">
@@ -42,7 +40,7 @@ export function Input({ label, error, className, onFocus, onBlur, ...props }: In
         {...props}
       />
       {error != null ? (
-        <Text variant="caption" className="text-red-400">
+        <Text variant="caption" className="text-danger">
           {error}
         </Text>
       ) : null}

@@ -8,6 +8,7 @@
 import type { WeighInStatus } from "@charya/schemas";
 import { View } from "react-native";
 import { FlashList } from "@shopify/flash-list";
+import { useTranslation } from "react-i18next";
 
 import { Text } from "@/shared/ui";
 
@@ -21,27 +22,13 @@ export interface WeighInHistoryItem {
   dateLabel: string;
 }
 
-/** Rótulo de display da captura (T0/T1/T2) a partir do `kind` do contrato. */
-const KIND_LABEL: Record<WeighInHistoryItem["kind"], string> = {
-  baseline: "T0",
-  mid: "T1",
-  final: "T2",
-};
-
-const STATUS_LABEL: Record<WeighInStatus, string> = {
-  pending: "Recebida",
-  blocked: "Bloqueada",
-  in_review: "Em revisão",
-  approved: "Aprovada",
-  rejected: "Reprovada",
-  recapture: "Recapturar",
-};
-
 export interface WeighInHistoryListProps {
   data: readonly WeighInHistoryItem[];
 }
 
 export function WeighInHistoryList({ data }: WeighInHistoryListProps) {
+  const { t } = useTranslation();
+
   return (
     <FlashList
       data={data as WeighInHistoryItem[]}
@@ -51,19 +38,25 @@ export function WeighInHistoryList({ data }: WeighInHistoryListProps) {
         <View className="flex-row items-center justify-between rounded-xl bg-surface px-4 py-3">
           <View>
             <Text variant="body">
-              {KIND_LABEL[item.kind]} · {item.weightKg.toFixed(1)} kg
+              {t(`home.history.kind.${item.kind}`)}{" "}
+              <Text variant="mono">· {item.weightKg.toFixed(1)} kg</Text>
             </Text>
             <Text variant="caption" className="text-muted">
               {item.dateLabel}
             </Text>
           </View>
-          <Text variant="caption">{STATUS_LABEL[item.status]}</Text>
+          <Text
+            variant="caption"
+            className={item.status === "approved" ? "text-arena-green" : undefined}
+          >
+            {t(`home.history.status.${item.status}`)}
+          </Text>
         </View>
       )}
       ItemSeparatorComponent={() => <View className="h-2" />}
       ListEmptyComponent={
         <Text variant="caption" className="text-muted">
-          Nenhuma pesagem ainda.
+          {t("home.history.empty")}
         </Text>
       }
     />

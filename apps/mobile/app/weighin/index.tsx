@@ -13,6 +13,7 @@
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { Link, useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 import { Button, Input, Screen, Text } from "@/shared/ui";
 import { apiErrorMessage } from "@/shared/lib/http";
@@ -27,6 +28,7 @@ import { useWeighInStore } from "@/features/weighin/model/store";
 import type { RecordedVideo } from "@/features/weighin/model/types";
 
 export default function WeighInCaptureScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const target = useActiveWeighInTarget();
 
@@ -55,7 +57,7 @@ export default function WeighInCaptureScreen() {
       { betId, capturePoint: point },
       {
         onSuccess: (res) => begin(point, res.challenge),
-        onError: () => setError("Não foi possível iniciar a pesagem."),
+        onError: () => setError(t("weighin.error.start")),
       },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,7 +67,7 @@ export default function WeighInCaptureScreen() {
     setWeightError(null);
     const kg = Number(weight.replace(",", ".").trim());
     if (!Number.isFinite(kg) || kg <= 0) {
-      setWeightError("Informe o peso que a balança mostra (kg).");
+      setWeightError(t("weighin.weightGate.invalid"));
       return;
     }
     setWeightConfirmed(true);
@@ -75,7 +77,7 @@ export default function WeighInCaptureScreen() {
     setVideo(video);
     const session = start.data;
     if (session == null || challenge == null || target.status !== "ready") {
-      setError("Sessão inválida.");
+      setError(t("weighin.error.session"));
       return;
     }
     try {
@@ -92,26 +94,26 @@ export default function WeighInCaptureScreen() {
       });
       router.replace("/weighin/result");
     } catch (e) {
-      setError(apiErrorMessage(e) ?? "Falha no envio. Tente novamente.");
+      setError(apiErrorMessage(e) ?? t("weighin.error.upload"));
     }
   }
 
   // --- destino da pesagem (antes de qualquer captura) ---
   if (target.status === "loading") {
-    return <CenteredMessage heading="Carregando…" />;
+    return <CenteredMessage heading={t("common.loading")} />;
   }
   if (target.status === "no-bet") {
     return (
       <Screen>
         <View className="flex-1 items-center justify-center gap-4 px-6">
           <Text variant="heading" className="text-center">
-            Nenhuma aposta ativa
+            {t("weighin.noBet.title")}
           </Text>
           <Text variant="caption" className="text-center text-muted">
-            Crie uma aposta e pague o stake para começar a pesar.
+            {t("weighin.noBet.body")}
           </Text>
           <Link href="/bet/new" asChild>
-            <Button label="Criar aposta" />
+            <Button label={t("weighin.noBet.cta")} />
           </Link>
         </View>
       </Screen>
@@ -122,13 +124,13 @@ export default function WeighInCaptureScreen() {
       <Screen>
         <View className="flex-1 items-center justify-center gap-4 px-6">
           <Text variant="heading" className="text-center">
-            Pesagens concluídas
+            {t("weighin.done.title")}
           </Text>
           <Text variant="caption" className="text-center text-muted">
-            Você já fez as 3 pesagens desta aposta. Aguarde o resultado.
+            {t("weighin.done.body")}
           </Text>
           <Link href="/" asChild>
-            <Button label="Voltar ao início" />
+            <Button label={t("common.backHome")} />
           </Link>
         </View>
       </Screen>
@@ -140,14 +142,14 @@ export default function WeighInCaptureScreen() {
       <Screen>
         <View className="flex-1 items-center justify-center gap-4 px-6">
           <Text variant="heading" className="text-center">
-            Algo deu errado
+            {t("weighin.error.title")}
           </Text>
           {errorMsg != null ? (
             <Text variant="caption" className="text-center text-muted">
               {errorMsg}
             </Text>
           ) : null}
-          <Button label="Tentar de novo" onPress={() => router.replace("/weighin")} />
+          <Button label={t("weighin.error.retry")} onPress={() => router.replace("/weighin")} />
         </View>
       </Screen>
     );
@@ -156,8 +158,8 @@ export default function WeighInCaptureScreen() {
   if (upload.isPending || submit.isPending) {
     return (
       <CenteredMessage
-        heading="Enviando o vídeo…"
-        caption="Mantemos tentando mesmo com a conexão instável."
+        heading={t("weighin.uploading.title")}
+        caption={t("weighin.uploading.caption")}
       />
     );
   }
@@ -168,21 +170,21 @@ export default function WeighInCaptureScreen() {
       <Screen>
         <View className="flex-1 gap-8 py-6">
           <View className="gap-2">
-            <Text variant="title">Qual o seu peso?</Text>
+            <Text variant="title">{t("weighin.weightGate.title")}</Text>
             <Text variant="body" className="text-muted">
-              Informe o peso que a balança mostra. Você vai prová-lo no vídeo a seguir.
+              {t("weighin.weightGate.body")}
             </Text>
           </View>
           <Input
-            label="Peso (kg)"
+            label={t("weighin.weightGate.label")}
             value={weight}
             onChangeText={setWeight}
-            placeholder="ex.: 82,5"
+            placeholder={t("weighin.weightGate.placeholder")}
             keyboardType="decimal-pad"
             error={weightError ?? undefined}
           />
           <View className="mt-auto">
-            <Button label="Continuar para a gravação" onPress={confirmWeight} />
+            <Button label={t("weighin.weightGate.cta")} onPress={confirmWeight} />
           </View>
         </View>
       </Screen>
@@ -191,7 +193,10 @@ export default function WeighInCaptureScreen() {
 
   if (start.isPending || challenge == null) {
     return (
-      <CenteredMessage heading="Preparando a pesagem…" caption="Gerando o código de verificação." />
+      <CenteredMessage
+        heading={t("weighin.preparing.title")}
+        caption={t("weighin.preparing.caption")}
+      />
     );
   }
 

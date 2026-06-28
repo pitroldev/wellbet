@@ -34,6 +34,8 @@ const A = {
   greenInk: "#0A2920",
   pink: "#FF80E1",
   pinkPale: "#FDC0FF",
+  danger: "#FF4D6D",
+  dangerDeep: "#E23A57",
   white: "#FFFFFF",
   fog: "#B9C0E0",
   fogMute: "#7A85B5",
@@ -84,6 +86,7 @@ module.exports = {
         "muted-foreground": A.fogMute,
         border: A.navyLine,
         "on-primary": A.white,
+        danger: A.danger,
 
         // Primária/acento da marca (escalas completas para `-50…-950`).
         primary: magenta,
@@ -106,6 +109,8 @@ module.exports = {
           "green-ink": A.greenInk,
           pink: A.pink,
           "pink-pale": A.pinkPale,
+          danger: A.danger,
+          "danger-deep": A.dangerDeep,
           white: A.white,
           fog: A.fog,
           "fog-mute": A.fogMute,

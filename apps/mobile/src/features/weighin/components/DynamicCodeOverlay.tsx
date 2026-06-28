@@ -9,6 +9,7 @@
  * vídeo (Orçamento de performance). Só um pulso CSS discreto para chamar
  * atenção ao código, respeitando reduce-motion.
  */
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 
@@ -18,21 +19,25 @@ import { durations } from "@/theme/tokens";
 
 import type { Challenge } from "../model/types";
 
-/** Rótulos legíveis dos gestos da api (challenge.gesture é string no contrato). */
-const GESTURE_LABEL: Record<string, string> = {
-  thumbs_up: "joinha (polegar para cima)",
-  open_palm: "palma da mão aberta",
-  peace_sign: "sinal de paz (dois dedos)",
-  wave: "acenar",
-  point_up: "apontar para cima",
-};
+/** Chaves i18n dos gestos da api (challenge.gesture é string no contrato). */
+const GESTURE_KEYS = {
+  thumbs_up: "weighin.code.gestures.thumbs_up",
+  open_palm: "weighin.code.gestures.open_palm",
+  peace_sign: "weighin.code.gestures.peace_sign",
+  wave: "weighin.code.gestures.wave",
+  point_up: "weighin.code.gestures.point_up",
+} as const;
 
 export interface DynamicCodeOverlayProps {
   challenge: Challenge;
 }
 
 export function DynamicCodeOverlay({ challenge }: DynamicCodeOverlayProps) {
+  const { t } = useTranslation();
   const pulseDuration = useMotionDuration(durations.slow);
+
+  const gKey = GESTURE_KEYS[challenge.gesture as keyof typeof GESTURE_KEYS];
+  const gestureLabel = gKey ? t(gKey) : challenge.gesture;
 
   return (
     <View pointerEvents="none" className="absolute left-0 right-0 top-0 items-center pt-16">
@@ -41,13 +46,13 @@ export function DynamicCodeOverlay({ challenge }: DynamicCodeOverlayProps) {
         style={pulseDuration > 0 ? pulse(pulseDuration) : undefined}
       >
         <Text variant="caption" className="text-white/70">
-          Mostre este código e faça o gesto
+          {t("weighin.code.prompt")}
         </Text>
         <Text variant="mono" className="mt-1 text-white">
           {challenge.word} · {challenge.code}
         </Text>
         <Text variant="caption" className="mt-1 text-white">
-          Gesto: {GESTURE_LABEL[challenge.gesture] ?? challenge.gesture}
+          {t("weighin.code.gesture", { gesture: gestureLabel })}
         </Text>
       </Animated.View>
     </View>

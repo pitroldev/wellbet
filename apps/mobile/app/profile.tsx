@@ -5,13 +5,22 @@
 import { useState } from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 
-import { Button, Input, Screen, Text } from "@/shared/ui";
+import { Button, Input, PressableScale, Screen, Text } from "@/shared/ui";
 import { apiErrorMessage } from "@/shared/lib/http";
+import { useLocale } from "@/shared/i18n/useLocale";
 import { useMe } from "@/features/profile/api/useMe";
 import { useUpdateProfile } from "@/features/profile/api/useUpdateProfile";
 
+const LANGUAGE_LABEL = {
+  pt: "common.languagePt",
+  en: "common.languageEn",
+} as const;
+
 export default function ProfileScreen() {
+  const { t } = useTranslation();
+  const { language, languages, setLanguage } = useLocale();
   const { data: me, isLoading } = useMe();
   const update = useUpdateProfile();
 
@@ -33,14 +42,14 @@ export default function ProfileScreen() {
     const tax = taxId.trim();
     const pix = pixKey.trim();
     if (tax.length === 0 || pix.length === 0) {
-      setError("Preencha o CPF/CNPJ e a chave Pix.");
+      setError(t("profile.error.required"));
       return;
     }
     try {
       await update.mutateAsync({ taxId: tax, pixKey: pix });
       router.back();
     } catch (e) {
-      setError(apiErrorMessage(e) ?? "Não foi possível salvar. Tente novamente.");
+      setError(apiErrorMessage(e) ?? t("profile.error.save"));
     }
   }
 
@@ -48,32 +57,59 @@ export default function ProfileScreen() {
     <Screen>
       <View className="flex-1 gap-8 py-6">
         <View className="gap-2">
-          <Text variant="title">Seu perfil</Text>
-          <Text variant="body" className="text-muted">
-            CPF/CNPJ e chave Pix são necessários para apostar e receber o prêmio.
+          <Text variant="label" className="text-arena-magenta">
+            Charya
           </Text>
+          <Text variant="title">{t("profile.title")}</Text>
+          <Text variant="body" className="text-muted">
+            {t("profile.body")}
+          </Text>
+        </View>
+
+        <View className="gap-2">
+          <Text variant="label">{t("common.language")}</Text>
+          <View className="flex-row gap-2">
+            {languages.map((lang) => {
+              const active = lang === language;
+              return (
+                <PressableScale
+                  key={lang}
+                  onPress={() => setLanguage(lang)}
+                  className={
+                    active
+                      ? "rounded-full bg-primary-600 px-4 py-2"
+                      : "rounded-full border border-border bg-arena-navy-soft px-4 py-2"
+                  }
+                >
+                  <Text variant="label" className={active ? "text-on-primary" : "text-muted"}>
+                    {t(LANGUAGE_LABEL[lang])}
+                  </Text>
+                </PressableScale>
+              );
+            })}
+          </View>
         </View>
 
         <View className="gap-4">
           <Input
-            label="CPF/CNPJ"
+            label={t("profile.field.taxId")}
             value={taxId}
             onChangeText={setTaxId}
-            placeholder="000.000.000-00"
+            placeholder={t("profile.field.taxIdPlaceholder")}
             keyboardType="numbers-and-punctuation"
             autoCapitalize="none"
             editable={!isLoading}
           />
           <Input
-            label="Chave Pix"
+            label={t("profile.field.pix")}
             value={pixKey}
             onChangeText={setPixKey}
-            placeholder="CPF, e-mail, telefone ou chave aleatória"
+            placeholder={t("profile.field.pixPlaceholder")}
             autoCapitalize="none"
             editable={!isLoading}
           />
           {error != null ? (
-            <Text variant="caption" className="text-red-500">
+            <Text variant="caption" className="text-danger">
               {error}
             </Text>
           ) : null}
@@ -81,11 +117,11 @@ export default function ProfileScreen() {
 
         <View className="mt-auto gap-3">
           <Button
-            label={update.isPending ? "Salvando…" : "Salvar"}
+            label={update.isPending ? t("common.saving") : t("common.save")}
             onPress={() => void onSave()}
             disabled={update.isPending || isLoading}
           />
-          <Button label="Cancelar" tone="ghost" onPress={() => router.back()} />
+          <Button label={t("common.cancel")} tone="ghost" onPress={() => router.back()} />
         </View>
       </View>
     </Screen>
