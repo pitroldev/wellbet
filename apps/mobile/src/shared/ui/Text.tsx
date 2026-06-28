@@ -1,22 +1,33 @@
 /**
- * Texto base com variantes tipográficas via NativeWind (estilo estático).
+ * Texto base com variantes tipográficas da Arena (estilo estático via NativeWind).
  *
- * Centraliza a tipografia para não espalhar classes soltas. Variantes mapeiam
- * para classes do preset de tokens (@charya/ui-tokens).
+ * Tipografia gymbet-arena (ver src/theme/fonts.ts):
+ *  - `title`   → Archivo black, CAIXA-ALTA, manchete pesada.
+ *  - `heading` → Plus Jakarta bold.
+ *  - `body`    → Plus Jakarta medium.
+ *  - `caption` → Plus Jakarta, secundário (fog).
+ *  - `label`   → eyebrow: caixa-alta, tracking largo, terciário.
+ *  - `mono`    → Geist Mono (códigos).
+ *  - `numeric` → Geist Mono grande em magenta (peso/streak/prêmio).
+ *
+ * Cada peso é uma família própria; por isso escolhemos a família explícita
+ * (`font-*`) e NÃO combinamos com `font-bold` (o RN não sintetiza peso bem).
  */
 import { Text as RNText, type TextProps as RNTextProps } from "react-native";
 
-type Variant = "title" | "heading" | "body" | "caption" | "mono";
+type Variant = "title" | "heading" | "body" | "caption" | "label" | "mono" | "numeric";
 
 const variantClass: Record<Variant, string> = {
-  title: "text-3xl font-bold text-foreground",
-  heading: "text-xl font-semibold text-foreground",
-  body: "text-base text-foreground",
-  caption: "text-sm text-muted",
-  mono: "text-base font-mono tracking-widest text-foreground",
+  title: "font-display text-4xl uppercase leading-[0.92] tracking-tight text-foreground",
+  heading: "font-sans-bold text-xl text-foreground",
+  body: "font-sans text-base leading-relaxed text-foreground",
+  caption: "font-sans text-sm text-muted",
+  label: "font-sans-bold text-xs uppercase tracking-[0.16em] text-muted-foreground",
+  mono: "font-mono text-base text-foreground",
+  numeric: "font-mono-bold text-3xl tabular-nums text-arena-magenta",
 };
-// Aliases de cor (background/surface/foreground/muted/border/on-primary) e a
-// escala `primary-*` vêm do preset @charya/ui-tokens + extends do tailwind.config.
+// Aliases de cor (background/surface/foreground/muted/border/on-primary), a
+// escala `primary-*` e as cores `arena-*` vêm do tailwind.config (tema Arena).
 
 export interface TextProps extends RNTextProps {
   variant?: Variant;

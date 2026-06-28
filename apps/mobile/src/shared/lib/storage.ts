@@ -54,4 +54,6 @@ export const StorageKeys = {
   onboardingDone: "onboarding.done",
   weighinDraft: "weighin.draft",
   lastCameraDevice: "camera.lastDevice",
+  /** Idioma escolhido manualmente (override da detecção do dispositivo). */
+  language: "app.language",
 } as const;

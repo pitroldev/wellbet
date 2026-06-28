@@ -11,7 +11,11 @@
  */
 import { colors, spacing, radii, durationsMs, springs, easing, tokens } from "@charya/ui-tokens";
 
+import { arena } from "./arena";
+
 export { colors, spacing, radii, durationsMs, springs, easing, tokens };
+export { arena, arenaAlpha, gradients, glow } from "./arena";
+export { fontFamilies, fontMap } from "./fonts";
 
 /**
  * Durações de animação (ms, números) — para Reanimated 4 (`withTiming` / CSS
@@ -27,17 +31,18 @@ export const durations = {
 
 /**
  * Cores semânticas cruas (hex) para uso imperativo em Skia/Reanimated/props
- * nativas. As escalas completas continuam em `colors` (ex.: `colors.brand[500]`).
+ * nativas — agora na direção GYMBET ARENA (ver src/theme/arena.ts). Os semânticos
+ * de veredito (success/danger) seguem das escalas de `@charya/ui-tokens`.
  */
 export const palette = {
-  primary: colors.brand[500],
-  primaryDeep: colors.brand[950],
-  accent: colors.accent[400],
-  success: colors.success[500],
+  primary: arena.magenta,
+  primaryDeep: arena.magentaDeep,
+  accent: arena.pink,
+  success: arena.green,
   danger: colors.danger[500],
-  surface: colors.neutral[900],
-  background: colors.neutral[950],
-  foreground: colors.neutral[50],
+  surface: arena.navySoft,
+  background: arena.navy,
+  foreground: arena.white,
 } as const;
 
 export type PaletteColor = keyof typeof palette;
