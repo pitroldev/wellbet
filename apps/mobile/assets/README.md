@@ -1,22 +1,24 @@
-# Assets nativos (Rive / Lottie / som)
+# Assets nativos (som / Rive / Lottie)
 
-Placeholders dos assets referenciados em código. Substituir pelos arquivos reais
-antes do build (os `require(...)`/`resourceName` apontam para cá).
+## Áudio (`assets/audio/`) — ✅ presente
 
-## Rive (`assets/rive/`)
+- `win.wav` — som de vitória/streak (arpejo C–E–G–C sintetizado). Tocado na tela
+  de recompensa via `expo-audio` (`features/reward/RewardScreen.tsx`).
 
-- `mascot.riv` — mascote reativo (state-machines `welcome`, `reward`).
-  Usado em `app/(onboarding)/index.tsx` e `features/reward/RewardScreen.tsx`.
-  Preferir Rive a Lottie para interação/state-machine (~10-15× menor — §3).
+## Animações — hoje em CÓDIGO (Skia), sem asset binário
 
-## Lottie (`assets/lottie/`)
+Os placeholders de Rive/Lottie foram substituídos por implementações em **Skia**
+(GPU, UI thread), então não há mais asset binário faltando:
 
-- `confetti.json` — confete decorativo, **não-loop**, desmonta ao fim.
-  Usado em `features/reward/components/Confetti.tsx`.
+- **Mascote** → `features/reward/components/Mascot.tsx` (desenhado em código;
+  usado em onboarding e na recompensa). Antes era `mascot.riv` (Rive).
+- **Confete** → `features/reward/components/Confetti.tsx` (partículas em Skia,
+  desmonta ao fim). Antes era `confetti.json` (Lottie).
 
-## Áudio (`assets/audio/`)
-
-- `win.mp3` — som de vitória/streak (expo-audio). TODO de RewardScreen.
+Quando entrar arte de verdade (um `.riv` de mascote ~10–15× menor que Lottie, ou
+um `confetti.json` autoral), basta trocar o interior desses dois componentes por
+`<Rive/>` / `<LottieView/>` mantendo a mesma API — as deps `rive-react-native` e
+`lottie-react-native` seguem instaladas para isso.
 
 Regra de feel (§3): Rive = interativo · Lottie = decorativo discreto · Skia =
 contínuo/partícula. Nada disso na tela de captura (sobriedade).

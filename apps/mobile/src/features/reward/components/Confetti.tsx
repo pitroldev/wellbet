@@ -1,54 +1,131 @@
 /**
- * Confete decorativo (Lottie). Regra do briefing: Lottie só para decorativo
- * discreto e DESMONTAR ao terminar (loop full-screen de Lottie é caro).
+ * Confete de celebração — partículas em Skia (GPU, UI thread), sem asset.
  *
- * Respeita reduce-motion: se o usuário pediu reduzir movimento, não renderiza.
+ * Regra de feel (§3): Skia para partícula/efeito contínuo. Antes era um Lottie
+ * com asset placeholder (que nem existia e quebrava o bundle); agora é gerado em
+ * código — desmonta sozinho ao terminar e respeita reduce-motion.
  */
-import { useRef } from "react";
-import LottieView from "lottie-react-native";
+import { useEffect, useMemo } from "react";
+import { useWindowDimensions } from "react-native";
+import { Canvas, Group, RoundedRect } from "@shopify/react-native-skia";
+import {
+  Easing,
+  useDerivedValue,
+  useSharedValue,
+  withTiming,
+  type SharedValue,
+} from "react-native-reanimated";
 
 import { useReducedMotion } from "@/shared/motion";
 import { arena } from "@/theme/tokens";
+
+const DURATION_MS = 1800;
+const COUNT = 22;
+const COLORS = [arena.magenta, arena.pink, arena.green, arena.white, arena.purple, "#3945FF"];
+
+/** PRNG determinística por índice — estável entre renders e PURA (sem Math.random). */
+function rand(i: number, salt: number): number {
+  const x = Math.sin(i * 12.9898 + salt * 78.233) * 43758.5453;
+  return x - Math.floor(x);
+}
 
 export interface ConfettiProps {
   /** Chamado quando a animação termina (para desmontar). */
   onFinish?: () => void;
 }
 
-/**
- * Recolore as partículas para a paleta da Arena (magenta/rosa/verde/branco/roxo)
- * em vez das cores sóbrias do asset placeholder. Os `keypath` apontam para os
- * grupos de partículas; quando o asset real de confete entrar (ver TODO abaixo),
- * basta alinhar os nomes dos keypaths aos layers dele.
- */
-const ARENA_CONFETTI_COLORS: readonly { keypath: string; color: string }[] = [
-  { keypath: "Particle 1", color: arena.magenta },
-  { keypath: "Particle 2", color: arena.pink },
-  { keypath: "Particle 3", color: arena.green },
-  { keypath: "Particle 4", color: arena.white },
-  { keypath: "Particle 5", color: arena.purple },
-];
+interface ParticleSpec {
+  x: number;
+  size: number;
+  color: string;
+  drift: number;
+  fallFactor: number;
+  rot: number;
+  spin: number;
+}
 
 export function Confetti({ onFinish }: ConfettiProps) {
-  const ref = useRef<LottieView>(null);
   const reduced = useReducedMotion();
+  const { width, height } = useWindowDimensions();
+  const progress = useSharedValue(0);
 
-  // Acessibilidade: sem confete quando reduce-motion está ligado.
+  const particles = useMemo<ParticleSpec[]>(
+    () =>
+      Array.from({ length: COUNT }, (_, i) => ({
+        x: rand(i, 1) * width,
+        size: 8 + rand(i, 2) * 8,
+        color: COLORS[i % COLORS.length] ?? arena.magenta,
+        drift: (rand(i, 3) - 0.5) * width * 0.4,
+        fallFactor: 0.7 + rand(i, 4) * 0.5,
+        rot: (rand(i, 5) - 0.5) * 8,
+        spin: 0.5 + rand(i, 6) * 1.5,
+      })),
+    [width],
+  );
+
+  useEffect(() => {
+    // Acessibilidade: sem confete em reduce-motion — encerra de imediato.
+    if (reduced) {
+      onFinish?.();
+      return;
+    }
+    progress.value = withTiming(1, { duration: DURATION_MS, easing: Easing.out(Easing.quad) });
+    const id = setTimeout(() => onFinish?.(), DURATION_MS);
+    return () => clearTimeout(id);
+    // onFinish é one-shot; não re-disparar por mudança de identidade.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reduced]);
+
   if (reduced) return null;
 
   return (
-    <LottieView
-      ref={ref}
-      // TODO: substituir pelo asset real de confete em assets/lottie/.
-      source={require("../../../../assets/lottie/confetti.json")}
-      autoPlay
-      loop={false}
-      onAnimationFinish={onFinish}
-      colorFilters={[...ARENA_CONFETTI_COLORS]}
-      resizeMode="cover"
-      // lottie-react-native v7 não expõe `pointerEvents` como prop própria;
-      // em RN 0.85+ ele é uma propriedade de estilo válida (ViewStyle).
-      style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
-    />
+    <Canvas
+      style={{ position: "absolute", left: 0, top: 0, right: 0, bottom: 0, pointerEvents: "none" }}
+    >
+      {particles.map((p, i) => (
+        <Particle key={i} progress={progress} spec={p} height={height} />
+      ))}
+    </Canvas>
+  );
+}
+
+function Particle({
+  progress,
+  spec,
+  height,
+}: {
+  progress: SharedValue<number>;
+  spec: ParticleSpec;
+  height: number;
+}) {
+  const fall = height * spec.fallFactor;
+
+  // Cai, deriva lateralmente (com leve oscilação) e gira em torno do próprio
+  // centro (rect desenhado centrado em 0,0 → rotate antes do translate).
+  const transform = useDerivedValue(() => {
+    const tp = progress.value;
+    const ty = -40 + fall * tp;
+    const tx = spec.x + spec.drift * tp + Math.sin(tp * spec.spin * Math.PI * 2) * 14;
+    const angle = spec.rot * tp;
+    return [{ translateX: tx }, { translateY: ty }, { rotate: angle }];
+  });
+
+  // Some no último terço da queda.
+  const opacity = useDerivedValue(() => {
+    const tp = progress.value;
+    return tp < 0.7 ? 1 : Math.max(0, 1 - (tp - 0.7) / 0.3);
+  });
+
+  return (
+    <Group transform={transform} opacity={opacity}>
+      <RoundedRect
+        x={-spec.size / 2}
+        y={-spec.size / 2}
+        width={spec.size}
+        height={spec.size * 0.6}
+        r={1.5}
+        color={spec.color}
+      />
+    </Group>
   );
 }

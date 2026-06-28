@@ -47,6 +47,7 @@ export default function WeighInCaptureScreen() {
   const [weight, setWeight] = useState("");
   const [weightConfirmed, setWeightConfirmed] = useState(false);
   const [weightError, setWeightError] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   // Inicia a sessão assim que sabemos a aposta + o ponto de captura.
   useEffect(() => {
@@ -81,8 +82,13 @@ export default function WeighInCaptureScreen() {
       return;
     }
     try {
-      // Upload direto p/ R2 com retry (não toca o backend).
-      await upload.mutateAsync({ video, uploadUrl: session.upload.url });
+      // Upload direto p/ R2 com retry + progresso (não toca o backend).
+      setUploadProgress(0);
+      await upload.mutateAsync({
+        video,
+        uploadUrl: session.upload.url,
+        onProgress: setUploadProgress,
+      });
 
       // Registra a pesagem (regra dura + validação rodam no backend).
       await submit.mutateAsync({
@@ -160,6 +166,7 @@ export default function WeighInCaptureScreen() {
       <CenteredMessage
         heading={t("weighin.uploading.title")}
         caption={t("weighin.uploading.caption")}
+        progress={upload.isPending ? uploadProgress : undefined}
       />
     );
   }
@@ -209,11 +216,21 @@ export default function WeighInCaptureScreen() {
   );
 }
 
-function CenteredMessage({ heading, caption }: { heading: string; caption?: string }) {
+function CenteredMessage({
+  heading,
+  caption,
+  progress,
+}: {
+  heading: string;
+  caption?: string;
+  /** 0..1 — quando presente, mostra a % do envio. */
+  progress?: number;
+}) {
   return (
     <Screen>
       <View className="flex-1 items-center justify-center gap-3">
         <Text variant="heading">{heading}</Text>
+        {progress != null ? <Text variant="numeric">{Math.round(progress * 100)}%</Text> : null}
         {caption != null ? (
           <Text variant="caption" className="text-center text-muted">
             {caption}

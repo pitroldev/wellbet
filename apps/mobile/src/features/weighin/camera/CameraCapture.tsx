@@ -76,10 +76,21 @@ export function CameraCapture({ challenge, onRecordingFinished, onError }: Camer
 
     // Gravação contínua: um único take. O Recorder grava uma vez só; parar
     // encerra o take. Sem segmentação/pausa.
-    // TODO: fixar codec/qualidade via setOutputSettings para tamanho
-    // previsível; manter HEVC (h265) quando suportado.
-    void videoOutput
-      .createRecorder({})
+    //
+    // Prefere HEVC (h265) quando suportado: ~metade do tamanho do H.264 para a
+    // mesma qualidade, deixando o upload do take contínuo mais leve. Best-effort:
+    // se falhar (codec indisponível/câmera não pronta), segue no codec padrão
+    // sem bloquear a gravação.
+    void (async () => {
+      try {
+        const supported = videoOutput.getSupportedVideoCodecs();
+        const codec = supported.includes("h265") ? "h265" : supported[0];
+        if (codec != null) await videoOutput.setOutputSettings({ codec });
+      } catch {
+        // mantém o codec padrão
+      }
+      return videoOutput.createRecorder({});
+    })()
       .then((recorder) => {
         recorderRef.current = recorder;
         return recorder.startRecording(

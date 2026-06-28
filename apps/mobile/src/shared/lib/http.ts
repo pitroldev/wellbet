@@ -39,7 +39,17 @@ async function authenticatedFetch(input: RequestInfo | URL, init?: RequestInit):
   if (token != null) {
     headers.set("Authorization", `Bearer ${token}`);
   }
-  return fetch(input, { ...init, headers });
+  const res = await fetch(input, { ...init, headers });
+
+  // 401 com token enviado → o token está inválido/expirado. Limpamos a sessão
+  // local para não seguir mandando um token morto em toda request (e a UI pode
+  // tratar a ausência de sessão). O REFRESH de verdade (renovar a sessão Better
+  // Auth) depende do fluxo de login no app, ainda não implementado — quando ele
+  // existir, troque este clear por: renovar via refresh token e repetir a request.
+  if (res.status === 401 && token != null) {
+    await tokenStore.clear();
+  }
+  return res;
 }
 
 /**
@@ -55,6 +65,3 @@ export function apiErrorMessage(error: unknown): string | null {
   }
   return null;
 }
-
-// TODO: tratar 401 com refresh do token (renovar a sessão Better Auth e repetir
-// a request) antes de propagar o erro aos hooks.
