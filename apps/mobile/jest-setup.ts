@@ -8,7 +8,9 @@
  */
 import "@testing-library/react-native";
 
-// Reanimated traz um mock oficial para Jest.
+// Reanimated traz um mock oficial para Jest. `require` é obrigatório aqui: o
+// factory do jest.mock é içado, então `import` não pode ser usado.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 jest.mock("react-native-reanimated", () => require("react-native-reanimated/mock"));
 
 // Worklets: no ambiente de teste, `scheduleOnRN(fn, ...args)` executa o callback

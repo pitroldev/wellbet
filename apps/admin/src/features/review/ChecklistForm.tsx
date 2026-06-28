@@ -60,6 +60,9 @@ export function ChecklistForm({ sessionId, onSubmitted }: ChecklistFormProps): R
     },
   });
 
+  // react-hook-form devolve `watch()`/`handleSubmit()` não-memoizáveis —
+  // incompatível com o React Compiler por design (componente pulado). Esperado.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const verdict = watch("verdict") ?? null;
 
   const onValid = handleSubmit((values) => {

@@ -76,6 +76,9 @@ export function QueueTable(): React.JSX.Element {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [filter, setFilter] = React.useState("");
 
+  // TanStack Table devolve funções não-memoizáveis — incompatível com o React
+  // Compiler por design; o compilador pula este componente (esperado).
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: data ?? [],
     columns,

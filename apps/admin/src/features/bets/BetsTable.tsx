@@ -79,6 +79,9 @@ export function BetsTable(): React.JSX.Element {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const { data, isLoading, isError } = useAllBets(status);
 
+  // TanStack Table devolve funções não-memoizáveis — incompatível com o React
+  // Compiler por design; o compilador pula este componente (esperado).
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: data ?? [],
     columns,
