@@ -1,67 +1,154 @@
 /**
- * Registry of the CHARYA design systems.
- * Shared by the playground hub. Demo routes live at /systems/<slug>.
- * Agents: READ this file, do not edit it.
+ * Registry dos systems do playground — agora ancorados na identidade OFICIAL
+ * wellbet & Co. (deck da agência). Cada slug é uma direção visual distinta da MESMA
+ * marca. Demo em /systems/<slug>. Veja BRAND.md. Agentes: READ this file, do not edit it.
  */
 export type DesignSystem = {
   index: string;
   slug: string;
   name: string;
+  /** Produto/mundo da marca que esta direção expressa. */
+  world: string;
   tagline: string;
   description: string;
-  /** 4 representative swatches (hex) for the hub card. */
+  /** Tema do hub-card. */
+  scheme: "light" | "dark";
+  /** 4 swatches representativos (hex). */
   swatches: string[];
-  /** Hub card hint colors. */
+  /** Cor de fundo e acento do card no hub. */
   cardBg: string;
   cardFg: string;
+  accent: string;
 };
 
 export const SYSTEMS: DesignSystem[] = [
   {
     index: "01",
-    slug: "neo-arcade",
-    name: "Neo-Arcade",
-    tagline: "A nostalgia do fliperama, a seriedade do dinheiro.",
+    slug: "editorial-muma",
+    name: "Editorial",
+    world: "Masterbrand · muma",
+    tagline: "A melhor aposta é na sua mudança.",
     description:
-      "Pixel-art como linguagem de recompensa — navegação limpa, conquista 8-bit. Conecta o público jovem sem virar cassino.",
-    swatches: ["#6D28D9", "#22E06B", "#FFD60A", "#120A24"],
-    cardBg: "#120A24",
-    cardFg: "#EDE9FE",
+      "Serifa de alto contraste (muma), pontuação gigante e respiro de revista. Rosa, indigo e ink: a bet como objeto de desejo, fashion-fintech.",
+    scheme: "light",
+    swatches: ["#FF80E1", "#3215AD", "#41FFCA", "#08161E"],
+    cardBg: "#FF80E1",
+    cardFg: "#08161E",
+    accent: "#3215AD",
   },
   {
     index: "02",
-    slug: "iso-gacha",
-    name: "Iso-Gacha",
-    tagline: "Seu esforço, em 3D, na palma da mão.",
+    slug: "wellbet-clean",
+    name: "WellBet Clean",
+    world: "WellBet · produto",
+    tagline: "Sua disciplina agora vale mais.",
     description:
-      "Profundidade isométrica tátil para roleta, drops, troféus e shields. Colecionável e fofo — a antítese do slot machine.",
-    swatches: ["#6E2BE0", "#00D97E", "#FFC93C", "#FF6B6B"],
-    cardBg: "#F4F1FA",
-    cardFg: "#2E1065",
+      "O app WellBet de verdade: claro, calmo, confiável. Azul elétrico como primária, menta para o “green”, anel de evolução semanal. Fintech de saúde com polimento de banco.",
+    scheme: "light",
+    swatches: ["#3945FF", "#41FFCA", "#08161E", "#FAFBFC"],
+    cardBg: "#FAFBFC",
+    cardFg: "#08161E",
+    accent: "#3945FF",
   },
   {
     index: "03",
-    slug: "glow-comportamental",
-    name: "Glow Comportamental",
-    tagline: "O painel do seu compromisso.",
+    slug: "gymbet-arena",
+    name: "GymBet Arena",
+    world: "GymBet · produto",
+    tagline: "Treine. Compita. Fature.",
     description:
-      "Dark mode sóbrio onde roxo e verde glow servem ao dado: Score, streak, payout. Vibe wearable premium, não festa.",
-    swatches: ["#8B5CF6", "#34F5A0", "#FF5470", "#0E0B1A"],
-    cardBg: "#0E0B1A",
-    cardFg: "#EDEAF7",
+      "Arena escura, magenta e roxo, caixa-alta pesada e estilhaços diagonais. Ranking, streak e jackpot no talo — dopamina competitiva máxima.",
+    scheme: "dark",
+    swatches: ["#FF00FF", "#7A1BD6", "#41FFCA", "#0B1226"],
+    cardBg: "#0B1226",
+    cardFg: "#FFFFFF",
+    accent: "#FF00FF",
   },
-  // {
-  //   index: "04",
-  //   slug: "holografico",
-  //   name: "Holográfico",
-  //   tagline: "Aposte no seu upgrade.",
-  //   description:
-  //     "Futuro luminoso: foil holográfico, iridescência roxo↔verde↔ciano e vidro fosco. Cartões que brilham ao inclinar; green em flash iridescente.",
-  //   swatches: ["#B026FF", "#39FF14", "#22D3EE", "#0A0A12"],
-  //   cardBg: "#0A0A12",
-  //   cardFg: "#F2F2FA",
-  // },
+  {
+    index: "04",
+    slug: "voltage",
+    name: "Voltage",
+    world: "wellbet & Co. · energia",
+    tagline: "Sua disciplina, carregada.",
+    description:
+      "O raio-seta como motivo vivo. Gradiente menta→azul, vidro e iridescência sobre quase-preto. Cinético, elétrico, cada toque solta uma faísca.",
+    scheme: "dark",
+    swatches: ["#41FFCA", "#3945FF", "#656FFF", "#08161E"],
+    cardBg: "#08161E",
+    cardFg: "#41FFCA",
+    accent: "#41FFCA",
+  },
+  {
+    index: "05",
+    slug: "ecossistema",
+    name: "Ecossistema",
+    world: "wellbet & Co. · OS",
+    tagline: "Mudanças reais acontecem quando existe algo em jogo.",
+    description:
+      "A visão masterbrand: indigo real, o “M” líquido e periwinkle. Um sistema operacional premium que unifica WellBet ↔ GymBet num toque. Instrumentos de dado elegantes.",
+    scheme: "dark",
+    swatches: ["#3215AD", "#656FFF", "#FF80E1", "#CCD1FF"],
+    cardBg: "#3215AD",
+    cardFg: "#FFFFFF",
+    accent: "#CCD1FF",
+  },
+  {
+    index: "06",
+    slug: "brutal",
+    name: "Brutalista",
+    world: "wellbet & Co. · raw",
+    tagline: "Sem firula. Só aposta.",
+    description:
+      "Neo-brutalismo tipográfico: bordas duras, sombras sólidas (sem blur), mono de terminal e blocos chapados de cor. Interações mecânicas e secas. A bet crua, honesta, com atitude — o oposto do polido.",
+    scheme: "light",
+    swatches: ["#08161E", "#FF00FF", "#41FFCA", "#3945FF"],
+    cardBg: "#FAFBFC",
+    cardFg: "#08161E",
+    accent: "#FF00FF",
+  },
+  {
+    index: "07",
+    slug: "riso",
+    name: "Risograph",
+    world: "wellbet & Co. · print",
+    tagline: "Impressa na sua mudança.",
+    description:
+      "Estética de risografia: sobreposição de tintas (overprint), meio-tom, grão e pôster de tipo grande. Tátil, analógica, de edição limitada — as mesmas cores agora como tintas de impressão.",
+    scheme: "light",
+    swatches: ["#FF80E1", "#3945FF", "#41FFCA", "#08161E"],
+    cardBg: "#F3EEE3",
+    cardFg: "#08161E",
+    accent: "#FF00FF",
+  },
+  {
+    index: "08",
+    slug: "cassino",
+    name: "Cassino Neon",
+    world: "wellbet & Co. · casino",
+    tagline: "A casa sempre torce por você.",
+    description:
+      "Cassino neon premium: roleta, cartas, fichas e dados sob luzes de neon magenta/azul sobre feltro verde escuro. Energia de cassino de verdade — mas chique, não cafona.",
+    scheme: "dark",
+    swatches: ["#FF00FF", "#41FFCA", "#3945FF", "#0B1226"],
+    cardBg: "#0B1226",
+    cardFg: "#FFFFFF",
+    accent: "#41FFCA",
+  },
+  {
+    index: "09",
+    slug: "jackpot",
+    name: "Jackpot",
+    world: "wellbet & Co. · slots",
+    tagline: "Puxa a alavanca. Dá green.",
+    description:
+      "Palácio de caça-níqueis: slot de 3 rolos, roda da fortuna, jackpot progressivo e chuva de moedas com luzes piscando. Dopamina de slot machine no talo — alto e brilhante.",
+    scheme: "dark",
+    swatches: ["#FF00FF", "#FF80E1", "#41FFCA", "#220C82"],
+    cardBg: "#220C82",
+    cardFg: "#FFFFFF",
+    accent: "#FF00FF",
+  },
 ];
 
-/** Total number of design systems. */
+/** Total de systems. */
 export const SYSTEM_COUNT = SYSTEMS.length;
