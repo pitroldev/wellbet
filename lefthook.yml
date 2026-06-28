@@ -1,6 +1,6 @@
 # Lefthook — git hooks paralelos e monorepo-aware (substitui Husky + lint-staged).
 # §7/§8: oxlint como pré-passo rápido, depois Prettier check nos arquivos staged,
-# e (opcional) typecheck do afetado. commit-msg roda commitlint.
+# e (opcional) typecheck do afetado.
 # Instalar os hooks: `pnpm lefthook install` (rodado pelo script `prepare`).
 
 pre-commit:
@@ -33,8 +33,3 @@ pre-push:
       run: pnpm exec turbo run typecheck --affected
       # TODO: ajustar a base do affected (`--affected` compara contra main por
       # padrão; em fork/branch longa pode precisar de TURBO_SCM_BASE).
-
-commit-msg:
-  commands:
-    commitlint:
-      run: pnpm exec commitlint --edit {1}

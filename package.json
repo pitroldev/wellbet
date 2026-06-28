@@ -43,8 +43,6 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
     "@changesets/cli": "catalog:",
-    "@commitlint/cli": "catalog:",
-    "@commitlint/config-conventional": "catalog:",
     "@manypkg/cli": "^0.25.1",
     "knip": "catalog:",
     "lefthook": "catalog:",

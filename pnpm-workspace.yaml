@@ -37,8 +37,6 @@ catalog:
   knip: ^6.0.0
   syncpack: ^15.0.0
   "@changesets/cli": ^2.31.0
-  "@commitlint/cli": ^21.0.0
-  "@commitlint/config-conventional": ^21.0.0
   "@t3-oss/env-core": ^0.13.0
 
 minimumReleaseAgeExclude:

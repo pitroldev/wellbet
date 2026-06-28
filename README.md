@@ -69,7 +69,7 @@ cp .env.example .env    # preencha as variáveis
 ## Qualidade & CI/CD
 
 - **Lint:** ESLint flat + typescript-eslint (fonte da verdade) · **oxlint** como pré-passo · **Prettier** para formato. Presets em [`packages/config`](./packages/config).
-- **Pre-commit:** [Lefthook](./lefthook.yml) (paralelo) — oxlint + Prettier + ESLint nos arquivos staged; `commit-msg` roda commitlint (Conventional Commits).
+- **Pre-commit:** [Lefthook](./lefthook.yml) (paralelo) — oxlint + Prettier + ESLint na árvore.
 - **CI** ([`.github/workflows/ci.yml`](./.github/workflows/ci.yml)): mise + pnpm + oxlint + `turbo run lint typecheck test build` **só afetados**; roda em `pull_request` **e** `merge_group` (merge queue); cache Turborepo remoto.
 - **CD:** backend/admin = imagem imutável promovida staging→prod (Cloud Run) · mobile = EAS (OTA p/ JS, Build+Submit p/ nativo) · infra = tofu plan no PR, apply staging auto + prod manual.
 - **Higiene:** knip · syncpack · Changesets.

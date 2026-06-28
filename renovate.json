@@ -85,8 +85,7 @@
         "@manypkg/cli",
         "publint",
         "@arethetypeswrong/cli",
-        "/^@changesets//",
-        "/^@commitlint//"
+        "/^@changesets//"
       ],
       "automerge": true
     },

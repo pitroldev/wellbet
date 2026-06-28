@@ -299,7 +299,7 @@ infra/terraform/
 | Lint type-aware          | **ESLint flat + typescript-eslint** (fonte da verdade) — preset em `packages/config`               |
 | Lint rápido              | **oxlint** como pré-passo (50-100× mais rápido) em pre-commit/CI, antes do ESLint                  |
 | Format                   | **Prettier**                                                                                       |
-| Commits                  | **Conventional Commits** + **commitlint**                                                          |
+| Commits                  | **Conventional Commits** (convenção, sem gate)                                                     |
 | Pre-commit               | **Lefthook** (paralelo, monorepo-aware; substitui Husky+lint-staged)                               |
 | Branching                | **Trunk-based**: `main` sempre deployável; branches curtas; PR + **merge queue**                   |
 | Versionamento de pacotes | **Changesets**                                                                                     |

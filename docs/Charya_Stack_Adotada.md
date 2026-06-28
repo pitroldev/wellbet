@@ -149,7 +149,7 @@ Consome `@charya/{contracts,schemas,ui-tokens}`.
 ## 8. Qualidade, testes & CI
 
 **Lint/format/higiene:** ESLint flat + `typescript-eslint` (type-aware, fonte da verdade) · **oxlint** como pré-passo rápido · **Prettier** (formato) · **knip** (código/dep morto) · **syncpack** + **manypkg** (consistência de versão) · **Changesets** · **publint** + **attw** (saúde de publish dos pacotes).
-**Git hooks:** **Lefthook** (paralelo, pre-commit) + **commitlint** (Conventional Commits; subject lowercase).
+**Git hooks:** **Lefthook** (paralelo, pre-commit: oxlint + Prettier + ESLint).
 
 **Camadas de teste:**
 

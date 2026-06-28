@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "workspaces": {
     ".": {
-      "entry": ["lefthook.yml", "commitlint.config.mjs", "knip.json", ".changeset/config.json"],
+      "entry": ["lefthook.yml", "knip.json", ".changeset/config.json"],
       "ignoreDependencies": ["lefthook", "syncpack", "@changesets/cli"]
     },
     "packages/config": {
