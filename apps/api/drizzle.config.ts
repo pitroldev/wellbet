@@ -5,7 +5,8 @@ import { defineConfig } from "drizzle-kit";
 // step explícito de deploy (nunca auto-migrate em runtime — ver §2 do doc).
 export default defineConfig({
   dialect: "postgresql",
-  schema: "./src/infra/db/schema.ts",
+  // Domínio + tabelas do Better Auth (user/session/account/verification).
+  schema: ["./src/infra/db/schema.ts", "./src/infra/db/auth-schema.ts"],
   out: "./src/infra/db/migrations",
   dbCredentials: {
     // DATABASE_URL é validada por @charya/env no boot do app; aqui o

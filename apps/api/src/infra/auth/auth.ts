@@ -12,7 +12,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
 import type { Database } from "@/infra/db/client.js";
-import { schema } from "@/infra/db/schema.js";
+import { authSchema } from "@/infra/db/auth-schema.js";
 
 export interface BuildAuthOptions {
   readonly db: Database;
@@ -35,10 +35,9 @@ export function buildAuth(opts: BuildAuthOptions) {
     trustedOrigins: [opts.baseUrl],
     database: drizzleAdapter(opts.db, {
       provider: "pg",
-      // Reusa o schema do app; Better Auth mapeia suas próprias tabelas.
-      // TODO: alinhar nomes de tabela de auth ao schema gerado pelo CLI do
-      // Better Auth (`@better-auth/cli generate`) e versionar via drizzle-kit.
-      schema,
+      // Tabelas próprias do Better Auth (user/session/account/verification),
+      // versionadas em src/infra/db/auth-schema.ts + migração drizzle-kit.
+      schema: authSchema,
     }),
     emailAndPassword: {
       enabled: true,
