@@ -4,7 +4,7 @@ import { ImageResponse } from "next/og";
  * Imagem OpenGraph gerada dinamicamente (sem asset binário /og.jpg).
  * O Next detecta este arquivo e injeta automaticamente `og:image`;
  * `twitter-image.tsx` reaproveita o mesmo gerador para o card do X.
- * É pré-renderizada no build (rota estática), coerente com a landing SSG.
+ * Pré-renderizada no build (rota estática) — identidade gymbet-arena (magenta).
  */
 export const alt = "Charya Bet — Aposte na sua transformação";
 export const size = { width: 1200, height: 630 };
@@ -14,54 +14,89 @@ export default function OpengraphImage(): ImageResponse {
   return new ImageResponse(
     <div
       style={{
+        position: "relative",
         width: "100%",
         height: "100%",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        background: "linear-gradient(135deg, #0e1f1a 0%, #16302a 100%)",
-        color: "#f5f1e8",
+        background: "linear-gradient(135deg, #08161E 0%, #240a36 55%, #0B1226 100%)",
+        color: "#ffffff",
         padding: 80,
         fontFamily: "sans-serif",
       }}
     >
+      {/* glow magenta */}
       <div
         style={{
+          position: "absolute",
+          top: -160,
+          right: -120,
+          width: 620,
+          height: 620,
+          borderRadius: 9999,
+          background: "radial-gradient(circle, rgba(255,0,255,0.5) 0%, rgba(255,0,255,0) 70%)",
+          display: "flex",
+        }}
+      />
+      {/* wordmark */}
+      <div
+        style={{
+          position: "relative",
           display: "flex",
           fontSize: 40,
-          fontWeight: 700,
+          fontWeight: 800,
           letterSpacing: "-0.02em",
         }}
       >
-        CHARYA<span style={{ color: "#d9a441" }}>BET</span>
+        Charya<span style={{ color: "#FF00FF" }}>Bet</span>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column" }}>
+      {/* manchete */}
+      <div style={{ position: "relative", display: "flex", flexDirection: "column" }}>
         <div
           style={{
-            fontSize: 76,
-            fontWeight: 800,
-            lineHeight: 1.05,
+            display: "flex",
+            fontSize: 92,
+            fontWeight: 900,
+            fontStyle: "italic",
+            textTransform: "uppercase",
+            lineHeight: 1.0,
             letterSpacing: "-0.03em",
           }}
         >
-          Aposte na sua transformação.
+          A melhor aposta é
         </div>
         <div
           style={{
             display: "flex",
-            marginTop: 16,
-            fontSize: 34,
-            color: "#c9c2b0",
-            maxWidth: 900,
+            fontSize: 92,
+            fontWeight: 900,
+            fontStyle: "italic",
+            textTransform: "uppercase",
+            lineHeight: 1.0,
+            letterSpacing: "-0.03em",
+            color: "#FF00FF",
           }}
         >
-          A única aposta em que você torce para você ganhar.
+          em você.
+        </div>
+        <div
+          style={{
+            display: "flex",
+            marginTop: 28,
+            fontSize: 32,
+            color: "#B9C0E0",
+            maxWidth: 920,
+          }}
+        >
+          Coloque dinheiro real na sua meta de peso. Bateu no prazo? Deu green.
         </div>
       </div>
 
-      <div style={{ display: "flex", fontSize: 26, color: "#9aa39b" }}>
-        Comprometa-se. Evolua. Ganhe.
+      {/* rodapé */}
+      <div style={{ position: "relative", display: "flex", fontSize: 26, color: "#41FFCA" }}>
+        Comprometa-se · Evolua · Dê green
       </div>
     </div>,
     { ...size },

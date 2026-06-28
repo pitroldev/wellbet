@@ -1,92 +1,130 @@
 /*
- * Tailwind v4 — entrada única de CSS da landing.
- * Em v4 a configuração de tema é CSS-first: importamos o Tailwind e declaramos
- * os tokens via `@theme`, sem `tailwind.config.js`.
+ * Tailwind v4 (CSS-first) — tema da LANDING na identidade wellbet & Co. (BRAND.md).
+ * Ground escuro premium (ink/navy), azul elétrico + verde menta (WellBet), e os
+ * gradientes oficiais voltage/iris/gymbet/muma. NÃO é a paleta sóbria do
+ * @charya/ui-tokens (essa serve o admin) — aqui a LP precisa VENDER, com energia.
  */
 @import "tailwindcss";
 
-/*
- * Tokens de design compartilhados (@charya/ui-tokens).
- * Os valores abaixo são espelho fiel de packages/ui-tokens/src/colors.ts —
- * paleta SÓBRIA e terrosa (verde-eucalipto, areia/âmbar, grafite quente),
- * deliberadamente longe de neon/cassino de bet (regra do dossiê §6).
- *
- * Substituir por `@import "@charya/ui-tokens/tokens.css";` quando o pacote
- * publicar o entrypoint de CSS de tokens.
- */
 @source "../src";
 @source "../app";
 
 @theme {
-  /* Neutros quentes (grafite amornado) — texto, superfícies, bordas. */
-  --color-neutral-50: #faf9f7;
-  --color-neutral-100: #f3f1ed;
-  --color-neutral-200: #e7e3db;
-  --color-neutral-300: #d3ccc0;
-  --color-neutral-400: #a9a094;
-  --color-neutral-500: #7d7568;
-  --color-neutral-600: #5f584d;
-  --color-neutral-700: #4a443b;
-  --color-neutral-800: #322e28;
-  --color-neutral-900: #1f1c18;
-  --color-neutral-950: #121009;
+  /* Grounds escuros */
+  --color-ink: #08161e;
+  --color-ink-soft: #3a4750;
+  --color-navy: #0b1226;
+  --color-navy-soft: #151d3a;
+  --color-navy-line: #232c50;
 
-  /* Verde-eucalipto — cor primária da marca (saúde/progresso real). */
-  --color-brand-50: #f0f7f4;
-  --color-brand-100: #dbece4;
-  --color-brand-200: #b9d9cb;
-  --color-brand-300: #8cbfa9;
-  --color-brand-400: #5c9f84;
-  --color-brand-500: #3d8268;
-  --color-brand-600: #2d6852;
-  --color-brand-700: #265344;
-  --color-brand-800: #214338;
-  --color-brand-900: #1d3830;
-  --color-brand-950: #0e1f1a;
+  /* WellBet: azul elétrico + verde menta */
+  --color-blue: #3945ff;
+  --color-blue-deep: #2936ff;
+  --color-blue-soft: #656fff;
+  --color-blue-wash: #eef0ff;
+  --color-green: #41ffca;
+  --color-green-deep: #18b488;
+  --color-green-ink: #0a2920;
 
-  /* Areia/âmbar terroso — acento de destaque (CTA, conquista). */
-  --color-accent-50: #fbf7ef;
-  --color-accent-100: #f5ebd6;
-  --color-accent-200: #ead4ac;
-  --color-accent-300: #ddb777;
-  --color-accent-400: #d29c4f;
-  --color-accent-500: #c5853a;
-  --color-accent-600: #a96a2f;
-  --color-accent-700: #8a4f2a;
-  --color-accent-800: #714028;
-  --color-accent-900: #5f3624;
-  --color-accent-950: #361b10;
+  /* Masterbrand / GymBet (acentos) */
+  --color-indigo: #3215ad;
+  --color-indigo-soft: #4b2bd6;
+  --color-periwinkle: #ccd1ff;
+  --color-magenta: #ff00ff;
+  --color-pink: #ff80e1;
 
-  /* Semânticos. */
-  --color-background: #faf9f7;
-  --color-foreground: #1f1c18;
-  --color-muted: #f3f1ed;
-  --color-muted-foreground: #5f584d;
-  --color-border: #e7e3db;
+  /* Texto sobre escuro */
+  --color-fog: #b9c0e0;
+  --color-fog-mute: #7a85b5;
+  --color-paper: #fafbfc;
+  --color-white: #ffffff;
 
-  /* Tipografia (espelho de typography.ts). */
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", "Roboto", sans-serif;
-  --font-numeric: "InterVariable", ui-monospace, "SFMono-Regular", "Roboto Mono", monospace;
+  /* Semânticos (dark) */
+  --color-background: #08161e;
+  --color-foreground: #ffffff;
 
-  /* Raios (espelho de spacing.ts). */
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
   --radius-3xl: 2rem;
 }
 
+/* Gradientes oficiais (BRAND.md §2) + glows — usados via var() em style/arbitrary.
+ * Assinatura da LP = GYMBET (magenta→roxo→indigo). Para TEXTO use a variante
+ * "bright" (magenta→rosa), que mantém contraste alto sobre o navy. */
+:root {
+  --gradient-gymbet: linear-gradient(125deg, #ff00ff 0%, #7a1bd6 55%, #3215ad 100%);
+  --gradient-gymbet-bright: linear-gradient(100deg, #ff00ff 0%, #fdc0ff 52%, #ff80e1 100%);
+  --gradient-jackpot: linear-gradient(120deg, #ff00ff 0%, #ff80e1 50%, #41ffca 100%);
+  --gradient-muma: linear-gradient(120deg, #ff80e1 0%, #3215ad 100%);
+  --gradient-voltage: linear-gradient(110deg, #41ffca 0%, #3945ff 100%);
+  --gradient-iris: linear-gradient(120deg, #3215ad 0%, #3945ff 45%, #656fff 100%);
+
+  --glow-magenta: 0 24px 70px -22px rgba(255, 0, 255, 0.6);
+  --glow-pink: 0 24px 70px -24px rgba(255, 128, 225, 0.5);
+  --glow-green: 0 24px 70px -24px rgba(65, 255, 202, 0.5);
+  --glow-blue: 0 24px 70px -24px rgba(57, 69, 255, 0.6);
+
+  /* estilhaço diagonal (motivo gymbet) */
+  --shard: polygon(0 0, 100% 0, 100% 78%, 0 100%);
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pan {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    opacity: 0.55;
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
 * {
-  border-color: var(--color-border);
+  border-color: var(--color-navy-line);
 }
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--color-ink);
 }
 
 body {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-  font-family: var(--font-sans);
+  background-color: var(--color-ink);
+  color: var(--color-white);
+  font-family: var(--font-jakarta), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-green);
+  color: var(--color-green-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

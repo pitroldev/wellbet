@@ -1,0 +1,82 @@
+import type { CSSProperties, JSX } from "react";
+import { cn } from "@/lib/utils";
+
+/**
+ * Brandmark oficial wellbet & Co. — o raio-seta (path vetorial REAL do deck,
+ * BRAND.md §4). `fill: currentColor`, recolorível. Nunca distorça.
+ */
+const BOLT_PATH =
+  "M 1203.457031 429.820312 C 1164.347656 497.035156 1022.339844 731.679688 1022.332031 731.691406 L 999.492188 597.003906 L 707.671875 688.765625 L 911.476562 431.011719 L 832.222656 350.699219 L 833.445312 348.308594 L 1151.824219 348.308594 C 1232.558594 348.308594 1212.242188 414.71875 1203.457031 429.820312";
+const BOLT_VIEWBOX = "707.67 348.31 524.89 383.38";
+
+export function BoltMark({
+  className,
+  style,
+  title = "Charya",
+}: {
+  className?: string;
+  style?: CSSProperties;
+  title?: string;
+}): JSX.Element {
+  return (
+    <svg
+      viewBox={BOLT_VIEWBOX}
+      className={className}
+      style={style}
+      role="img"
+      aria-label={title}
+      fill="currentColor"
+    >
+      <path d={BOLT_PATH} />
+    </svg>
+  );
+}
+
+/** Raio dentro de um quadrado arredondado com gradiente voltage (app-icon). */
+export function BoltTile({
+  size = 36,
+  className,
+}: {
+  size?: number;
+  className?: string;
+}): JSX.Element {
+  return (
+    <span
+      className={cn(
+        "inline-grid place-items-center shadow-[0_8px_24px_-8px_rgba(57,69,255,0.7)]",
+        className,
+      )}
+      style={{
+        width: size,
+        height: size,
+        background: "var(--gradient-voltage)",
+        borderRadius: size * 0.28,
+      }}
+    >
+      <BoltMark style={{ width: size * 0.54, height: "auto", color: "#08161E" }} />
+    </span>
+  );
+}
+
+/** Lockup do produto: tile + "Charya". `tone` ajusta a cor do texto. */
+export function Wordmark({
+  size = 30,
+  tone = "light",
+  className,
+}: {
+  size?: number;
+  tone?: "light" | "ink";
+  className?: string;
+}): JSX.Element {
+  return (
+    <span className={cn("inline-flex items-center gap-2.5", className)}>
+      <BoltTile size={size} />
+      <span
+        className="font-[family-name:var(--font-jakarta)] font-extrabold tracking-tight"
+        style={{ color: tone === "light" ? "#FFFFFF" : "#08161E", fontSize: size * 0.62 }}
+      >
+        Charya
+      </span>
+    </span>
+  );
+}
