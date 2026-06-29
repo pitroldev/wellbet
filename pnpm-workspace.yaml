@@ -6,6 +6,7 @@ packages:
 # true = roda o build do pacote; false = bloqueia (telemetria etc.).
 allowBuilds:
   "@scarf/scarf": false # telemetria de analytics — não precisa rodar nada
+  "@swc/core": true # compilador SWC (dev rápido: nest start -b swc)
   cpu-features: false # otimização opcional do ssh2; desnecessária p/ docker local
   esbuild: true # binário de bundling (Vitest/tsx)
   lefthook: true # instala os git hooks

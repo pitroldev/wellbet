@@ -13,6 +13,8 @@ import { type JobHandler, type PublishOptions, type QueuePort } from "./queue.po
 @Injectable()
 export class PgBossAdapter implements QueuePort, OnModuleInit, OnModuleDestroy {
   private readonly boss: PgBoss;
+  /** Filas já garantidas nesta instância (evita createQueue redundante). */
+  private readonly ensured = new Set<string>();
 
   constructor(@Inject(ENV) env: Env) {
     this.boss = new PgBoss({ connectionString: env.DATABASE_URL });
@@ -26,7 +28,18 @@ export class PgBossAdapter implements QueuePort, OnModuleInit, OnModuleDestroy {
     await this.boss.stop({ graceful: true });
   }
 
+  /**
+   * pg-boss 12 NÃO cria a fila no `send`/`work` (versões antigas criavam): é
+   * preciso `createQueue` antes, senão dá "Queue does not exist". Idempotente.
+   */
+  private async ensureQueue(queue: string): Promise<void> {
+    if (this.ensured.has(queue)) return;
+    await this.boss.createQueue(queue);
+    this.ensured.add(queue);
+  }
+
   async publish<T>(queue: string, data: T, options?: PublishOptions): Promise<string | null> {
+    await this.ensureQueue(queue);
     return this.boss.send(queue, data as object, {
       startAfter: options?.startAfterSeconds,
       singletonKey: options?.singletonKey,
@@ -35,6 +48,7 @@ export class PgBossAdapter implements QueuePort, OnModuleInit, OnModuleDestroy {
   }
 
   async subscribe<T>(queue: string, handler: JobHandler<T>): Promise<void> {
+    await this.ensureQueue(queue);
     // pg-boss 12: `work` entrega lotes de jobs.
     await this.boss.work<T>(queue, async (jobs: Job<T>[]) => {
       for (const job of jobs) {

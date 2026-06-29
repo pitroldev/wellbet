@@ -10,7 +10,7 @@
   "main": "dist/main.js",
   "scripts": {
     "build": "nest build && tsc-alias -p tsconfig.build.json",
-    "dev": "pnpm build && concurrently -k -n nest,alias,run \"nest build --watch\" \"tsc-alias -w -p tsconfig.build.json\" \"node --watch dist/main.js\"",
+    "dev": "nest start --watch --builder swc",
     "start": "node dist/main.js",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -60,6 +60,8 @@
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.1.0",
+    "@swc/cli": "^0.8.1",
+    "@swc/core": "^1.15.43",
     "@testcontainers/postgresql": "^12.0.3",
     "@types/express": "^5.0.0",
     "@types/node": "^24.0.0",
