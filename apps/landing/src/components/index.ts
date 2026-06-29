@@ -12,7 +12,7 @@ export { CTAFinal } from "./CTAFinal";
 export { Footer } from "./Footer";
 export { CTA, type CTAProps } from "./CTA";
 export { Secao, type SecaoProps } from "./Secao";
-export { Eyebrow, Glow, Display, GradText } from "./ui";
+export { Eyebrow, Tag, Rule, Glow, Display, GradText, Slab } from "./ui";
 export { Reveal } from "./motion";
 export { RevealText } from "./RevealText";
 export { TiltCard } from "./TiltCard";

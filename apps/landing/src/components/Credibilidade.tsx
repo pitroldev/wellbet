@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { ShieldCheck, Lock, Users, type LucideIcon } from "lucide-react";
 import { Secao } from "@/components/Secao";
-import { Eyebrow, Glow, Display, GradText } from "@/components/ui";
+import { Tag, Display, GradText } from "@/components/ui";
 import { Reveal } from "@/components/motion";
 
 type Tone = "green" | "magenta" | "pink";
@@ -14,11 +14,9 @@ interface Prova {
 }
 
 /**
- * Seção "Por que confiar" — Server Component estático. Três pilares de
- * credibilidade (pesagem auditada, contrato consigo mesmo, gente real) que
- * sustentam a promessa séria da marca: saúde e compromisso, não dinheiro fácil.
- * Direção GYMBET ARENA — tiles positivos (verde/magenta/rosa), hairline em
- * gradiente e descrições legíveis em fog. Confiança que parece premium.
+ * Seção "Por que confiar" — superfície PAPEL (confiança = claro, limpo, sério).
+ * Três pilares (pesagem auditada, contrato consigo mesmo, gente real) em cards de
+ * fio duro com selo magenta no hover. Saúde e compromisso, não dinheiro fácil.
  */
 const provas: readonly Prova[] = [
   {
@@ -45,31 +43,20 @@ const provas: readonly Prova[] = [
 ];
 
 const toneTile: Record<Tone, string> = {
-  green: "bg-green/10 text-green ring-green/25",
-  magenta: "bg-magenta/10 text-pink ring-magenta/25",
-  pink: "bg-pink/10 text-pink ring-pink/30",
+  green: "bg-green",
+  magenta: "bg-magenta",
+  pink: "bg-pink",
 };
 
 export function Credibilidade(): JSX.Element {
   return (
-    <Secao id="credibilidade" surface="ink">
-      <Glow
-        className="right-[-12%] top-[6%] h-[32rem] w-[32rem]"
-        color="#FF00FF"
-        style={{ opacity: 0.24 }}
-      />
-      <Glow
-        className="right-[14%] bottom-[-8%] h-[24rem] w-[24rem]"
-        color="#FF80E1"
-        style={{ opacity: 0.16 }}
-      />
-
+    <Secao id="credibilidade" surface="paper">
       <Reveal y={26} className="relative max-w-2xl">
-        <Eyebrow tone="magenta">Por que confiar</Eyebrow>
-        <Display level={2} className="mt-5 text-[clamp(2rem,5vw,3.4rem)]">
+        <Tag>Por que confiar</Tag>
+        <Display level={2} className="mt-5 text-[clamp(2rem,5.4vw,3.6rem)] text-ink">
           Sério, transparente e <GradText>do seu lado.</GradText>
         </Display>
-        <p className="mt-5 max-w-2xl text-lg leading-relaxed text-fog">
+        <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[color:var(--color-paper-mute)]">
           A Charya vende saúde e compromisso — não promessa de dinheiro fácil. Cada detalhe é
           construído para você confiar.
         </p>
@@ -78,30 +65,25 @@ export function Credibilidade(): JSX.Element {
       <div className="relative mt-12 grid gap-6 md:grid-cols-3">
         {provas.map(({ Icon, tone, titulo, descricao }, i) => (
           <Reveal key={titulo} delay={0.05 * i} y={26}>
-            <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-navy-line bg-navy-soft p-6 transition-colors hover:border-magenta/40">
-              {/* hairline em gradiente — assinatura gymbet */}
-              <span
-                aria-hidden
-                className="absolute inset-x-0 top-0 h-px"
-                style={{ background: "var(--gradient-gymbet)" }}
-              />
-
+            <article className="group flex h-full flex-col border-2 border-ink bg-paper p-6 transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#ff00ff]">
               <div className="flex items-start justify-between">
-                <span
-                  className={`grid size-11 place-items-center rounded-xl ring-1 ${toneTile[tone]}`}
-                >
-                  <Icon className="size-5" aria-hidden />
+                <span className={`grid size-11 place-items-center text-ink ${toneTile[tone]}`}>
+                  <Icon className="size-5" strokeWidth={2.4} aria-hidden />
                 </span>
                 <span
                   aria-hidden
-                  className="font-[family-name:var(--font-geist-mono)] text-sm font-medium tabular-nums text-fog-mute"
+                  className="font-[family-name:var(--font-geist-mono)] text-sm font-bold tabular-nums text-[color:var(--color-paper-mute)]"
                 >
                   0{i + 1}
                 </span>
               </div>
 
-              <h3 className="mt-5 text-lg font-bold text-white">{titulo}</h3>
-              <p className="mt-2 text-[15px] leading-relaxed text-fog">{descricao}</p>
+              <h3 className="mt-5 font-[family-name:var(--font-archivo)] text-2xl uppercase leading-[0.95] text-ink">
+                {titulo}
+              </h3>
+              <p className="mt-2.5 text-[15px] leading-relaxed text-[color:var(--color-paper-mute)]">
+                {descricao}
+              </p>
             </article>
           </Reveal>
         ))}

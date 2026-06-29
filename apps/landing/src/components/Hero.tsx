@@ -6,9 +6,7 @@ import { Check } from "lucide-react";
 import { CTA } from "@/components/CTA";
 import { Eyebrow, GradText } from "@/components/ui";
 import { RevealText } from "@/components/RevealText";
-import { TiltCard } from "@/components/TiltCard";
 import { AnimatedNumber } from "@/components/AnimatedNumber";
-import { MeshHero } from "@/components/MeshHero";
 import { Wordmark, BoltMark } from "@/components/brand";
 import { fireGreen } from "@/lib/confetti";
 import { appUrl, ctaLabel } from "@/config";
@@ -17,59 +15,59 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const BRL = { style: "currency", currency: "BRL", maximumFractionDigits: 0 } as const;
 
 /**
- * Hero v2 — gymbet-arena award-level. Mesh-gradient WebGL + grão, manchete
- * Archivo gigante com reveal mascarado, e o CUPOM holográfico interativo com
- * SIMULADOR: arrasta o stake → o payout ROLA (odômetro) → "deu green" (confete).
+ * Hero v3 — SPORTSBOOK BRUTAL. Seção PAPEL (cartaz): manchete Anton gigante em
+ * caixa-alta, estilhaço magenta CHAPADO sangrando à direita e o CUPOM como
+ * bilhete de aposta REAL (entalhado/perfurado, tudo em mono) com SIMULADOR:
+ * arrasta o stake → o payout ROLA (odômetro) → "deu green" (confete).
  */
 export function Hero(): JSX.Element {
   return (
-    <section className="relative w-full overflow-hidden px-6 pb-20 pt-6 sm:pb-28">
-      <MeshHero />
-
-      {/* scrim de legibilidade sobre o mesh (escurece o lado do texto) */}
+    <section className="relative w-full overflow-hidden bg-paper px-6 pb-16 pt-5 text-ink sm:pb-24">
+      {/* estilhaço magenta CHAPADO sangrando pela direita (atrás do bilhete) */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-[1]"
-        style={{
-          background:
-            "linear-gradient(90deg, rgba(10,13,22,0.82) 0%, rgba(10,13,22,0.5) 38%, rgba(10,13,22,0.1) 64%, transparent 100%)",
-        }}
+        className="pointer-events-none absolute right-0 top-0 hidden h-full w-[46%] bg-magenta lg:block"
+        style={{ clipPath: "polygon(22% 0, 100% 0, 100% 100%, 0 100%)" }}
       />
+      {/* halftone de cartaz no canto inferior-esquerdo (textura impressa) */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-40"
-        style={{ background: "linear-gradient(180deg, transparent, var(--color-ink))" }}
-      />
-
-      {/* grade técnica sutil */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 z-[1] opacity-[0.06]"
+        className="pointer-events-none absolute bottom-0 left-0 h-64 w-80 text-ink/[0.10]"
         style={{
-          backgroundImage:
-            "linear-gradient(var(--color-navy-line) 1px, transparent 1px), linear-gradient(90deg, var(--color-navy-line) 1px, transparent 1px)",
-          backgroundSize: "52px 52px",
-          maskImage: "radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent)",
+          backgroundImage: "var(--halftone)",
+          backgroundSize: "10px 10px",
+          maskImage: "radial-gradient(ellipse 80% 80% at 0% 100%, black, transparent)",
         }}
       />
 
       <div className="relative z-10 mx-auto w-full max-w-6xl">
         {/* nav */}
         <nav className="flex items-center justify-between py-2">
-          <Wordmark size={30} />
-          <a
-            href={appUrl}
-            className="hidden rounded-full px-5 py-2.5 text-sm font-bold text-white ring-1 ring-inset ring-white/15 backdrop-blur-sm transition hover:bg-white/5 sm:inline-flex"
-          >
-            Entrar
-          </a>
+          <Wordmark size={30} tone="ink" />
+          <div className="flex items-center gap-3">
+            <a
+              href="#como-funciona"
+              className="hidden font-[family-name:var(--font-geist-mono)] text-xs font-bold uppercase tracking-[0.14em] text-ink/70 transition-colors hover:text-ink sm:inline-flex"
+            >
+              Como funciona
+            </a>
+            <a
+              href={appUrl}
+              className="inline-flex items-center border-2 border-ink px-4 py-2 font-[family-name:var(--font-geist-mono)] text-xs font-bold uppercase tracking-[0.14em] text-ink transition-colors hover:bg-ink hover:text-paper"
+            >
+              Entrar
+            </a>
+          </div>
         </nav>
 
-        <div className="mt-14 grid items-center gap-12 sm:mt-20 lg:grid-cols-[1.06fr_0.94fr]">
+        <div className="mt-12 grid items-center gap-12 sm:mt-16 lg:grid-cols-[1.08fr_0.92fr]">
           <HeroCopy />
           <HeroCupom />
         </div>
       </div>
+
+      {/* fio duro de fechamento (transição pro ticker preto) */}
+      <span aria-hidden className="absolute inset-x-0 bottom-0 h-1 bg-ink" />
     </section>
   );
 }
@@ -91,25 +89,27 @@ function HeroCopy(): JSX.Element {
         <Eyebrow>A bet que você torce pra ganhar</Eyebrow>
       </motion.div>
 
-      <h1 className="mt-5 font-[family-name:var(--font-archivo)] text-hero font-extrabold uppercase leading-[0.95] tracking-[-0.02em] text-white">
+      <h1 className="mt-5 font-[family-name:var(--font-archivo)] text-hero uppercase leading-[0.95] tracking-[-0.01em] text-ink">
         <RevealText immediate delay={0.1}>
-          A melhor
+          Quanto você
         </RevealText>
         <RevealText immediate delay={0.2}>
-          aposta é
+          apostaria
         </RevealText>
         <RevealText immediate delay={0.3}>
-          <GradText>em você.</GradText>
+          <GradText>em você?</GradText>
         </RevealText>
       </h1>
 
       <motion.p
         {...rise(0.5)}
-        className="mt-7 max-w-xl text-lg leading-relaxed text-fog sm:text-xl"
+        className="mt-7 max-w-xl text-lg leading-relaxed text-[color:var(--color-paper-mute)] sm:text-xl"
       >
         Coloque dinheiro real na sua meta de peso. Bateu no prazo?{" "}
-        <strong className="font-semibold text-green">Deu green</strong> — recebe de volta com
-        recompensa. A única aposta em que perder é você que ganha.
+        <strong className="font-bold text-ink">
+          Deu <span className="text-green-deep">green</span>
+        </strong>{" "}
+        — recebe de volta com recompensa. A única aposta em que perder é você que ganha.
       </motion.p>
 
       <motion.div {...rise(0.62)} className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -121,8 +121,8 @@ function HeroCopy(): JSX.Element {
 
       <motion.div {...rise(0.74)} className="mt-9 flex items-center gap-4">
         <AvatarStack />
-        <p className="text-sm text-fog">
-          <span className="font-[family-name:var(--font-geist-mono)] font-semibold text-white">
+        <p className="text-sm text-[color:var(--color-paper-mute)]">
+          <span className="font-[family-name:var(--font-geist-mono)] font-bold text-ink">
             +2.140
           </span>{" "}
           pessoas com algo em jogo agora
@@ -141,20 +141,15 @@ function AvatarStack(): JSX.Element {
     "var(--gradient-gymbet-bright)",
   ];
   return (
-    <div className="flex -space-x-3">
+    <div className="flex -space-x-2">
       {grads.map((g, i) => (
-        <span
-          key={i}
-          className="size-9 rounded-full ring-2 ring-ink"
-          style={{ background: g }}
-          aria-hidden
-        />
+        <span key={i} className="size-9 ring-2 ring-paper" style={{ background: g }} aria-hidden />
       ))}
     </div>
   );
 }
 
-/** Cupom holográfico interativo + simulador de payout. */
+/** Cupom = bilhete de aposta entalhado + simulador de payout. */
 function HeroCupom(): JSX.Element {
   const reduce = useReducedMotion();
   const [stake, setStake] = useState(200);
@@ -169,41 +164,55 @@ function HeroCupom(): JSX.Element {
             animate: { opacity: 1, y: 0 },
             transition: { duration: 0.8, ease: EASE, delay: 0.3 },
           })}
-      className="relative mx-auto w-full max-w-sm"
+      className="relative mx-auto w-full max-w-sm text-white"
     >
-      <TiltCard className="rounded-[1.75rem]">
-        <div
-          className="relative overflow-hidden rounded-[1.75rem] border border-white/12 bg-navy/45 p-6 backdrop-blur-xl sm:p-7"
-          style={{ boxShadow: "var(--glow-magenta)" }}
-        >
-          {/* header */}
-          <div className="flex items-center justify-between">
-            <span className="inline-flex items-center gap-2 font-[family-name:var(--font-archivo)] text-xs font-extrabold uppercase tracking-[0.18em] text-fog">
-              <BoltMark className="h-3.5 w-auto text-magenta" /> Cupom
-            </span>
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-magenta">
+      <div
+        className="relative overflow-hidden bg-ink"
+        style={{
+          clipPath: "var(--ticket)",
+          filter: "drop-shadow(10px 12px 0 rgba(10,13,22,0.14))",
+        }}
+      >
+        {/* header — barra magenta chapada */}
+        <div className="flex items-center justify-between bg-magenta px-5 py-3 text-ink">
+          <span className="inline-flex items-center gap-2 font-[family-name:var(--font-geist-mono)] text-xs font-bold uppercase tracking-[0.18em]">
+            <BoltMark className="h-3.5 w-auto" /> Cupom
+          </span>
+          <span className="font-[family-name:var(--font-geist-mono)] text-xs font-bold tracking-[0.12em]">
+            #0007
+          </span>
+        </div>
+
+        <div className="px-5 pb-6 pt-5 sm:px-6">
+          {/* meta */}
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="font-[family-name:var(--font-geist-mono)] text-[11px] font-bold uppercase tracking-[0.18em] text-fog-mute">
+                Sua meta
+              </p>
+              <p className="mt-1.5 font-[family-name:var(--font-archivo)] text-4xl uppercase leading-[0.9] text-white">
+                Perder 8&nbsp;kg
+              </p>
+              <p className="mt-1.5 font-[family-name:var(--font-geist-mono)] text-xs text-fog">
+                4 meses · vídeo
+              </p>
+            </div>
+            <span className="inline-flex items-center gap-1.5 font-[family-name:var(--font-geist-mono)] text-[10px] font-bold uppercase tracking-[0.16em] text-magenta">
               <span
-                className="size-2 rounded-full bg-magenta"
+                className="size-2 bg-magenta"
                 style={{ animation: "float 2.5s ease-in-out infinite" }}
               />
               Ativo
             </span>
           </div>
 
-          {/* meta */}
-          <div className="mt-5">
-            <p className="text-xs font-bold uppercase tracking-wide text-fog-mute">Sua meta</p>
-            <p className="mt-1 font-[family-name:var(--font-archivo)] text-4xl font-extrabold uppercase leading-none text-white">
-              Perder 8&nbsp;kg
-            </p>
-            <p className="mt-1.5 text-sm text-fog">em 4 meses · pesagem por vídeo</p>
-          </div>
-
           {/* simulador: arrasta o stake */}
-          <div className="mt-5 rounded-2xl bg-ink/50 px-4 py-3">
+          <div className="mt-5 border border-white/10 bg-white/[0.03] px-4 py-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-fog">Quanto você aposta?</span>
-              <span className="font-[family-name:var(--font-geist-mono)] text-base font-semibold text-white">
+              <span className="font-[family-name:var(--font-geist-mono)] text-[11px] uppercase tracking-[0.12em] text-fog">
+                Quanto você aposta?
+              </span>
+              <span className="font-[family-name:var(--font-geist-mono)] text-base font-bold text-white">
                 <AnimatedNumber value={stake} format={BRL} />
               </span>
             </div>
@@ -215,19 +224,19 @@ function HeroCupom(): JSX.Element {
               value={stake}
               onChange={(e) => setStake(Number(e.target.value))}
               aria-label="Valor da aposta"
-              className="mt-2 h-1.5 w-full cursor-pointer appearance-none rounded-full bg-navy-line accent-magenta"
+              className="mt-2.5 h-1 w-full cursor-pointer appearance-none bg-navy-line accent-magenta"
             />
-            <div className="mt-1 flex items-center justify-between text-[11px] text-fog-mute">
-              <span>cotação 2,00</span>
-              <span>arraste pra ver o payout subir</span>
+            <div className="mt-1.5 flex items-center justify-between font-[family-name:var(--font-geist-mono)] text-[10px] uppercase tracking-[0.1em] text-fog-mute">
+              <span>Cotação 2,00</span>
+              <span>arraste →</span>
             </div>
           </div>
 
-          {/* perfuração */}
-          <div className="my-5 flex items-center gap-1" aria-hidden>
-            <span className="size-4 rounded-full bg-ink" />
-            <span className="h-px flex-1 border-t border-dashed border-white/15" />
-            <span className="size-4 rounded-full bg-ink" />
+          {/* perfuração — fio tracejado + furos cor de papel nas bordas */}
+          <div className="relative my-5" aria-hidden>
+            <span className="block h-px w-full border-t border-dashed border-white/20" />
+            <span className="absolute left-0 top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-paper" />
+            <span className="absolute right-0 top-1/2 size-4 -translate-y-1/2 translate-x-1/2 rounded-full bg-paper" />
           </div>
 
           {/* payout + deu green */}
@@ -239,23 +248,25 @@ function HeroCupom(): JSX.Element {
             className="group flex w-full items-end justify-between text-left"
           >
             <div>
-              <p className="text-xs font-bold uppercase tracking-wide text-fog-mute">
+              <p className="font-[family-name:var(--font-geist-mono)] text-[11px] font-bold uppercase tracking-[0.18em] text-fog-mute">
                 Se der green
               </p>
-              <p className="font-[family-name:var(--font-geist-mono)] text-4xl font-medium leading-none text-green">
+              <p className="mt-1 font-[family-name:var(--font-geist-mono)] text-4xl font-bold leading-none text-green">
                 <AnimatedNumber value={payout} format={BRL} />
               </p>
-              <p className="mt-1 text-xs text-fog-mute">toque pra comemorar 🎉</p>
+              <p className="mt-1.5 font-[family-name:var(--font-geist-mono)] text-[10px] uppercase tracking-[0.1em] text-fog-mute">
+                toque pra comemorar
+              </p>
             </div>
             <span
-              className="grid size-14 shrink-0 place-items-center rounded-full text-green-ink transition-transform group-hover:scale-105"
-              style={{ background: "var(--gradient-voltage)", boxShadow: "var(--glow-green)" }}
+              className="grid size-14 shrink-0 place-items-center bg-green text-green-ink transition-transform group-hover:scale-105"
+              style={{ boxShadow: "var(--glow-green)" }}
             >
               <Check className="size-7" strokeWidth={3} aria-hidden />
             </span>
           </button>
         </div>
-      </TiltCard>
+      </div>
     </motion.div>
   );
 }

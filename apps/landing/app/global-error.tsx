@@ -43,12 +43,14 @@ export default function GlobalError({ reset }: { error: Error; reset: () => void
             style={{
               marginTop: 20,
               padding: "12px 24px",
-              borderRadius: 9999,
+              borderRadius: 0,
               border: "none",
               cursor: "pointer",
               fontWeight: 800,
-              color: "#fff",
-              background: "linear-gradient(125deg,#ff00ff,#7a1bd6)",
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              color: "#0a0d16",
+              background: "#ff00ff",
             }}
           >
             Tentar de novo

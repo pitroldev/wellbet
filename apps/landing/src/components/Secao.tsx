@@ -6,16 +6,19 @@ export interface SecaoProps {
   children: ReactNode;
   className?: string;
   containerClassName?: string;
-  /** Superfície escura da marca. */
-  surface?: "ink" | "navy";
+  /** Superfície — ritmo CLARO/ESCURO do placar (ink/navy escuras, papel/magenta claras). */
+  surface?: "ink" | "navy" | "paper" | "magenta";
 }
 
+/** Cada superfície já carrega o fundo E a cor de texto base (claro ↔ escuro). */
 const surfaceClasses: Record<NonNullable<SecaoProps["surface"]>, string> = {
-  ink: "bg-ink",
-  navy: "bg-navy",
+  ink: "bg-ink text-white",
+  navy: "bg-navy text-white",
+  paper: "bg-paper text-[color:var(--color-paper-ink)]",
+  magenta: "bg-magenta text-ink",
 };
 
-/** Primitivo de seção — espaçamento vertical, largura máxima, fundo escuro. */
+/** Primitivo de seção — espaçamento vertical, largura máxima, superfície do ritmo. */
 export function Secao({
   id,
   children,
@@ -27,7 +30,7 @@ export function Secao({
     <section
       id={id}
       className={cn(
-        "relative w-full overflow-hidden px-6 py-20 text-white sm:py-28",
+        "relative w-full overflow-hidden px-6 py-20 sm:py-28",
         surfaceClasses[surface],
         className,
       )}

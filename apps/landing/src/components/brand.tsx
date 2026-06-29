@@ -32,7 +32,7 @@ export function BoltMark({
   );
 }
 
-/** Raio dentro de um quadrado arredondado com a FOIL magenta GymBet (app-icon). */
+/** Raio dentro de um quadrado de CANTO VIVO com a FOIL magenta GymBet (app-icon). */
 export function BoltTile({
   size = 36,
   className,
@@ -50,7 +50,7 @@ export function BoltTile({
         width: size,
         height: size,
         background: "var(--gradient-gymbet)",
-        borderRadius: size * 0.28,
+        borderRadius: 0,
       }}
     >
       <BoltMark style={{ width: size * 0.54, height: "auto", color: "#0A0D16" }} />
@@ -58,7 +58,7 @@ export function BoltTile({
   );
 }
 
-/** Lockup do produto: tile + "Charya". `tone` ajusta a cor do texto. */
+/** Lockup do produto: tile + "CHARYA" em Anton condensada. `tone` ajusta a cor. */
 export function Wordmark({
   size = 30,
   tone = "light",
@@ -72,8 +72,8 @@ export function Wordmark({
     <span className={cn("inline-flex items-center gap-2.5", className)}>
       <BoltTile size={size} />
       <span
-        className="font-[family-name:var(--font-jakarta)] font-extrabold tracking-tight"
-        style={{ color: tone === "light" ? "#FFFFFF" : "#0A0D16", fontSize: size * 0.62 }}
+        className="font-[family-name:var(--font-archivo)] uppercase leading-none tracking-[0.01em]"
+        style={{ color: tone === "light" ? "#FFFFFF" : "#0A0D16", fontSize: size * 0.82 }}
       >
         Charya
       </span>

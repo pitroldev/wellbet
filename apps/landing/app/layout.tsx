@@ -1,24 +1,31 @@
 import type { Metadata, Viewport } from "next";
 import type { JSX, ReactNode } from "react";
-import { Sora, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Anton, Archivo, Space_Mono } from "next/font/google";
 import "./globals.css";
 
 /**
- * Fontes da direção HOLOGRÁFICO, via next/font. Mantemos os MESMOS nomes de CSS
- * var do tema antigo (--font-archivo / --font-jakarta / --font-geist-mono) para
- * re-fontar todos os componentes sem tocá-los:
- *  - Sora → manchetes geométricas futuristas (era "archivo").
- *  - Space Grotesk → UI/corpo (era "jakarta").
- *  - JetBrains Mono → odds, stake, payout, contadores (era "geist-mono").
+ * Fontes da direção SPORTSBOOK BRUTAL (placar / cartaz de boxe / bilhete de
+ * aposta). Mantemos os MESMOS nomes de CSS var do tema antigo
+ * (--font-archivo / --font-jakarta / --font-geist-mono) para re-fontar todos os
+ * componentes sem tocar cada um:
+ *  - Anton → manchetes condensadas pesadíssimas em caixa-alta (era "archivo").
+ *  - Archivo → corpo / UI, grotesca de trabalho (era "jakarta").
+ *  - Space Mono → odds, stake, payout, labels, contadores — DNA de bilhete (era "geist-mono").
  */
-const jakarta = Space_Grotesk({
+const jakarta = Archivo({
   subsets: ["latin"],
   variable: "--font-jakarta",
   display: "swap",
 });
-const archivo = Sora({ subsets: ["latin"], variable: "--font-archivo", display: "swap" });
-const geistMono = JetBrains_Mono({
+const archivo = Anton({
   subsets: ["latin"],
+  weight: "400",
+  variable: "--font-archivo",
+  display: "swap",
+});
+const geistMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
   variable: "--font-geist-mono",
   display: "swap",
 });
@@ -71,7 +78,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0A0D16",
+  themeColor: "#F1EFE9",
   width: "device-width",
   initialScale: 1,
 };

@@ -84,8 +84,7 @@ export function ComoFunciona(): JSX.Element {
         {/* fio-gradiente da progressão (lg) — atravessa os vãos entre os cards */}
         <span
           aria-hidden
-          className="pointer-events-none absolute left-0 right-0 top-[3.6rem] hidden h-px lg:block"
-          style={{ background: "var(--gradient-gymbet)", opacity: 0.5 }}
+          className="pointer-events-none absolute left-0 right-0 top-[3.6rem] hidden h-0.5 bg-magenta lg:block"
         />
 
         <div className="relative grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -135,7 +134,7 @@ export function ComoFunciona(): JSX.Element {
 
                 <h3
                   className={cn(
-                    "mt-6 text-lg font-bold tracking-[-0.01em]",
+                    "mt-6 font-[family-name:var(--font-archivo)] text-xl uppercase leading-[0.95] tracking-tight",
                     destaque ? "text-green" : "text-white",
                   )}
                 >

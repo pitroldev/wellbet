@@ -1,10 +1,11 @@
 /*
- * Tailwind v4 (CSS-first) — tema da LANDING: estrutura HOLOGRÁFICA nas cores
- * oficiais do GYMBET (deck CHARYA-IDs / wellbet & Co.). Ground escuro navy-quase
- * -preto (#0A0D16), vidro fosco translúcido, e a iridescência FOIL da seta 3D
- * do GymBet deslizando magenta→pink→roxo→indigo. Verde menta = vitória ("deu
- * green"). Os NOMES de token são herdados do tema antigo p/ não tocar componente
- * a componente; só os VALORES mudam. Fontes: Sora / Space Grotesk / JetBrains.
+ * Tailwind v4 (CSS-first) — tema da LANDING: direção SPORTSBOOK BRUTAL nas cores
+ * oficiais do GYMBET (deck CHARYA-IDs / wellbet & Co.). Placar / cartaz de boxe /
+ * bilhete de aposta: CANTO VIVO (radius ~0), blocos CHAPADOS de magenta (não
+ * glow), ritmo CLARO/ESCURO (papel ↔ ink), tipo condensado pesadíssimo (Anton)
+ * e mono em todo número (Space Mono). Magenta #FF00FF = energia; verde menta =
+ * vitória ("deu green"). Os NOMES de token são herdados p/ não tocar componente
+ * a componente; só os VALORES mudam.
  */
 @import "tailwindcss";
 
@@ -34,26 +35,32 @@
   --color-indigo: #7a1bd6;
   --color-indigo-soft: #9d4edd;
   --color-periwinkle: #c9a6ff;
-  --color-magenta: #ff2cf0;
+  --color-magenta: #ff00ff;
   --color-pink: #ff80e1;
 
   /* Texto sobre escuro */
   --color-fog: #aaa2c8;
   --color-fog-mute: #6b6488;
-  --color-paper: #f4f2fb;
   --color-white: #ffffff;
 
-  /* Semânticos (dark) */
+  /* Papel — superfície CLARA do ritmo claro/escuro (cartaz impresso, leve osso) */
+  --color-paper: #f1efe9;
+  --color-paper-ink: #0a0d16;
+  --color-paper-mute: #565163;
+  --color-paper-line: #15131c;
+
+  /* Semânticos (dark default) */
   --color-background: #0a0d16;
-  --color-foreground: #f4f2fb;
+  --color-foreground: #f1efe9;
 
-  /* Escala de manchete (Sora geométrica, grande) */
-  --text-hero: clamp(2.6rem, 7.4vw, 5.6rem);
-  --text-display: clamp(2.1rem, 5.5vw, 3.8rem);
+  /* Escala de manchete (Anton condensada — billboard, pode ser enorme) */
+  --text-hero: clamp(3.2rem, 11.5vw, 8.5rem);
+  --text-display: clamp(2.4rem, 7vw, 5rem);
 
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
-  --radius-3xl: 2rem;
+  /* CANTO VIVO — radius praticamente zero (mata todo rounded-xl/2xl/3xl de uma vez) */
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 1px;
 }
 
 /* FOIL iridescente do GymBet (magenta→pink→roxo→indigo) + gradientes/glows —
@@ -92,8 +99,28 @@
   --glow-green: 0 22px 60px -26px rgba(65, 255, 202, 0.5);
   --glow-blue: 0 22px 60px -26px rgba(122, 27, 214, 0.55);
 
-  /* estilhaço diagonal (motivo) */
+  /* sombra "carimbo" — offset duro (sem blur), cartaz/brutalist. Canto vivo. */
+  --stamp-ink: 7px 7px 0 0 #0a0d16;
+  --stamp-magenta: 7px 7px 0 0 #ff00ff;
+  --stamp-green: 7px 7px 0 0 #41ffca;
+
+  /* estilhaço diagonal (MOTIVO repetido) — corte de bilhete / cartaz rasgado */
   --shard: polygon(0 0, 100% 0, 100% 78%, 0 100%);
+  --shard-up: polygon(0 22%, 100% 0, 100% 100%, 0 100%);
+  /* canto cortado de bilhete (stub) — para botões/cards (top-right chanfrado) */
+  --stub: polygon(0 0, calc(100% - 0.85rem) 0, 100% 0.85rem, 100% 100%, 0 100%);
+  /* canto cortado duplo (top-right + bottom-left) — ticket de aposta */
+  --ticket: polygon(
+    0 0,
+    calc(100% - 0.9rem) 0,
+    100% 0.9rem,
+    100% 100%,
+    0.9rem 100%,
+    0 calc(100% - 0.9rem)
+  );
+
+  /* halftone — pontos de cartaz impresso (textura, via background-image) */
+  --halftone: radial-gradient(currentColor 1px, transparent 1.4px);
 }
 
 @keyframes float {

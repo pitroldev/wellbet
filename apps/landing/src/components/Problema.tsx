@@ -70,21 +70,19 @@ export function Problema(): JSX.Element {
               key={dor.titulo}
               delay={0.05 * i}
               y={26}
-              className="group relative overflow-hidden rounded-2xl border border-navy-line border-l-2 border-l-magenta/40 bg-navy-soft/60 p-6 transition-colors hover:border-magenta/40 hover:border-l-magenta/70"
+              className="group relative overflow-hidden border border-navy-line border-l-[3px] border-l-magenta bg-navy-soft/60 p-6 transition-colors hover:border-magenta/50 hover:border-l-magenta"
             >
-              <span
-                aria-hidden
-                className="pointer-events-none absolute left-0 top-0 h-full w-px bg-gradient-to-b from-magenta/50 via-magenta/10 to-transparent"
-              />
               <div className="flex items-center gap-3">
-                <span className="grid size-11 place-items-center rounded-xl bg-white/5 text-fog-mute ring-1 ring-white/10">
+                <span className="grid size-11 place-items-center bg-white/5 text-fog-mute ring-1 ring-white/10">
                   <Icone className="size-5" strokeWidth={2} aria-hidden />
                 </span>
-                <span className="font-[family-name:var(--font-geist-mono)] text-xs font-semibold tracking-[0.2em] text-fog-mute">
+                <span className="font-[family-name:var(--font-geist-mono)] text-xs font-bold tracking-[0.2em] text-fog-mute">
                   {String(i + 1).padStart(2, "0")}
                 </span>
               </div>
-              <h3 className="mt-5 text-lg font-bold text-white">{dor.titulo}</h3>
+              <h3 className="mt-5 font-[family-name:var(--font-archivo)] text-xl uppercase leading-[0.95] tracking-tight text-white">
+                {dor.titulo}
+              </h3>
               <p className="mt-2.5 text-[15px] leading-relaxed text-fog">{dor.texto}</p>
             </Reveal>
           );
