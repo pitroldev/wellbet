@@ -43,6 +43,10 @@
   --color-background: #08161e;
   --color-foreground: #ffffff;
 
+  /* Escala de manchete (type-as-hero, Archivo black gigante) */
+  --text-hero: clamp(2.6rem, 7.4vw, 5.6rem);
+  --text-display: clamp(2.1rem, 5.5vw, 3.8rem);
+
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
   --radius-3xl: 2rem;
@@ -98,13 +102,30 @@
   }
 }
 
+/* Ticker/marquee: conteúdo duplicado desliza -50% (loop perfeito). */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 * {
   border-color: var(--color-navy-line);
 }
 
 html {
-  scroll-behavior: smooth;
+  /* O smooth-scroll é gerido pelo Lenis (SmoothScroll.tsx). Sem scroll-behavior
+   * nativo aqui pra não duplicar. Fallback nativo entra só em reduce-motion. */
   background-color: var(--color-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {

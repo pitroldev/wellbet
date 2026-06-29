@@ -15,6 +15,16 @@ allowBuilds:
   ssh2: false # dep do testcontainers; build nativo só p/ docker REMOTO (SSH) — local usa npipe
   unrs-resolver: true # resolver nativo do oxlint/eslint
 
+# Override de resolução: força UM único React/React-DOM em todo o monorepo.
+# Next 16 + framer-motion/lucide resolviam um react@19.2.4 paralelo ao react@19.2.0
+# do catálogo (peer-deps), criando DOIS Reacts → "Cannot read properties of null
+# (reading 'useContext')" no prerender do /_global-error. 19.2.0 casa com o
+# React Native 0.86 (mobile). (Override fica AQUI; pnpm 11 ignora pnpm.overrides
+# no package.json.)
+overrides:
+  react: 19.2.0
+  react-dom: 19.2.0
+
 # Catálogo central de versões compartilhadas (pnpm catalogs).
 # Apps/pacotes referenciam com "catalog:" para manter uma versão única.
 # Versões alinhadas ao baseline jun/2026 do doc de Arquitetura Técnica.
