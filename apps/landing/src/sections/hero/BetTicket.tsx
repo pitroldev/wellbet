@@ -2,21 +2,27 @@
 
 import type { JSX } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Check, X } from "lucide-react";
+import { Check, X, ArrowRight } from "lucide-react";
 import { BoltMark } from "@/ui";
-import { AnimatedNumber, EASE, DUR } from "@/motion";
+import { EASE, DUR } from "@/motion";
 import { BRL } from "@/lib/formatters";
+import { appUrl } from "@/config";
 import { useStakeSimulator } from "./useStakeSimulator";
+import { StakeLever } from "./StakeLever";
+import { GreenPreview } from "./GreenPreview";
+
+const brl = (n: number) => new Intl.NumberFormat("pt-BR", BRL).format(n);
 
 /**
- * O cupom como BILHETE de aposta honesto (entalhado/perfurado, tudo em mono).
- * Sem cotação 2,00 nem payout ×2 (promessa de dinheiro fácil que a marca renega):
- * o simulador mostra o que você PÕE EM JOGO e os dois desfechos reais — bateu
- * (de volta + sua fatia do bolo) ou não (vai pro bolo de quem bateu).
+ * O cupom = BILHETE de aposta honesto E tátil. O stake vira uma alavanca
+ * (StakeLever): arrastar enche a barra magenta (risco exato), rola o número,
+ * troca o tier e INCLINA o bilhete (metáfora de peso). Os dois desfechos reais
+ * continuam à mostra; "ver como é o green" entrega o pico de dopamina rotulado.
  */
 export function BetTicket(): JSX.Element {
   const reduce = useReducedMotion();
-  const { stake, setStake, min, max, step } = useStakeSimulator();
+  const sim = useStakeSimulator();
+  const tilt = reduce ? 0 : (sim.pct - 0.5) * 2.2;
 
   return (
     <motion.div
@@ -30,10 +36,11 @@ export function BetTicket(): JSX.Element {
       className="relative mx-auto w-full max-w-sm text-white"
     >
       <div
-        className="relative overflow-hidden bg-ink"
+        className="relative overflow-hidden bg-ink transition-transform duration-300 ease-out"
         style={{
           clipPath: "var(--ticket)",
           filter: "drop-shadow(10px 12px 0 rgba(10,13,22,0.14))",
+          transform: `rotate(${tilt}deg)`,
         }}
       >
         {/* header — barra magenta chapada */}
@@ -58,30 +65,8 @@ export function BetTicket(): JSX.Element {
             4 meses · pesagem por vídeo
           </p>
 
-          {/* simulador: arrasta o stake */}
-          <div className="mt-5 border border-white/10 bg-white/[0.03] px-4 py-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-fog">Quanto você põe em jogo?</span>
-              <span className="font-[family-name:var(--font-geist-mono)] text-base font-bold text-white">
-                <AnimatedNumber value={stake} format={BRL} />
-              </span>
-            </div>
-            <input
-              type="range"
-              min={min}
-              max={max}
-              step={step}
-              value={stake}
-              onChange={(e) => setStake(Number(e.target.value))}
-              aria-label="Quanto você põe em jogo?"
-              aria-valuetext={`R$ ${stake}`}
-              className="mt-2.5 h-1 w-full cursor-pointer appearance-none bg-navy-line accent-magenta"
-            />
-            <div className="mt-1.5 flex items-center justify-between font-[family-name:var(--font-geist-mono)] text-[10px] uppercase tracking-[0.1em] text-fog-mute">
-              <span>mín R$ 50</span>
-              <span>máx R$ 500</span>
-            </div>
-          </div>
+          {/* a alavanca tátil */}
+          <StakeLever {...sim} />
 
           {/* perfuração — fio tracejado + furos cor de papel nas bordas */}
           <div className="relative my-5" aria-hidden>
@@ -90,7 +75,7 @@ export function BetTicket(): JSX.Element {
             <span className="absolute right-0 top-1/2 size-4 -translate-y-1/2 translate-x-1/2 rounded-full bg-paper" />
           </div>
 
-          {/* os dois desfechos reais — honestidade = o mecanismo (aversão à perda) */}
+          {/* os dois desfechos reais */}
           <ul className="flex flex-col gap-3">
             <li className="flex items-start gap-3">
               <span className="mt-0.5 grid size-7 shrink-0 place-items-center bg-green text-green-ink">
@@ -112,9 +97,21 @@ export function BetTicket(): JSX.Element {
             </li>
           </ul>
 
-          <p className="mt-4 font-[family-name:var(--font-geist-mono)] text-[10px] uppercase leading-relaxed tracking-[0.08em] text-fog-mute">
-            Sem mágica: o prêmio vem de quem desistiu.
-          </p>
+          {/* preview honesto do green (clique → carimbo + confete + auto-reset) */}
+          <GreenPreview stake={sim.stake} />
+
+          {/* CTA viva — responde à pergunta do hero com o SEU número */}
+          <a
+            href={`${appUrl}?valor=${sim.stake}`}
+            className="group mt-3 flex w-full items-center justify-center gap-2 bg-magenta py-3 font-[family-name:var(--font-geist-mono)] text-sm font-bold uppercase tracking-[0.08em] text-ink transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper"
+            style={{ clipPath: "var(--stub)" }}
+          >
+            Apostar {brl(sim.stake)} em mim
+            <ArrowRight
+              className="size-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"
+              aria-hidden
+            />
+          </a>
         </div>
       </div>
     </motion.div>
