@@ -2,7 +2,7 @@ import type { CSSProperties, JSX, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { BoltMark } from "./brand";
 
-/** Eyebrow esportivo (Archivo caixa-alta) com o raio como bullet. */
+/** Eyebrow holográfico (mono JetBrains, raio como bullet). Acento iridescente. */
 export function Eyebrow({
   children,
   tone = "magenta",
@@ -18,12 +18,12 @@ export function Eyebrow({
       : tone === "green"
         ? "text-green"
         : tone === "blue"
-          ? "text-blue-soft"
+          ? "text-blue"
           : "text-magenta";
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 font-[family-name:var(--font-archivo)] text-xs font-extrabold uppercase tracking-[0.2em]",
+        "inline-flex items-center gap-2 font-[family-name:var(--font-geist-mono)] text-[11px] font-semibold uppercase tracking-[0.24em]",
         color,
         className,
       )}
@@ -34,7 +34,7 @@ export function Eyebrow({
   );
 }
 
-/** Mancha de luz desfocada para o fundo (decorativa). Default magenta. */
+/** Mancha de luz desfocada para o fundo (decorativa). Default magenta GymBet. */
 export function Glow({
   className,
   color = "#FF00FF",
@@ -54,7 +54,7 @@ export function Glow({
 }
 
 /**
- * Manchete da marca — Archivo black, CAIXA-ALTA itálico (energia gymbet-arena).
+ * Manchete da marca — Sora geométrica, CAIXA-ALTA (futuro luminoso holográfico).
  * É o protagonista tipográfico da LP. `level` controla a tag semântica.
  */
 export function Display({
@@ -67,7 +67,7 @@ export function Display({
   level?: 1 | 2 | 3;
 }): JSX.Element {
   const cls = cn(
-    "font-[family-name:var(--font-archivo)] font-black uppercase italic leading-[0.9] tracking-[-0.02em] text-white",
+    "font-[family-name:var(--font-archivo)] font-extrabold uppercase leading-[0.95] tracking-[-0.015em] text-white",
     className,
   );
   if (level === 1) return <h1 className={cls}>{children}</h1>;
@@ -75,7 +75,7 @@ export function Display({
   return <h2 className={cls}>{children}</h2>;
 }
 
-/** Palavra/trecho em texto-gradiente. Default: gymbet bright (magenta→rosa, alto contraste). */
+/** Palavra/trecho em texto-gradiente FOIL iridescente (desliza em loop). */
 export function GradText({
   children,
   gradient = "var(--gradient-gymbet-bright)",
@@ -90,6 +90,8 @@ export function GradText({
       className={cn("bg-clip-text text-transparent", className)}
       style={{
         backgroundImage: gradient,
+        backgroundSize: "220% 100%",
+        animation: "foilshift 8s linear infinite",
         WebkitBoxDecorationBreak: "clone",
         boxDecorationBreak: "clone",
       }}

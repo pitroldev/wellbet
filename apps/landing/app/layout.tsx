@@ -1,22 +1,23 @@
 import type { Metadata, Viewport } from "next";
 import type { JSX, ReactNode } from "react";
-import { Plus_Jakarta_Sans, Archivo, Geist_Mono } from "next/font/google";
+import { Sora, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 /**
- * Fontes da marca wellbet & Co. (BRAND.md §3), carregadas via next/font e
- * expostas como CSS vars:
- *  - Archivo (black/800/900) → manchetes caixa-alta itálicas (energia gymbet-arena).
- *  - Plus Jakarta Sans → UI/corpo (o "sans da casa").
- *  - Geist Mono → odds, stake, payout, contadores (tabular).
+ * Fontes da direção HOLOGRÁFICO, via next/font. Mantemos os MESMOS nomes de CSS
+ * var do tema antigo (--font-archivo / --font-jakarta / --font-geist-mono) para
+ * re-fontar todos os componentes sem tocá-los:
+ *  - Sora → manchetes geométricas futuristas (era "archivo").
+ *  - Space Grotesk → UI/corpo (era "jakarta").
+ *  - JetBrains Mono → odds, stake, payout, contadores (era "geist-mono").
  */
-const jakarta = Plus_Jakarta_Sans({
+const jakarta = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-jakarta",
   display: "swap",
 });
-const archivo = Archivo({ subsets: ["latin"], variable: "--font-archivo", display: "swap" });
-const geistMono = Geist_Mono({
+const archivo = Sora({ subsets: ["latin"], variable: "--font-archivo", display: "swap" });
+const geistMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-geist-mono",
   display: "swap",
@@ -70,7 +71,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#08161E",
+  themeColor: "#0A0D16",
   width: "device-width",
   initialScale: 1,
 };

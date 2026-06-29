@@ -28,7 +28,7 @@ export function TiltCard({
   const sheen = useTransform(
     [mx, my],
     ([x, y]: number[]) =>
-      `radial-gradient(circle at ${(x ?? 0.5) * 100}% ${(y ?? 0.5) * 100}%, rgba(255,128,225,0.55), rgba(255,0,255,0.16) 38%, transparent 68%)`,
+      `radial-gradient(circle at ${(x ?? 0.5) * 100}% ${(y ?? 0.5) * 100}%, rgba(255,0,255,0.5), rgba(122,27,214,0.22) 40%, transparent 70%)`,
   );
 
   if (reduce) return <div className={cn("relative", className)}>{children}</div>;

@@ -23,7 +23,7 @@ export function TickerBand(): JSX.Element {
         {WORDS.map((w) => (
           <span
             key={w}
-            className="mx-7 inline-flex items-center gap-7 font-[family-name:var(--font-archivo)] text-xl font-black uppercase italic sm:text-2xl"
+            className="mx-7 inline-flex items-center gap-7 font-[family-name:var(--font-archivo)] text-xl font-extrabold uppercase tracking-tight sm:text-2xl"
           >
             <span className={w === "Deu green" ? "text-green" : "text-white/80"}>{w}</span>
             <BoltMark className="h-3.5 w-auto text-magenta sm:h-4" />

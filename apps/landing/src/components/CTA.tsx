@@ -12,8 +12,8 @@ export interface CTAProps {
 
 /**
  * CTA da landing — `<a>` estilizado como botão (link real, sem JS de cliente).
- * Primário usa o gradiente voltage (menta→azul) com texto `ink` (BRAND.md:
- * texto sobre menta usa ink) e glow azul.
+ * Primário = passe FOIL iridescente com texto escuro (alto contraste sobre o
+ * foil claro) e glow roxo. Secundário = contorno de vidro.
  */
 export function CTA({ href, children, variant = "primary", className }: CTAProps): JSX.Element {
   if (variant === "secondary") {
@@ -21,7 +21,7 @@ export function CTA({ href, children, variant = "primary", className }: CTAProps
       <a
         href={href}
         className={cn(
-          "inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-base font-bold text-white ring-1 ring-inset ring-white/20 transition hover:bg-white/5",
+          "inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-base font-bold text-white ring-1 ring-inset ring-white/20 backdrop-blur-sm transition hover:bg-white/5",
           className,
         )}
       >
@@ -33,10 +33,15 @@ export function CTA({ href, children, variant = "primary", className }: CTAProps
     <a
       href={href}
       className={cn(
-        "group inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-base font-extrabold text-white transition-transform duration-200 hover:-translate-y-0.5",
+        "group inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-base font-extrabold text-[#0A0D16] transition-transform duration-200 hover:-translate-y-0.5",
         className,
       )}
-      style={{ background: "var(--gradient-gymbet)", boxShadow: "var(--glow-magenta)" }}
+      style={{
+        background: "var(--foil)",
+        backgroundSize: "200% 100%",
+        animation: "foilshift 8s linear infinite",
+        boxShadow: "var(--glow-magenta)",
+      }}
     >
       {children}
       <ArrowRight

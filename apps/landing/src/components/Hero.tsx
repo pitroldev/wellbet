@@ -32,7 +32,7 @@ export function Hero(): JSX.Element {
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{
           background:
-            "linear-gradient(90deg, rgba(8,22,30,0.82) 0%, rgba(8,22,30,0.5) 38%, rgba(8,22,30,0.1) 64%, transparent 100%)",
+            "linear-gradient(90deg, rgba(10,13,22,0.82) 0%, rgba(10,13,22,0.5) 38%, rgba(10,13,22,0.1) 64%, transparent 100%)",
         }}
       />
       <span
@@ -91,7 +91,7 @@ function HeroCopy(): JSX.Element {
         <Eyebrow>A bet que você torce pra ganhar</Eyebrow>
       </motion.div>
 
-      <h1 className="mt-5 font-[family-name:var(--font-archivo)] text-hero font-black uppercase italic leading-[0.86] tracking-[-0.035em] text-white">
+      <h1 className="mt-5 font-[family-name:var(--font-archivo)] text-hero font-extrabold uppercase leading-[0.95] tracking-[-0.02em] text-white">
         <RevealText immediate delay={0.1}>
           A melhor
         </RevealText>
@@ -193,7 +193,7 @@ function HeroCupom(): JSX.Element {
           {/* meta */}
           <div className="mt-5">
             <p className="text-xs font-bold uppercase tracking-wide text-fog-mute">Sua meta</p>
-            <p className="mt-1 font-[family-name:var(--font-archivo)] text-4xl font-black uppercase italic leading-none text-white">
+            <p className="mt-1 font-[family-name:var(--font-archivo)] text-4xl font-extrabold uppercase leading-none text-white">
               Perder 8&nbsp;kg
             </p>
             <p className="mt-1.5 text-sm text-fog">em 4 meses · pesagem por vídeo</p>

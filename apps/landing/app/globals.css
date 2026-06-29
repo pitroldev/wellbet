@@ -1,8 +1,10 @@
 /*
- * Tailwind v4 (CSS-first) — tema da LANDING na identidade wellbet & Co. (BRAND.md).
- * Ground escuro premium (ink/navy), azul elétrico + verde menta (WellBet), e os
- * gradientes oficiais voltage/iris/gymbet/muma. NÃO é a paleta sóbria do
- * @charya/ui-tokens (essa serve o admin) — aqui a LP precisa VENDER, com energia.
+ * Tailwind v4 (CSS-first) — tema da LANDING: estrutura HOLOGRÁFICA nas cores
+ * oficiais do GYMBET (deck CHARYA-IDs / wellbet & Co.). Ground escuro navy-quase
+ * -preto (#0A0D16), vidro fosco translúcido, e a iridescência FOIL da seta 3D
+ * do GymBet deslizando magenta→pink→roxo→indigo. Verde menta = vitória ("deu
+ * green"). Os NOMES de token são herdados do tema antigo p/ não tocar componente
+ * a componente; só os VALORES mudam. Fontes: Sora / Space Grotesk / JetBrains.
  */
 @import "tailwindcss";
 
@@ -10,40 +12,42 @@
 @source "../app";
 
 @theme {
-  /* Grounds escuros */
-  --color-ink: #08161e;
-  --color-ink-soft: #3a4750;
-  --color-navy: #0b1226;
-  --color-navy-soft: #151d3a;
-  --color-navy-line: #232c50;
+  /* Grounds escuros (ink navy do GymBet) */
+  --color-ink: #0a0d16;
+  --color-ink-soft: #6b6488;
+  --color-navy: #14131f;
+  --color-navy-soft: #1c1a2c;
+  --color-navy-line: #2c2548;
 
-  /* WellBet: azul elétrico + verde menta */
-  --color-blue: #3945ff;
-  --color-blue-deep: #2936ff;
-  --color-blue-soft: #656fff;
-  --color-blue-wash: #eef0ff;
+  /* "blue" reaproveitado p/ roxo (GymBet não tem ciano) */
+  --color-blue: #9d4edd;
+  --color-blue-deep: #7a1bd6;
+  --color-blue-soft: #c084fc;
+  --color-blue-wash: #1c1a2c;
+
+  /* Verde menta — só vitória / "deu green" */
   --color-green: #41ffca;
-  --color-green-deep: #18b488;
-  --color-green-ink: #0a2920;
+  --color-green-deep: #10b981;
+  --color-green-ink: #04231a;
 
-  /* Masterbrand / GymBet (acentos) */
-  --color-indigo: #3215ad;
-  --color-indigo-soft: #4b2bd6;
-  --color-periwinkle: #ccd1ff;
-  --color-magenta: #ff00ff;
+  /* Roxo + magenta + pink (núcleo da marca GymBet) */
+  --color-indigo: #7a1bd6;
+  --color-indigo-soft: #9d4edd;
+  --color-periwinkle: #c9a6ff;
+  --color-magenta: #ff2cf0;
   --color-pink: #ff80e1;
 
   /* Texto sobre escuro */
-  --color-fog: #b9c0e0;
-  --color-fog-mute: #7a85b5;
-  --color-paper: #fafbfc;
+  --color-fog: #aaa2c8;
+  --color-fog-mute: #6b6488;
+  --color-paper: #f4f2fb;
   --color-white: #ffffff;
 
   /* Semânticos (dark) */
-  --color-background: #08161e;
-  --color-foreground: #ffffff;
+  --color-background: #0a0d16;
+  --color-foreground: #f4f2fb;
 
-  /* Escala de manchete (type-as-hero, Archivo black gigante) */
+  /* Escala de manchete (Sora geométrica, grande) */
   --text-hero: clamp(2.6rem, 7.4vw, 5.6rem);
   --text-display: clamp(2.1rem, 5.5vw, 3.8rem);
 
@@ -52,23 +56,43 @@
   --radius-3xl: 2rem;
 }
 
-/* Gradientes oficiais (BRAND.md §2) + glows — usados via var() em style/arbitrary.
- * Assinatura da LP = GYMBET (magenta→roxo→indigo). Para TEXTO use a variante
- * "bright" (magenta→rosa), que mantém contraste alto sobre o navy. */
+/* FOIL iridescente do GymBet (magenta→pink→roxo→indigo) + gradientes/glows —
+ * via var() em style/arbitrary. Os nomes "gymbet" persistem como interface. */
 :root {
-  --gradient-gymbet: linear-gradient(125deg, #ff00ff 0%, #7a1bd6 55%, #3215ad 100%);
-  --gradient-gymbet-bright: linear-gradient(100deg, #ff00ff 0%, #fdc0ff 52%, #ff80e1 100%);
-  --gradient-jackpot: linear-gradient(120deg, #ff00ff 0%, #ff80e1 50%, #41ffca 100%);
-  --gradient-muma: linear-gradient(120deg, #ff80e1 0%, #3215ad 100%);
-  --gradient-voltage: linear-gradient(110deg, #41ffca 0%, #3945ff 100%);
-  --gradient-iris: linear-gradient(120deg, #3215ad 0%, #3945ff 45%, #656fff 100%);
+  --foil: linear-gradient(
+    115deg,
+    #ff00ff 0%,
+    #ff80e1 16%,
+    #c026d3 36%,
+    #7a1bd6 56%,
+    #5b2be0 72%,
+    #c026d3 88%,
+    #ff00ff 100%
+  );
+  --foil-conic: conic-gradient(
+    from 0deg,
+    #ff00ff,
+    #ff80e1,
+    #c026d3,
+    #7a1bd6,
+    #5b2be0,
+    #c026d3,
+    #ff00ff
+  );
 
-  --glow-magenta: 0 24px 70px -22px rgba(255, 0, 255, 0.6);
-  --glow-pink: 0 24px 70px -24px rgba(255, 128, 225, 0.5);
-  --glow-green: 0 24px 70px -24px rgba(65, 255, 202, 0.5);
-  --glow-blue: 0 24px 70px -24px rgba(57, 69, 255, 0.6);
+  --gradient-gymbet: var(--foil);
+  --gradient-gymbet-bright: var(--foil);
+  --gradient-jackpot: linear-gradient(115deg, #ff00ff 0%, #7a1bd6 55%, #5b2be0 100%);
+  --gradient-muma: linear-gradient(120deg, #9d4edd 0%, #5b21b6 100%);
+  --gradient-voltage: linear-gradient(135deg, #2be8b0 0%, #41ffca 100%);
+  --gradient-iris: var(--foil);
 
-  /* estilhaço diagonal (motivo gymbet) */
+  --glow-magenta: 0 22px 60px -24px rgba(255, 0, 255, 0.5);
+  --glow-pink: 0 22px 60px -26px rgba(255, 128, 225, 0.45);
+  --glow-green: 0 22px 60px -26px rgba(65, 255, 202, 0.5);
+  --glow-blue: 0 22px 60px -26px rgba(122, 27, 214, 0.55);
+
+  /* estilhaço diagonal (motivo) */
   --shard: polygon(0 0, 100% 0, 100% 78%, 0 100%);
 }
 
@@ -102,6 +126,19 @@
   }
 }
 
+/* Foil deslizando — iridescência viva em texto/superfícies. */
+@keyframes foilshift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 /* Ticker/marquee: conteúdo duplicado desliza -50% (loop perfeito). */
 @keyframes marquee {
   from {
@@ -130,7 +167,7 @@ html {
 
 body {
   background-color: var(--color-ink);
-  color: var(--color-white);
+  color: var(--color-paper);
   font-family: var(--font-jakarta), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }

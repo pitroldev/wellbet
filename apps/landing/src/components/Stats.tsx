@@ -42,7 +42,7 @@ function Stat({ s }: { s: StatDef }): JSX.Element {
   return (
     <div ref={ref} className="rounded-2xl border border-navy-line bg-navy-soft p-7">
       <p
-        className={`font-[family-name:var(--font-archivo)] text-[clamp(3rem,7vw,4.6rem)] font-black italic leading-none ${color}`}
+        className={`font-[family-name:var(--font-geist-mono)] text-[clamp(3rem,7vw,4.6rem)] font-extrabold leading-none ${color}`}
       >
         <AnimatedNumber value={inView ? s.value : 0} suffix={s.suffix} />
       </p>

@@ -32,7 +32,7 @@ export function BoltMark({
   );
 }
 
-/** Raio dentro de um quadrado arredondado com gradiente voltage (app-icon). */
+/** Raio dentro de um quadrado arredondado com a FOIL magenta GymBet (app-icon). */
 export function BoltTile({
   size = 36,
   className,
@@ -43,17 +43,17 @@ export function BoltTile({
   return (
     <span
       className={cn(
-        "inline-grid place-items-center shadow-[0_8px_24px_-8px_rgba(57,69,255,0.7)]",
+        "inline-grid place-items-center shadow-[0_8px_24px_-8px_rgba(255,0,255,0.55)]",
         className,
       )}
       style={{
         width: size,
         height: size,
-        background: "var(--gradient-voltage)",
+        background: "var(--gradient-gymbet)",
         borderRadius: size * 0.28,
       }}
     >
-      <BoltMark style={{ width: size * 0.54, height: "auto", color: "#08161E" }} />
+      <BoltMark style={{ width: size * 0.54, height: "auto", color: "#0A0D16" }} />
     </span>
   );
 }
@@ -73,7 +73,7 @@ export function Wordmark({
       <BoltTile size={size} />
       <span
         className="font-[family-name:var(--font-jakarta)] font-extrabold tracking-tight"
-        style={{ color: tone === "light" ? "#FFFFFF" : "#08161E", fontSize: size * 0.62 }}
+        style={{ color: tone === "light" ? "#FFFFFF" : "#0A0D16", fontSize: size * 0.62 }}
       >
         Charya
       </span>

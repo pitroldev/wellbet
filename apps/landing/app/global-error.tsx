@@ -17,7 +17,7 @@ export default function GlobalError({ reset }: { error: Error; reset: () => void
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#08161e",
+          background: "#0a0d16",
           color: "#ffffff",
           fontFamily: "system-ui, sans-serif",
         }}

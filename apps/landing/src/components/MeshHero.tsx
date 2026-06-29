@@ -5,8 +5,8 @@ import dynamic from "next/dynamic";
 import { useReducedMotion } from "framer-motion";
 
 /**
- * Fundo do hero = mesh-gradient WebGL animado (Paper Shaders) — a assinatura
- * "premium tech" (Stripe/Linear) na paleta da arena. Carregado client-only
+ * Fundo do hero = mesh-gradient WebGL animado (Paper Shaders) na iridescência
+ * do GYMBET (roxo→magenta→pink sobre o ink navy #0A0D16). Carregado client-only
  * (next/dynamic ssr:false) sobre um gradiente CSS estático que pinta de imediato
  * (bom LCP) e serve de fallback / reduce-motion. Decorativo (aria-hidden).
  */
@@ -15,13 +15,13 @@ const MeshGradient = dynamic(
   { ssr: false },
 );
 
-const COLORS = ["#08161E", "#3215AD", "#7A1BD6", "#FF00FF", "#FF80E1"];
+const COLORS = ["#0A0D16", "#5B21B6", "#7A1BD6", "#FF00FF", "#FF80E1"];
 
 const CSS_BASE =
-  "radial-gradient(120% 85% at 16% -12%, rgba(255,0,255,0.32), transparent 55%)," +
-  "radial-gradient(115% 90% at 94% 12%, rgba(122,27,214,0.45), transparent 55%)," +
-  "radial-gradient(95% 80% at 60% 115%, rgba(65,255,202,0.10), transparent 55%)," +
-  "#08161e";
+  "radial-gradient(120% 85% at 16% -12%, rgba(255,0,255,0.30), transparent 55%)," +
+  "radial-gradient(115% 90% at 94% 12%, rgba(122,27,214,0.34), transparent 55%)," +
+  "radial-gradient(95% 80% at 60% 115%, rgba(255,128,225,0.14), transparent 55%)," +
+  "#0a0d16";
 
 export function MeshHero(): JSX.Element {
   const reduce = useReducedMotion();
