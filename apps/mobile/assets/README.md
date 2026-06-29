@@ -10,10 +10,11 @@
 Os placeholders de Rive/Lottie foram substituídos por implementações em **Skia**
 (GPU, UI thread), então não há mais asset binário faltando:
 
-- **Mascote** → `features/reward/components/Mascot.tsx` (desenhado em código;
-  usado em onboarding e na recompensa). Antes era `mascot.riv` (Rive).
 - **Confete** → `features/reward/components/Confetti.tsx` (partículas em Skia,
   desmonta ao fim). Antes era `confetti.json` (Lottie).
+
+> O mascote (antigo `Mascot.tsx`, Skia) foi **removido** — fora do tom da marca
+> Sportsbook Brutal. A celebração da recompensa é o badge + confete + "deu green".
 
 Quando entrar arte de verdade (um `.riv` de mascote ~10–15× menor que Lottie, ou
 um `confetti.json` autoral), basta trocar o interior desses dois componentes por

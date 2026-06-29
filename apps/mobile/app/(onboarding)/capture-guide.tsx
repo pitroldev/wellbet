@@ -23,7 +23,7 @@ export default function CaptureGuide() {
       <View className="flex-1 gap-6 py-6">
         <View className="gap-2">
           <Text variant="label" className="text-arena-magenta">
-            WellBet
+            {t("onboarding.guide.eyebrow")}
           </Text>
           <Text variant="title">{t("onboarding.guide.title")}</Text>
           <Text variant="body" className="text-muted">

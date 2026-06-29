@@ -4,7 +4,6 @@
  * Combina, na UI thread:
  * - Reanimated 4 (entrada/pop via CSS API) + Skia (glow contínuo) no badge;
  * - confete em Skia que se DESMONTA ao terminar;
- * - mascote desenhado em código (Skia), quicando;
  * - Haptics + som de vitória (expo-audio) ao montar (tátil + visual + sonoro).
  *
  * Contraste com a tela de captura, que é deliberadamente SÓBRIA.
@@ -19,7 +18,6 @@ import * as Haptics from "expo-haptics";
 import { Button, Screen, Text } from "@/shared/ui";
 
 import { Confetti } from "./components/Confetti";
-import { Mascot } from "./components/Mascot";
 import { RewardBadge } from "./components/RewardBadge";
 
 // Som de vitória (asset real em assets/audio/). Carregado uma vez pelo player.
@@ -45,9 +43,6 @@ export function RewardScreen({ title, subtitle, onContinue }: RewardScreenProps)
 
   return (
     <Screen animateIn={false} className="flex-1 items-center justify-center px-6">
-      {/* Mascote (Skia, desenhado em código). */}
-      <Mascot variant="reward" size={160} />
-
       <RewardBadge label={title} />
 
       {subtitle != null ? (

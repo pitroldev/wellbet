@@ -7,6 +7,12 @@
 **/coverage/
 **/out/
 
+# Saída nativa do Expo CNG / prebuild (gerada — também no .gitignore do app).
+# O Prettier usa .prettierignore (não respeita .gitignore), então repetimos aqui.
+apps/mobile/android/
+apps/mobile/ios/
+apps/mobile/expo-env.d.ts
+
 # Código gerado (não editar à mão)
 packages/contracts/src/generated/
 # Contrato OpenAPI emitido pela api (artefato gerado)
