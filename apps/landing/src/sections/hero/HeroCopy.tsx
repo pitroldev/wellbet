@@ -28,7 +28,7 @@ export function HeroCopy(): JSX.Element {
         <Eyebrow tone="indigo">A bet que você torce pra ganhar</Eyebrow>
       </motion.div>
 
-      <h1 className="mt-5 font-[family-name:var(--font-archivo)] text-hero uppercase leading-[1.08] tracking-[-0.01em] text-ink">
+      <h1 className="mt-5 font-[family-name:var(--font-archivo)] text-hero uppercase leading-[1.2] tracking-[-0.01em] text-ink">
         <RevealText immediate delay={0.1}>
           Quanto você
         </RevealText>

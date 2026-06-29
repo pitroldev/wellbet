@@ -38,9 +38,9 @@ export function Eyebrow({
 }
 
 const DISPLAY_SIZE = {
-  hero: "text-hero leading-[1.02]",
-  display: "text-display leading-[1.02]",
-  section: "text-[clamp(2rem,5.2vw,3.4rem)] leading-[1.06]",
+  hero: "text-hero leading-[1.2]",
+  display: "text-display leading-[1.18]",
+  section: "text-[clamp(2rem,5.2vw,3.4rem)] leading-[1.18]",
 } as const;
 
 /**
@@ -105,12 +105,12 @@ export function Slab({
   tone?: "magenta" | "green";
   className?: string;
 }): JSX.Element {
-  // inline-block + leading controlado: a caixa do bloco huga o texto (não cobre a
-  // métrica inteira da fonte) — assim não colide com a linha de cima quando a
+  // inline-block + padding vertical: o bloco huga o texto E cobre os acentos
+  // (circunflexo do Ê, cedilha do ç) sem colidir com a linha de cima quando a
   // manchete quebra. A frase grifada fica inteira numa linha só.
   return (
     <span
-      className={cn("inline-block px-[0.16em] leading-[1.04] text-ink", className)}
+      className={cn("inline-block px-[0.16em] py-[0.16em] leading-[1.0] text-ink", className)}
       style={{ background: tone === "green" ? "var(--color-green)" : "var(--color-magenta)" }}
     >
       {children}
