@@ -56,9 +56,9 @@
   --color-background: #0a0d16;
   --color-foreground: #f1efe9;
 
-  /* Escala de manchete (Anton condensada — billboard, mas sem sufocar o mobile) */
-  --text-hero: clamp(3rem, 10vw, 7.5rem);
-  --text-display: clamp(2.3rem, 6.4vw, 4.6rem);
+  /* Escala de manchete (Anton condensada — presença sem gritar) */
+  --text-hero: clamp(2.4rem, 6.4vw, 5rem);
+  --text-display: clamp(1.9rem, 4.8vw, 3.4rem);
 
   /* CANTO VIVO — radius praticamente zero (mata todo rounded-xl/2xl/3xl de uma vez) */
   --radius-xl: 0px;

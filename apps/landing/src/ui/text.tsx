@@ -38,9 +38,9 @@ export function Eyebrow({
 }
 
 const DISPLAY_SIZE = {
-  hero: "text-hero leading-[1.2]",
-  display: "text-display leading-[1.18]",
-  section: "text-[clamp(2rem,5.2vw,3.4rem)] leading-[1.18]",
+  hero: "text-hero leading-[1.18]",
+  display: "text-display leading-[1.16]",
+  section: "text-[clamp(1.7rem,4.2vw,2.7rem)] leading-[1.16]",
 } as const;
 
 /**

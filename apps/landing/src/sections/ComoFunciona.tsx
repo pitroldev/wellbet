@@ -1,7 +1,11 @@
+"use client";
+
 import type { JSX } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Target, Wallet, Camera, Trophy, type LucideIcon } from "lucide-react";
 import { Secao, SectionHeader, Eyebrow, GradText, CardBrutal, IconTile } from "@/ui";
-import { Reveal } from "@/motion";
+import { Reveal, EASE } from "@/motion";
+import { fireGreen } from "@/fx";
 import { cn } from "@/lib/utils";
 
 interface Passo {
@@ -9,7 +13,7 @@ interface Passo {
   readonly titulo: string;
   readonly descricao: string;
   readonly Icon: LucideIcon;
-  /** O passo do green nomeia o DOWNSIDE (objeção nº1) e ganha acento verde. */
+  /** O passo do green nomeia o DOWNSIDE (objeção nº1) e é tocável (comemora). */
   readonly destaque?: boolean;
 }
 
@@ -46,11 +50,20 @@ const PASSOS: readonly Passo[] = [
 ];
 
 /**
- * Seção "Como funciona" — os 4 passos da meta ao green E, sem letra miúda, o que
- * acontece se você NÃO bater (a maior objeção de dar Pix contra si mesmo).
- * 100% PT-BR (sem skin in the game / payout). Superfície navy, sem glow.
+ * Seção "Como funciona" — 4 passos com vida: a régua de progressão SE DESENHA ao
+ * entrar na tela, os cards reagem ao hover e o passo do green é TOCÁVEL (confete
+ * honesto, é o conceito "deu green"). O downside continua nomeado, 100% PT-BR.
  */
 export function ComoFunciona(): JSX.Element {
+  const reduce = useReducedMotion();
+
+  const onGreen = (_e: unknown, info: { point: { x: number; y: number } }) => {
+    void fireGreen({
+      x: info.point.x / window.innerWidth,
+      y: info.point.y / window.innerHeight,
+    });
+  };
+
   return (
     <Secao id="como-funciona" surface="navy">
       <Reveal>
@@ -66,16 +79,20 @@ export function ComoFunciona(): JSX.Element {
       </Reveal>
 
       <div className="relative mt-12 sm:mt-14">
-        {/* fio da progressão (lg) — régua magenta dura entre os cards */}
-        <span
+        {/* régua da progressão (lg) — se DESENHA da esquerda pra direita */}
+        <motion.span
           aria-hidden
-          className="pointer-events-none absolute left-0 right-0 top-[3.6rem] hidden h-0.5 bg-magenta lg:block"
+          className="pointer-events-none absolute left-0 right-0 top-[3.6rem] hidden h-0.5 origin-left bg-magenta lg:block"
+          initial={reduce ? false : { scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
         />
 
         <div className="relative grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {PASSOS.map(({ numero, titulo, descricao, Icon, destaque }, i) => (
-            <Reveal key={numero} delay={0.05 * i}>
-              <CardBrutal surface="ink" accent={destaque ? "green" : "magenta"}>
+          {PASSOS.map(({ numero, titulo, descricao, Icon, destaque }, i) => {
+            const card = (
+              <CardBrutal surface="ink" accent={destaque ? "green" : "magenta"} interactive>
                 <div className="flex items-center justify-between">
                   <IconTile tone={destaque ? "green" : "magenta"}>
                     <Icon className="size-5" strokeWidth={2.4} aria-hidden />
@@ -98,9 +115,30 @@ export function ComoFunciona(): JSX.Element {
                   {titulo}
                 </h3>
                 <p className="mt-2.5 text-[15px] leading-relaxed text-fog">{descricao}</p>
+                {destaque ? (
+                  <span className="mt-4 inline-flex items-center gap-1.5 font-[family-name:var(--font-geist-mono)] text-[10px] font-bold uppercase tracking-[0.14em] text-green">
+                    ▸ toque pra comemorar
+                  </span>
+                ) : null}
               </CardBrutal>
-            </Reveal>
-          ))}
+            );
+
+            return (
+              <Reveal key={numero} delay={0.05 * i}>
+                {destaque ? (
+                  <motion.div
+                    onTap={onGreen}
+                    whileTap={reduce ? undefined : { scale: 0.98 }}
+                    className="h-full cursor-pointer"
+                  >
+                    {card}
+                  </motion.div>
+                ) : (
+                  card
+                )}
+              </Reveal>
+            );
+          })}
         </div>
       </div>
     </Secao>

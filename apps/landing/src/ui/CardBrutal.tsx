@@ -26,8 +26,8 @@ export function CardBrutal({
     surface === "paper" ? "border-2 border-ink bg-paper" : "border border-navy-line bg-navy-soft";
   const interactiveCls = interactive
     ? surface === "paper"
-      ? "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#ff00ff]"
-      : "transition-colors hover:border-magenta/50"
+      ? "transition-all duration-200 hover:-translate-y-1.5 hover:shadow-[8px_8px_0_0_#ff00ff]"
+      : "transition-all duration-200 hover:-translate-y-1.5 hover:border-magenta hover:shadow-[8px_8px_0_0_#ff00ff]"
     : "";
   const accentCls = accent === "green" ? "bg-green" : "bg-magenta";
 

@@ -35,15 +35,12 @@ export function BoltMark({
   );
 }
 
-/** Raio dentro de um quadrado de CANTO VIVO com a FOIL magenta GymBet (app-icon). */
+/** Raio num quadrado de CANTO VIVO, magenta CHAPADO (consistente com os blocos). */
 function BoltTile({ size = 36, className }: { size?: number; className?: string }): JSX.Element {
   return (
     <span
-      className={cn(
-        "inline-grid place-items-center shadow-[0_8px_24px_-8px_rgba(255,0,255,0.55)]",
-        className,
-      )}
-      style={{ width: size, height: size, background: "var(--gradient-gymbet)", borderRadius: 0 }}
+      className={cn("inline-grid place-items-center", className)}
+      style={{ width: size, height: size, background: "var(--color-magenta)", borderRadius: 0 }}
     >
       <BoltMark style={{ width: size * 0.54, height: "auto", color: "#0A0D16" }} />
     </span>
