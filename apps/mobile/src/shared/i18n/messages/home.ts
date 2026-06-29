@@ -1,7 +1,7 @@
 /** Home (app/index.tsx) + histórico de pesagens (WeighInHistoryList). */
 export const home = {
   pt: {
-    title: "Charya",
+    title: "WellBet",
     tagline: "Aposte em você. Emagreça de verdade.",
     weighinsTitle: "Suas pesagens",
     newBet: "Nova aposta",
@@ -26,7 +26,7 @@ export const home = {
     },
   },
   en: {
-    title: "Charya",
+    title: "WellBet",
     tagline: "Bet on yourself. Lose weight for real.",
     weighinsTitle: "Your weigh-ins",
     newBet: "New bet",

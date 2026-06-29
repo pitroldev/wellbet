@@ -1,16 +1,16 @@
 /**
- * Tailwind config (TW3, exigido pelo NativeWind v4) — TEMA GYMBET ARENA.
+ * Tailwind config (TW3, exigido pelo NativeWind v4) — TEMA SPORTSBOOK BRUTAL.
  *
- * O app de consumidor adotou a direção visual `gymbet-arena`: navy escuro,
- * magenta neon, gradiente competitivo, números em mono. Em vez de reescrever
- * `className` em toda tela, OVERRIDAMOS aqui os aliases semânticos que as telas
- * já usam (`bg-background`, `text-foreground`, `text-muted`, `border-border`,
- * `bg-primary-600`, `text-on-primary`, …) para apontarem às cores da Arena.
- * Assim a mudança de marca propaga sozinha.
+ * O app de consumidor adotou a direção da landing WellBet: ground escuro, blocos
+ * CHAPADOS de magenta (sem gradiente/glow no dia a dia), CANTO VIVO (radius ~0),
+ * Anton nas manchetes e Space Mono nos números. Em vez de reescrever `className`
+ * em toda tela, OVERRIDAMOS aqui os aliases semânticos que as telas já usam
+ * (`bg-background`, `text-foreground`, `text-muted`, `border-border`,
+ * `bg-primary-600`, `text-on-primary`, …). Assim a marca propaga sozinha.
  *
- * Mantemos o `charyaPreset` por baixo (espaçamento, raios, motion, escalas
- * neutras) — só trocamos COR e TIPOGRAFIA. O `@charya/ui-tokens` (sóbrio) segue
- * intocado e continua servindo o admin; a Arena é local a este app.
+ * Mantemos o `charyaPreset` por baixo (espaçamento, motion, escalas neutras) —
+ * trocamos COR, TIPOGRAFIA e RAIO. O `@charya/ui-tokens` (sóbrio) segue intocado
+ * e serve o admin; este tema é local a este app.
  *
  * Lembrete (Orçamento de performance): NativeWind só para estilo ESTÁTICO.
  *
@@ -18,27 +18,31 @@
  */
 const { charyaPreset } = require("@charya/ui-tokens/tailwind");
 
-// Paleta da Arena espelhada de src/theme/arena.ts (mantenha os dois em sincronia).
+// Paleta espelhada de src/theme/arena.ts (mantenha os dois em sincronia).
 const A = {
-  navy: "#0B1226",
-  navySoft: "#151D3A",
-  navyLine: "#232C50",
-  ink: "#08161E",
+  navy: "#0A0D16",
+  navySoft: "#1C1A2C",
+  navyLine: "#2C2548",
+  ink: "#06070D",
+  paper: "#F1EFE9",
+  paperInk: "#0A0D16",
+  paperMute: "#565163",
   magenta: "#FF00FF",
-  magentaDeep: "#C800D6",
+  magentaDeep: "#C026D3",
   purple: "#7A1BD6",
   purpleDeep: "#5A12A0",
   indigo: "#3215AD",
   green: "#41FFCA",
-  greenDeep: "#18B488",
-  greenInk: "#0A2920",
+  greenDeep: "#10B981",
+  greenText: "#047857",
+  greenInk: "#04231A",
   pink: "#FF80E1",
   pinkPale: "#FDC0FF",
   danger: "#FF4D6D",
   dangerDeep: "#E23A57",
   white: "#FFFFFF",
-  fog: "#B9C0E0",
-  fogMute: "#7A85B5",
+  fog: "#AAA2C8",
+  fogMute: "#8B84A6",
 };
 
 // Escala magenta (alias `primary`) — para `bg-primary-600`, `text-primary-400`.
@@ -77,7 +81,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Aliases semânticos (mobile) — agora APONTAM PARA A ARENA.
+        // Aliases semânticos (mobile) — apontam para o tema brutal.
         background: A.navy,
         surface: A.navySoft,
         "surface-elevated": A.navyLine,
@@ -85,20 +89,29 @@ module.exports = {
         muted: A.fog,
         "muted-foreground": A.fogMute,
         border: A.navyLine,
-        "on-primary": A.white,
+        // Texto sobre o bloco PRIMÁRIO (magenta chapado) = ink, não branco.
+        "on-primary": A.ink,
         danger: A.danger,
+
+        // Superfície CLARA ocasional (ritmo claro/escuro).
+        paper: A.paper,
+        "paper-ink": A.paperInk,
+        "paper-mute": A.paperMute,
 
         // Primária/acento da marca (escalas completas para `-50…-950`).
         primary: magenta,
         accent: pink,
 
-        // Cores nomeadas da Arena — para realces explícitos
-        // (`bg-arena-navy-soft`, `text-arena-magenta`, `text-arena-green`, …).
+        // Cores nomeadas — para realces explícitos
+        // (`bg-arena-magenta`, `text-arena-green`, `text-arena-green-text`, …).
         arena: {
           navy: A.navy,
           "navy-soft": A.navySoft,
           "navy-line": A.navyLine,
           ink: A.ink,
+          paper: A.paper,
+          "paper-ink": A.paperInk,
+          "paper-mute": A.paperMute,
           magenta: A.magenta,
           "magenta-deep": A.magentaDeep,
           purple: A.purple,
@@ -106,6 +119,7 @@ module.exports = {
           indigo: A.indigo,
           green: A.green,
           "green-deep": A.greenDeep,
+          "green-text": A.greenText,
           "green-ink": A.greenInk,
           pink: A.pink,
           "pink-pale": A.pinkPale,
@@ -123,11 +137,21 @@ module.exports = {
         "sans-semibold": ["PlusJakartaSans_600SemiBold"],
         "sans-bold": ["PlusJakartaSans_700Bold"],
         "sans-extra": ["PlusJakartaSans_800ExtraBold"],
-        display: ["Archivo_900Black"],
-        "display-italic": ["Archivo_900Black_Italic"],
-        archivo: ["Archivo_800ExtraBold"],
-        mono: ["GeistMono_500Medium"],
-        "mono-bold": ["GeistMono_600SemiBold"],
+        display: ["Anton_400Regular"],
+        mono: ["SpaceMono_400Regular"],
+        "mono-bold": ["SpaceMono_700Bold"],
+      },
+      // CANTO VIVO — radius ~0 em tudo (mata rounded-lg/xl/2xl/3xl de uma vez).
+      // `rounded-full` segue redondo (pontos de status, etc.).
+      borderRadius: {
+        none: "0px",
+        sm: "0px",
+        DEFAULT: "0px",
+        md: "0px",
+        lg: "0px",
+        xl: "1px",
+        "2xl": "2px",
+        "3xl": "2px",
       },
     },
   },

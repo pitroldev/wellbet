@@ -2,7 +2,7 @@
 export const onboarding = {
   pt: {
     welcome: {
-      title: "Bem-vindo ao Charya",
+      title: "Bem-vindo ao WellBet",
       body: "Você aposta no seu próprio emagrecimento. A pesagem é gravada no app e revisada por uma pessoa.",
       cta: "Como gravar a pesagem",
     },
@@ -22,7 +22,7 @@ export const onboarding = {
   },
   en: {
     welcome: {
-      title: "Welcome to Charya",
+      title: "Welcome to WellBet",
       body: "You bet on your own weight loss. The weigh-in is recorded in the app and reviewed by a person.",
       cta: "How to record the weigh-in",
     },

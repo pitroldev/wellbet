@@ -1,23 +1,17 @@
 /**
- * Fontes da Arena (carregadas em runtime via expo-font / @expo-google-fonts).
+ * Fontes do app (carregadas em runtime via expo-font / @expo-google-fonts).
  *
- * A direção gymbet-arena pede três papéis tipográficos:
- *  - DISPLAY: Archivo black/extra-bold, caixa-alta itálico nas manchetes.
+ * Direção SPORTSBOOK BRUTAL (igual à landing), três papéis tipográficos:
+ *  - DISPLAY: Anton — condensada pesadíssima, CAIXA-ALTA (cartaz/placar). Sem itálico.
  *  - UI/TEXTO: Plus Jakarta Sans (corpo, botões, rótulos).
- *  - NÚMEROS: Geist Mono tabular (peso, streak, prêmio — dígitos que não
- *    "dançam" ao animar).
+ *  - NÚMEROS/CÓDIGOS: Space Mono (peso, streak, prêmio, stake — DNA de bilhete).
  *
  * Cada PESO é uma família própria (o RN não sintetiza peso de forma confiável a
- * partir de um único arquivo). Por isso o componente `Text`/`Button` escolhe a
- * família explícita via classe `font-*` (ver tailwind.config.js) em vez de
- * combinar uma família única com `font-bold`.
+ * partir de um único arquivo). Por isso o componente escolhe a família explícita
+ * via classe `font-*` (ver tailwind.config.js) em vez de `font-bold`.
  */
-import {
-  Archivo_700Bold,
-  Archivo_800ExtraBold,
-  Archivo_900Black,
-  Archivo_900Black_Italic,
-} from "@expo-google-fonts/archivo";
+import { Anton_400Regular } from "@expo-google-fonts/anton";
+import { SpaceMono_400Regular, SpaceMono_700Bold } from "@expo-google-fonts/space-mono";
 import {
   PlusJakartaSans_400Regular,
   PlusJakartaSans_500Medium,
@@ -25,11 +19,6 @@ import {
   PlusJakartaSans_700Bold,
   PlusJakartaSans_800ExtraBold,
 } from "@expo-google-fonts/plus-jakarta-sans";
-import {
-  GeistMono_400Regular,
-  GeistMono_500Medium,
-  GeistMono_600SemiBold,
-} from "@expo-google-fonts/geist-mono";
 
 /**
  * Mapa passado para `useFonts(...)` no layout raiz. As CHAVES são exatamente os
@@ -37,18 +26,14 @@ import {
  * `fontFamily` do Tailwind). NÃO renomeie sem atualizar os dois.
  */
 export const fontMap = {
-  Archivo_700Bold,
-  Archivo_800ExtraBold,
-  Archivo_900Black,
-  Archivo_900Black_Italic,
+  Anton_400Regular,
+  SpaceMono_400Regular,
+  SpaceMono_700Bold,
   PlusJakartaSans_400Regular,
   PlusJakartaSans_500Medium,
   PlusJakartaSans_600SemiBold,
   PlusJakartaSans_700Bold,
   PlusJakartaSans_800ExtraBold,
-  GeistMono_400Regular,
-  GeistMono_500Medium,
-  GeistMono_600SemiBold,
 } as const;
 
 /**
@@ -56,15 +41,13 @@ export const fontMap = {
  * não há className. Espelha as chaves `fontFamily` do tailwind.config.js.
  */
 export const fontFamilies = {
-  display: "Archivo_900Black",
-  displayItalic: "Archivo_900Black_Italic",
-  archivo: "Archivo_800ExtraBold",
+  display: "Anton_400Regular",
   sans: "PlusJakartaSans_500Medium",
   sansSemibold: "PlusJakartaSans_600SemiBold",
   sansBold: "PlusJakartaSans_700Bold",
   sansExtra: "PlusJakartaSans_800ExtraBold",
-  mono: "GeistMono_500Medium",
-  monoBold: "GeistMono_600SemiBold",
+  mono: "SpaceMono_400Regular",
+  monoBold: "SpaceMono_700Bold",
 } as const;
 
 export type FontFamilyRole = keyof typeof fontFamilies;

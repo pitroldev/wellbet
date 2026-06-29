@@ -20,7 +20,7 @@ export default function OnboardingWelcome() {
           <Mascot variant="welcome" size={200} />
           <View className="gap-2">
             <Text variant="label" className="text-center text-arena-magenta">
-              Charya
+              WellBet
             </Text>
             <Text variant="title" className="text-center">
               {t("onboarding.welcome.title")}

@@ -23,7 +23,7 @@ export default function CaptureGuide() {
       <View className="flex-1 gap-6 py-6">
         <View className="gap-2">
           <Text variant="label" className="text-arena-magenta">
-            Charya
+            WellBet
           </Text>
           <Text variant="title">{t("onboarding.guide.title")}</Text>
           <Text variant="body" className="text-muted">
@@ -34,10 +34,8 @@ export default function CaptureGuide() {
         <View className="flex-1 gap-4">
           {([1, 2, 3, 4, 5, 6] as const).map((n) => (
             <View key={n} className="flex-row gap-3">
-              <View className="h-7 w-7 items-center justify-center rounded-full bg-primary-600">
-                <Text variant="mono" className="text-on-primary font-bold">
-                  {n}
-                </Text>
+              <View className="h-7 w-7 items-center justify-center bg-arena-magenta">
+                <Text className="font-mono-bold text-base text-on-primary">{n}</Text>
               </View>
               <Text variant="body" className="flex-1">
                 {t(`onboarding.guide.steps.s${n}`)}

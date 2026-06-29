@@ -7,9 +7,9 @@
  * - I18nextProvider (i18n pt/en — instância inicializada no import de @/shared/i18n).
  * - QueryClientProvider (TanStack Query — estado de servidor).
  *
- * Tipografia da Arena: as fontes (Archivo/Plus Jakarta/Geist Mono) são
- * carregadas em runtime com `useFonts`; seguramos o render num fundo navy até
- * carregarem para evitar flash da fonte do sistema.
+ * Tipografia brutal: as fontes (Anton/Plus Jakarta/Space Mono) são carregadas em
+ * runtime com `useFonts`; seguramos o render num fundo escuro até carregarem
+ * para evitar flash da fonte do sistema.
  *
  * `ReducedMotionConfig` no nível raiz respeita a preferência do sistema para
  * todas as animações declarativas (acessibilidade, §3).

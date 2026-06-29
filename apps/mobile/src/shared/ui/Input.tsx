@@ -1,7 +1,7 @@
 /**
- * Campo de texto — direção Arena. TextInput sobre surface navy, texto branco,
- * placeholder fog. Foco acende a borda em magenta; erro em vermelho. Base para
- * formulários (perfil, nova aposta, gate de peso).
+ * Campo de texto — SPORTSBOOK BRUTAL. TextInput sobre surface navy, canto vivo,
+ * fio duro 2px; foco acende a borda em magenta, erro em vermelho. Rótulo em
+ * Space Mono (variant label). Base para formulários (perfil, nova aposta, gate).
  */
 import { useState } from "react";
 import { TextInput, View, type TextInputProps } from "react-native";
@@ -34,7 +34,7 @@ export function Input({ label, error, className, onFocus, onBlur, ...props }: In
           onBlur?.(e);
         }}
         style={{ borderColor }}
-        className={`h-14 rounded-2xl border bg-arena-navy-soft px-4 font-sans text-base text-foreground${
+        className={`h-14 border-2 bg-arena-navy-soft px-4 font-sans text-base text-foreground${
           className ? ` ${className}` : ""
         }`}
         {...props}

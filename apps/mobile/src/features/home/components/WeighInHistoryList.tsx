@@ -35,7 +35,7 @@ export function WeighInHistoryList({ data }: WeighInHistoryListProps) {
       keyExtractor={(item) => item.id}
       // FlashList v2: sem estimatedItemSize (auto-sizing).
       renderItem={({ item }) => (
-        <View className="flex-row items-center justify-between rounded-xl bg-surface px-4 py-3">
+        <View className="flex-row items-center justify-between border-2 border-l-4 border-border border-l-arena-magenta bg-arena-navy-soft px-4 py-3">
           <View>
             <Text variant="body">
               {t(`home.history.kind.${item.kind}`)}{" "}

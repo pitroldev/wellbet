@@ -1,54 +1,60 @@
 /**
- * GymBet Arena — paleta da direção visual adotada pelo app (o "system"
- * gymbet-arena do playground, agora promovido a tema do produto mobile).
+ * Sportsbook Brutal — paleta da direção visual do app, alinhada à landing
+ * WellBet (Anton + Space Mono, blocos CHAPADOS de magenta, canto vivo, ritmo
+ * claro/escuro). O nome do módulo segue "arena" por compatibilidade de imports.
  *
- * Por que viver AQUI e não em `@charya/ui-tokens`: aquele pacote é
- * compartilhado com o admin e codifica DELIBERADAMENTE a marca sóbria
- * ("verde-eucalipto, sem vibe de aposta barata"). A Arena é o oposto — navy
- * escuro, magenta neon, glows e gradiente competitivo. Mantemos esse override
- * LOCAL ao app de consumidor; o admin (console interno de revisão) segue sóbrio.
+ * Por que viver AQUI e não em `@charya/ui-tokens`: aquele pacote é compartilhado
+ * com o admin e codifica DELIBERADAMENTE a marca sóbria. Este override é LOCAL ao
+ * app de consumidor; o admin (console interno de revisão) segue sóbrio.
  *
- * Uso: valores crus (hex) para estilo IMPERATIVO — Skia, Reanimated, gradientes
- * e props nativas que não aceitam className. O estilo estático vem das classes
- * do NativeWind (ver tailwind.config.js, que deriva os aliases semânticos
- * — background/surface/foreground/primary/… — destas mesmas cores).
+ * Uso: valores crus (hex) para estilo IMPERATIVO — Skia, Reanimated, props
+ * nativas que não aceitam className. O estilo estático vem das classes do
+ * NativeWind (ver tailwind.config.js, que deriva os aliases semânticos destas
+ * cores). `gradients`/`glow` abaixo ficam SÓ para o momento de celebração
+ * (reward/"deu green") — o resto da UI é flat/brutal.
  */
 
-/** Paleta da Arena (amostrada da identidade oficial wellbet & Co.). */
+/** Paleta SPORTSBOOK BRUTAL (alinhada à landing WellBet). */
 export const arena = {
-  // Grounds escuros
-  navy: "#0B1226", // ground principal (background)
-  navySoft: "#151D3A", // cartões / surface
-  navyLine: "#232C50", // bordas
-  ink: "#08161E", // quase-preto (trilhos, poços)
+  // Grounds escuros (família dark da landing — ink/navy)
+  navy: "#0A0D16", // ground principal (background) — landing --color-ink
+  navySoft: "#1C1A2C", // cartões / surface — landing --color-navy-soft
+  navyLine: "#2C2548", // bordas — landing --color-navy-line
+  ink: "#06070D", // poços (inputs/trilhos), mais fundo que o ground
+
+  // Papel — superfície CLARA ocasional (ritmo claro/escuro do brutal)
+  paper: "#F1EFE9",
+  paperInk: "#0A0D16", // texto sobre papel
+  paperMute: "#565163", // texto secundário sobre papel
 
   // Primária
   magenta: "#FF00FF",
-  magentaDeep: "#C800D6",
+  magentaDeep: "#C026D3", // magenta legível como TEXTO sobre papel (AA)
 
-  // Roxo / indigo (profundidade do gradiente)
+  // Roxo / indigo (só profundidade de gradiente — momento de celebração/reward)
   purple: "#7A1BD6",
   purpleDeep: "#5A12A0",
   indigo: "#3215AD",
 
   // Vitória / jackpot
   green: "#41FFCA",
-  greenDeep: "#18B488",
-  greenInk: "#0A2920",
+  greenDeep: "#10B981",
+  greenText: "#047857", // verde legível como TEXTO sobre papel (AA)
+  greenInk: "#04231A",
 
   // Acentos rosa
   pink: "#FF80E1",
   pinkPale: "#FDC0FF",
 
-  // Erro / perigo — vermelho-neon que lê bem sobre navy e harmoniza com
+  // Erro / perigo — vermelho-neon que lê bem sobre escuro e harmoniza com
   // magenta/pink (a marca não tem dourado/vermelho de aposta barata).
   danger: "#FF4D6D",
   dangerDeep: "#E23A57",
 
   // Texto sobre escuro
   white: "#FFFFFF",
-  fog: "#B9C0E0", // secundário
-  fogMute: "#7A85B5", // terciário
+  fog: "#AAA2C8", // secundário (landing --color-fog)
+  fogMute: "#8B84A6", // terciário (landing --color-fog-mute)
 } as const;
 
 export type ArenaColor = keyof typeof arena;

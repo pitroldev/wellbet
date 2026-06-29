@@ -58,7 +58,7 @@ export default function ProfileScreen() {
       <View className="flex-1 gap-8 py-6">
         <View className="gap-2">
           <Text variant="label" className="text-arena-magenta">
-            Charya
+            WellBet
           </Text>
           <Text variant="title">{t("profile.title")}</Text>
           <Text variant="body" className="text-muted">
@@ -77,8 +77,8 @@ export default function ProfileScreen() {
                   onPress={() => setLanguage(lang)}
                   className={
                     active
-                      ? "rounded-full bg-primary-600 px-4 py-2"
-                      : "rounded-full border border-border bg-arena-navy-soft px-4 py-2"
+                      ? "bg-arena-magenta px-4 py-2"
+                      : "border-2 border-border bg-arena-navy-soft px-4 py-2"
                   }
                 >
                   <Text variant="label" className={active ? "text-on-primary" : "text-muted"}>

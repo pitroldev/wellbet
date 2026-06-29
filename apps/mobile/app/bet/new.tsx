@@ -45,7 +45,7 @@ export default function NewBetScreen() {
 
           <View className="gap-2">
             <Text variant="label">{t("bet.pay.label")}</Text>
-            <View className="rounded-2xl border border-border bg-surface px-4 py-3">
+            <View className="border-2 border-border bg-arena-ink px-4 py-3">
               <Text variant="mono" selectable className="text-xs">
                 {bet.brcode}
               </Text>
