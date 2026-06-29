@@ -7,7 +7,7 @@
  */
 
 /** URL do app (download / abrir app) para onde os CTAs apontam. */
-export const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.charya.com.br";
+export const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.wellbet.com.br";
 
 /** Texto único de CTA reutilizado nos botões primários. */
 export const ctaLabel = "Começar minha aposta";

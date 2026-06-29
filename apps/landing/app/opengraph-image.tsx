@@ -7,7 +7,7 @@ import { ImageResponse } from "next/og";
  * Pré-renderizada no build (rota estática) — cartaz PAPEL sportsbook-brutal:
  * tipo ink pesado em caixa-alta, bloco CHAPADO de magenta, sem itálico.
  */
-export const alt = "Charya Bet — Aposte na sua transformação";
+export const alt = "WellBet — Aposte na sua transformação";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -60,7 +60,7 @@ export default function OpengraphImage(): ImageResponse {
             letterSpacing: "-0.01em",
           }}
         >
-          Charya
+          WellBet
         </div>
       </div>
 

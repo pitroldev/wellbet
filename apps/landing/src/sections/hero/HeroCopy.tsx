@@ -3,7 +3,7 @@
 import type { JSX } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Eyebrow, Slab, CTA } from "@/ui";
-import { RevealText, EASE } from "@/motion";
+import { RevealText, EASE, Magnetic } from "@/motion";
 import { appUrl, ctaLabel } from "@/config";
 import { HeroProof } from "./HeroProof";
 
@@ -52,7 +52,9 @@ export function HeroCopy(): JSX.Element {
       </motion.p>
 
       <motion.div {...rise(0.62)} className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <CTA href={appUrl}>{ctaLabel}</CTA>
+        <Magnetic>
+          <CTA href={appUrl}>{ctaLabel}</CTA>
+        </Magnetic>
         <CTA href="#como-funciona" variant="secondary">
           Como funciona
         </CTA>

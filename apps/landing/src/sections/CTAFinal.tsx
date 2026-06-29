@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { Secao, CTA, Eyebrow, Display, GradText, BoltMark } from "@/ui";
-import { Reveal } from "@/motion";
+import { Reveal, Magnetic } from "@/motion";
 import { appUrl, ctaLabel } from "@/config";
 
 /**
@@ -45,9 +45,11 @@ export function CTAFinal(): JSX.Element {
             </p>
 
             <div className="mt-9">
-              <CTA href={appUrl} onDark>
-                {ctaLabel}
-              </CTA>
+              <Magnetic>
+                <CTA href={appUrl} onDark>
+                  {ctaLabel}
+                </CTA>
+              </Magnetic>
             </div>
 
             <p className="mt-7 font-[family-name:var(--font-geist-mono)] text-[11px] uppercase tracking-[0.1em] text-fog">

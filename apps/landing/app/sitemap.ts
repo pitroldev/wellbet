@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://charya.com.br";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://wellbet.com.br";
 
 /**
  * `sitemap.xml` gerado pelo App Router (SSG). Hoje a landing é uma página única;

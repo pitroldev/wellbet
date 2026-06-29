@@ -58,7 +58,7 @@ export function Confianca(): JSX.Element {
               Sério, transparente e <Slab>do seu lado.</Slab>
             </>
           }
-          lede="A Charya vende saúde e compromisso — não promessa de dinheiro fácil. Cada detalhe é construído para você confiar."
+          lede="A WellBet vende saúde e compromisso — não promessa de dinheiro fácil. Cada detalhe é construído para você confiar."
         />
       </Reveal>
 

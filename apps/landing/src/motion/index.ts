@@ -5,3 +5,5 @@ export { RevealText } from "./RevealText";
 export { AnimatedNumber } from "./AnimatedNumber";
 export { Marquee } from "./Marquee";
 export { SmoothScroll } from "./SmoothScroll";
+export { ScrollProgress } from "./ScrollProgress";
+export { Magnetic } from "./Magnetic";

@@ -11,8 +11,8 @@ const BOLT_VIEWBOX = "707.67 348.31 524.89 383.38";
 
 /**
  * Raio-seta DECORATIVO (aria-hidden): nunca é o único portador de significado —
- * vive como bullet de eyebrow e ao lado do texto "Charya" no Wordmark, então
- * anunciá-lo geraria ruído ("Charya Charya") para leitores de tela.
+ * vive como bullet de eyebrow e ao lado do texto "WellBet" no Wordmark, então
+ * anunciá-lo geraria ruído ("WellBet WellBet") para leitores de tela.
  */
 export function BoltMark({
   className,
@@ -64,7 +64,7 @@ export function Wordmark({
         className="font-[family-name:var(--font-archivo)] uppercase leading-none tracking-[0.01em]"
         style={{ color: tone === "light" ? "#FFFFFF" : "#0A0D16", fontSize: size * 0.82 }}
       >
-        Charya
+        WellBet
       </span>
     </span>
   );

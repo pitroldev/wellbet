@@ -30,19 +30,19 @@ const geistMono = Space_Mono({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://charya.com.br";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://wellbet.com.br";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Charya Bet — Aposte na sua transformação",
-    template: "%s · Charya Bet",
+    default: "WellBet — Aposte na sua transformação",
+    template: "%s · WellBet",
   },
   description:
     "A única aposta em que você torce para você ganhar. Coloque dinheiro real em jogo na sua própria meta de peso — porque você muda quando existe algo de verdade em jogo.",
-  applicationName: "Charya Bet",
+  applicationName: "WellBet",
   keywords: [
-    "Charya Bet",
+    "WellBet",
     "aposta em si mesmo",
     "perder peso",
     "emagrecer com compromisso",
@@ -51,9 +51,9 @@ export const metadata: Metadata = {
     "fitness",
     "saúde",
   ],
-  authors: [{ name: "Charya" }],
-  creator: "Charya",
-  publisher: "Charya Saúde e Bem-Estar",
+  authors: [{ name: "WellBet" }],
+  creator: "WellBet",
+  publisher: "WellBet Saúde e Bem-Estar",
   alternates: { canonical: "/" },
   robots: {
     index: true,
@@ -64,14 +64,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     url: siteUrl,
-    siteName: "Charya Bet",
-    title: "Charya Bet — Aposte na sua transformação",
+    siteName: "WellBet",
+    title: "WellBet — Aposte na sua transformação",
     description:
       "A única aposta em que você torce para você ganhar. Coloque dinheiro real em jogo na sua própria meta e mude quando existe algo de verdade em jogo.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Charya Bet — Aposte na sua transformação",
+    title: "WellBet — Aposte na sua transformação",
     description: "A única aposta em que você torce para você ganhar. Comprometa-se. Evolua. Ganhe.",
   },
   category: "health",

@@ -1,6 +1,6 @@
 /**
  * Curvas e durações de movimento — fonte ÚNICA. Ease "premium" (out-expo suave)
- * padrão da Charya. `base` = reveals; `slow` = manchetes mascaradas / cupom.
+ * padrão da WellBet. `base` = reveals; `slow` = manchetes mascaradas / cupom.
  */
 export const EASE = [0.22, 1, 0.36, 1] as const;
 

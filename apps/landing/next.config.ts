@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 /**
- * Landing page de marketing da Charya Bet.
+ * Landing page de marketing da WellBet.
  *
  * `output: 'standalone'` empacota apenas o necessário (server + node_modules
  * tracados) em `.next/standalone`, para uma imagem Docker enxuta rodando em

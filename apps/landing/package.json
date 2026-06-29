@@ -2,7 +2,7 @@
   "name": "@charya/landing",
   "version": "0.0.0",
   "private": true,
-  "description": "Charya Bet — landing page de marketing (Next.js 16 App Router, SSG/SEO, container standalone, anti-lock-in).",
+  "description": "WellBet — landing page de marketing (Next.js 16 App Router, SSG/SEO, container standalone, anti-lock-in).",
   "type": "module",
   "scripts": {
     "dev": "next dev -p 3002",

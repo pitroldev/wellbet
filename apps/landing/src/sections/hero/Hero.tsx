@@ -10,7 +10,10 @@ import { BetTicket } from "./BetTicket";
  */
 export function Hero(): JSX.Element {
   return (
-    <section className="relative w-full overflow-hidden bg-paper px-6 pb-16 pt-6 text-ink sm:pb-24 sm:pt-8">
+    <section
+      id="topo"
+      className="relative w-full overflow-hidden bg-paper px-6 pb-16 pt-6 text-ink sm:pb-24 sm:pt-8"
+    >
       {/* halftone de cartaz no canto inferior-esquerdo (textura impressa) */}
       <span
         aria-hidden

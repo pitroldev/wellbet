@@ -33,7 +33,7 @@ export default function GlobalError({ reset }: { error: Error; reset: () => void
               margin: 0,
             }}
           >
-            Charya
+            WellBet
           </p>
           <h2 style={{ fontSize: 28, fontWeight: 800, marginTop: 8 }}>Algo deu errado.</h2>
           <p style={{ color: "#b9c0e0", marginTop: 8 }}>Recarregue a página ou tente de novo.</p>
