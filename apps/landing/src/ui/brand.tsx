@@ -9,22 +9,25 @@ const BOLT_PATH =
   "M 1203.457031 429.820312 C 1164.347656 497.035156 1022.339844 731.679688 1022.332031 731.691406 L 999.492188 597.003906 L 707.671875 688.765625 L 911.476562 431.011719 L 832.222656 350.699219 L 833.445312 348.308594 L 1151.824219 348.308594 C 1232.558594 348.308594 1212.242188 414.71875 1203.457031 429.820312";
 const BOLT_VIEWBOX = "707.67 348.31 524.89 383.38";
 
+/**
+ * Raio-seta DECORATIVO (aria-hidden): nunca é o único portador de significado —
+ * vive como bullet de eyebrow e ao lado do texto "Charya" no Wordmark, então
+ * anunciá-lo geraria ruído ("Charya Charya") para leitores de tela.
+ */
 export function BoltMark({
   className,
   style,
-  title = "Charya",
 }: {
   className?: string;
   style?: CSSProperties;
-  title?: string;
 }): JSX.Element {
   return (
     <svg
       viewBox={BOLT_VIEWBOX}
       className={className}
       style={style}
-      role="img"
-      aria-label={title}
+      aria-hidden
+      focusable="false"
       fill="currentColor"
     >
       <path d={BOLT_PATH} />
@@ -33,25 +36,14 @@ export function BoltMark({
 }
 
 /** Raio dentro de um quadrado de CANTO VIVO com a FOIL magenta GymBet (app-icon). */
-export function BoltTile({
-  size = 36,
-  className,
-}: {
-  size?: number;
-  className?: string;
-}): JSX.Element {
+function BoltTile({ size = 36, className }: { size?: number; className?: string }): JSX.Element {
   return (
     <span
       className={cn(
         "inline-grid place-items-center shadow-[0_8px_24px_-8px_rgba(255,0,255,0.55)]",
         className,
       )}
-      style={{
-        width: size,
-        height: size,
-        background: "var(--gradient-gymbet)",
-        borderRadius: 0,
-      }}
+      style={{ width: size, height: size, background: "var(--gradient-gymbet)", borderRadius: 0 }}
     >
       <BoltMark style={{ width: size * 0.54, height: "auto", color: "#0A0D16" }} />
     </span>

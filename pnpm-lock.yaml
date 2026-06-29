@@ -6,48 +6,15 @@ settings:
 
 catalogs:
   default:
-    '@changesets/cli':
-      specifier: ^2.31.0
-      version: 2.31.0
-    '@t3-oss/env-core':
-      specifier: ^0.13.0
-      version: 0.13.11
-    '@tanstack/react-query':
-      specifier: ^5.101.0
-      version: 5.101.0
     eslint:
       specifier: ^9.34.0
       version: 9.39.4
-    knip:
-      specifier: ^6.0.0
-      version: 6.17.1
-    lefthook:
-      specifier: ^2.1.0
-      version: 2.1.9
-    oxlint:
-      specifier: ^1.0.0
-      version: 1.70.0
-    prettier:
-      specifier: ^3.8.0
-      version: 3.8.4
-    syncpack:
-      specifier: ^15.0.0
-      version: 15.3.2
-    turbo:
-      specifier: ^2.9.0
-      version: 2.9.18
     typescript:
       specifier: ^5.9.3
       version: 5.9.3
     typescript-eslint:
       specifier: ^8.61.0
       version: 8.61.1
-    vitest:
-      specifier: ^4.1.0
-      version: 4.1.9
-    zod:
-      specifier: ^4.4.3
-      version: 4.4.3
 
 overrides:
   react: 19.2.0
@@ -359,12 +326,6 @@ importers:
       '@number-flow/react':
         specifier: ^0.6.1
         version: 0.6.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@paper-design/shaders-react':
-        specifier: ^0.0.76
-        version: 0.0.76(@types/react@19.2.17)(react@19.2.0)
-      canvas-confetti:
-        specifier: ^1.9.4
-        version: 1.9.4
       framer-motion:
         specifier: ^12.40.0
         version: 12.40.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -396,9 +357,6 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4.3.0
         version: 4.3.1
-      '@types/canvas-confetti':
-        specifier: ^1.9.0
-        version: 1.9.0
       '@types/node':
         specifier: ^24.0.0
         version: 24.13.2
@@ -413,7 +371,7 @@ importers:
         version: 9.39.4(jiti@2.7.0)
       eslint-config-next:
         specifier: ^16.2.9
-        version: 16.2.9(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3)
+        version: 16.2.9(@typescript-eslint/parser@8.61.1(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3)
       tailwindcss:
         specifier: ^4.3.0
         version: 4.3.1
@@ -3805,18 +3763,6 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@paper-design/shaders-react@0.0.76':
-    resolution: {integrity: sha512-uPJWrYRf6cJdO2H+fuXlahaqz0QjYglNAyUTaRfIInpzCa/d6guxBIK003soAZQFuQ035yg9FhtfFzKNWm+a5A==}
-    peerDependencies:
-      '@types/react': ^18 || ^19
-      react: 19.2.0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-
-  '@paper-design/shaders@0.0.76':
-    resolution: {integrity: sha512-AcNDY4J66YQHUfQYFInkCP7M9VOje0od7wLpOR7LtCmc532opJy6ll+h1W9zBovz8tt9U7OADUmJ/qKEXyOX/A==}
-
   '@paralleldrive/cuid2@2.3.1':
     resolution: {integrity: sha512-XO7cAxhnTZl0Yggq6jOgjiOHhbgcO4NqFqwSmQpjK3b6TEE6Uj/jfSk6wzYyemh3+I0sHirKSetjQwn5cZktFw==}
 
@@ -4788,9 +4734,6 @@ packages:
 
   '@types/bunyan@1.8.11':
     resolution: {integrity: sha512-758fRH7umIMk5qt5ELmRMff4mLDlN+xyYzC+dkPTdKwbSkJFvz6xwyScrytPU0QIBbRRwbiE8/BIg8bpajerNQ==}
-
-  '@types/canvas-confetti@1.9.0':
-    resolution: {integrity: sha512-aBGj/dULrimR1XDZLtG9JwxX1b4HPRF6CX9Yfwh3NvstZEm1ZL7RBnel4keCPSqs1ANRu1u2Aoz9R+VmtjYuTg==}
 
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
@@ -5902,9 +5845,6 @@ packages:
 
   caniuse-lite@1.0.30001799:
     resolution: {integrity: sha512-hG1bReV+OUU+MOqK4t/ZWI0tZOyz3rqS9XuhOUz1cIcbwBKjOyJEJuw9ER5JuNyqxNk8u/JUVbGibBOL1yrjFw==}
-
-  canvas-confetti@1.9.4:
-    resolution: {integrity: sha512-yxQbJkAVrFXWNbTUjPqjF7G+g6pDotOUHGbkZq2NELZUMDpiJ85rIEazVb8GTaAptNW2miJAXbs1BtioA251Pw==}
 
   canvaskit-wasm@0.41.0:
     resolution: {integrity: sha512-cnbL02NFB3yOYMF/MtxViZHgD1vh55Pvy+zR8q4JuFvyCPejZP3eClkt2GuZ0S7jOmGMCJXaHBasbMChbR9JZg==}
@@ -15183,15 +15123,6 @@ snapshots:
   '@oxlint/binding-win32-x64-msvc@1.70.0':
     optional: true
 
-  '@paper-design/shaders-react@0.0.76(@types/react@19.2.17)(react@19.2.0)':
-    dependencies:
-      '@paper-design/shaders': 0.0.76
-      react: 19.2.0
-    optionalDependencies:
-      '@types/react': 19.2.17
-
-  '@paper-design/shaders@0.0.76': {}
-
   '@paralleldrive/cuid2@2.3.1':
     dependencies:
       '@noble/hashes': 1.8.0
@@ -16138,8 +16069,6 @@ snapshots:
   '@types/bunyan@1.8.11':
     dependencies:
       '@types/node': 24.13.2
-
-  '@types/canvas-confetti@1.9.0': {}
 
   '@types/chai@5.2.3':
     dependencies:
@@ -17503,8 +17432,6 @@ snapshots:
   camelcase@6.3.0: {}
 
   caniuse-lite@1.0.30001799: {}
-
-  canvas-confetti@1.9.4: {}
 
   canvaskit-wasm@0.41.0:
     dependencies:

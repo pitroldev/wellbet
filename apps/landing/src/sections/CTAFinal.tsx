@@ -1,31 +1,22 @@
 import type { JSX } from "react";
-import { Secao } from "@/components/Secao";
-import { CTA } from "@/components/CTA";
-import { Eyebrow, Glow, Display, GradText } from "@/components/ui";
-import { Reveal } from "@/components/motion";
-import { BoltMark } from "@/components/brand";
+import { Secao, CTA, Eyebrow, Display, GradText, BoltMark } from "@/ui";
+import { Reveal } from "@/motion";
 import { appUrl, ctaLabel } from "@/config";
 
 /**
- * CTAFinal — clímax de fechamento. Painel de MOLDURA MAGENTA dura sobre navy,
- * barra magenta chapada no topo e o convite direto: faça a aposta em quem você
- * quer se tornar. O único green é o "Dê green." — o momento de vitória.
+ * CTAFinal — pico ÚNICO colado à ação. Absorve o clímax do antigo Manifesto como
+ * manchete (acaba o pico-duplo magenta) e oferece UMA só decisão (sem CTA de
+ * fuga "relembrar como funciona"). Painel de moldura magenta dura, sem glow.
  */
 export function CTAFinal(): JSX.Element {
   return (
-    <Secao id="comecar" surface="ink">
-      <Glow
-        className="left-1/2 top-[-7rem] h-[30rem] w-[44rem] -translate-x-1/2"
-        color="#FF00FF"
-        style={{ opacity: 0.26 }}
-      />
-
-      <Reveal y={30} className="mx-auto max-w-5xl">
+    <Secao id="comecar" surface="ink" size="tight">
+      <Reveal className="mx-auto max-w-5xl">
         <div className="relative overflow-hidden border-2 border-magenta bg-navy px-6 py-16 text-center sm:px-16 sm:py-20">
           {/* barra magenta chapada no topo */}
           <span aria-hidden className="absolute inset-x-0 top-0 h-2 bg-magenta" />
 
-          {/* grade técnica sutil */}
+          {/* grade técnica sutil (textura de placar) */}
           <span
             aria-hidden
             className="pointer-events-none absolute inset-0 opacity-[0.06]"
@@ -44,26 +35,23 @@ export function CTAFinal(): JSX.Element {
 
             <Eyebrow tone="green">Sua vez</Eyebrow>
 
-            <Display level={2} className="mt-4 text-[clamp(2.4rem,6.5vw,4rem)] text-white">
-              Comprometa-se. Evolua. <GradText tone="green">Dê green.</GradText>
+            <Display level={2} size="display" className="mt-5 text-white">
+              Mudança real acontece quando tem <GradText>algo em jogo.</GradText>
             </Display>
 
-            <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-fog">
+            <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-fog">
               A próxima tentativa pode ser a definitiva — porque desta vez tem algo de verdade em
               jogo. Faça a aposta em quem você quer se tornar.
             </p>
 
-            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="mt-9">
               <CTA href={appUrl} onDark>
                 {ctaLabel}
-              </CTA>
-              <CTA href="#como-funciona" variant="secondary" onDark>
-                Relembrar como funciona
               </CTA>
             </div>
 
             <p className="mt-7 font-[family-name:var(--font-geist-mono)] text-[11px] uppercase tracking-[0.1em] text-fog">
-              Sem mensalidade · Pix · cancele quando quiser.
+              Sem mensalidade · você define o valor · Pix na hora.
             </p>
           </div>
         </div>

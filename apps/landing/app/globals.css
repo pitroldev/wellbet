@@ -26,9 +26,10 @@
   --color-blue-soft: #c084fc;
   --color-blue-wash: #1c1a2c;
 
-  /* Verde menta — só vitória / "deu green" */
+  /* Verde menta — só vitória / "deu green". green-text = verde legível sobre PAPEL */
   --color-green: #41ffca;
   --color-green-deep: #10b981;
+  --color-green-text: #047857;
   --color-green-ink: #04231a;
 
   /* Roxo + magenta + pink (núcleo da marca GymBet) */
@@ -36,11 +37,13 @@
   --color-indigo-soft: #9d4edd;
   --color-periwinkle: #c9a6ff;
   --color-magenta: #ff00ff;
+  /* magenta-deep = magenta legível quando vira TEXTO sobre papel (#ff00ff reprova AA) */
+  --color-magenta-deep: #c026d3;
   --color-pink: #ff80e1;
 
-  /* Texto sobre escuro */
+  /* Texto sobre escuro (fog-mute clareado p/ passar AA: 3.5:1 -> 5.5:1) */
   --color-fog: #aaa2c8;
-  --color-fog-mute: #6b6488;
+  --color-fog-mute: #8b84a6;
   --color-white: #ffffff;
 
   /* Papel — superfície CLARA do ritmo claro/escuro (cartaz impresso, leve osso) */
@@ -202,6 +205,12 @@ body {
 ::selection {
   background: var(--color-green);
   color: var(--color-green-ink);
+}
+
+/* Foco visível — fallback global (WCAG 2.4.7). CTA/botões sobrescrevem a cor. */
+:focus-visible {
+  outline: 2px solid var(--color-magenta);
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {

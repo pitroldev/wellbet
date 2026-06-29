@@ -5,20 +5,19 @@ import {
   Problema,
   Stats,
   ComoFunciona,
-  Manifesto,
-  Credibilidade,
+  Confianca,
   CTAFinal,
   Footer,
-  SmoothScroll,
-  GrainOverlay,
-} from "@/components";
+} from "@/sections";
+import { SmoothScroll } from "@/motion";
+import { GrainOverlay } from "@/fx";
 
 /**
- * Landing de marketing da Charya Bet — gymbet-arena, award-level (LP v2).
- * SSG no above-the-fold; ilhas client (mesh WebGL, smooth-scroll, cupom
- * interativo, contadores) hidratam por cima. Estrutura: hero (com simulador) →
- * ticker → problema → ciência (commitment device) → como funciona → manifesto →
- * credibilidade → CTA final → footer.
+ * Landing de marketing da Charya Bet — sportsbook brutal, award-level.
+ * Narrativa de conversão, cada seção com um ofício único:
+ * hero (fisga + simulador honesto) → ticker (arena) → problema (a dor) →
+ * ciência (por que funciona) → como funciona (o como + o downside) →
+ * confiança & objeções (derruba o medo + FAQ) → CTA (pico único) → footer (legal).
  */
 export default function HomePage(): JSX.Element {
   return (
@@ -30,8 +29,7 @@ export default function HomePage(): JSX.Element {
       <Problema />
       <Stats />
       <ComoFunciona />
-      <Manifesto />
-      <Credibilidade />
+      <Confianca />
       <CTAFinal />
       <Footer />
     </main>

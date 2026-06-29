@@ -7,8 +7,8 @@ type NumberFlowFormat = ComponentProps<typeof NumberFlow>["format"];
 
 /**
  * Número que ROLA (odômetro tabular) ao mudar de valor — NumberFlow (Intl +
- * Web Animations API). É a assinatura de movimento da Charya: stake/cotação/
- * payout subindo. Geist Mono + tabular por padrão.
+ * Web Animations API). É a assinatura de movimento da Charya: stake/valor em
+ * jogo subindo. Space Mono + tabular por padrão.
  */
 export function AnimatedNumber({
   value,

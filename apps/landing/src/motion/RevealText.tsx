@@ -3,12 +3,11 @@
 import type { JSX, ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
-
-const EASE = [0.22, 1, 0.36, 1] as const;
+import { EASE, DUR } from "./easing";
 
 /**
  * Reveal "premium": o conteúdo sobe de dentro de uma máscara (overflow-hidden).
- * Nível de LINHA (funciona com palavra em gradiente dentro). Respeita reduce-motion.
+ * Nível de LINHA (funciona com palavra em destaque dentro). Respeita reduce-motion.
  */
 export function RevealText({
   children,
@@ -36,7 +35,7 @@ export function RevealText({
       <motion.span
         className={cn("block", className)}
         {...anim}
-        transition={{ duration: 0.8, ease: EASE, delay }}
+        transition={{ duration: DUR.slow, ease: EASE, delay }}
       >
         {children}
       </motion.span>

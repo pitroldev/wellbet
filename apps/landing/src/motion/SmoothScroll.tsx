@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 
 /**
- * Smooth-scroll (Lenis) integrado ao GSAP ScrollTrigger — base do scrollytelling.
- * Desliga em prefers-reduced-motion (scroll nativo). Intercepta âncoras (#secao).
+ * Smooth-scroll (Lenis) integrado ao GSAP ScrollTrigger. Desliga em
+ * prefers-reduced-motion (scroll nativo). Intercepta âncoras (#secao).
  *
  * Lenis/GSAP são importados DENTRO do efeito (dynamic import) — assim não entram
  * no grafo de SSR/prerender (evita o erro de prerender do /_global-error no

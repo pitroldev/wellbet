@@ -3,8 +3,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Ticker/marquee infinito (CSS puro, GPU). Conteúdo duplicado desliza -50% em
- * loop perfeito; pausa no hover. Server Component — zero JS. A faixa do
- * vocabulário de bet (CUPOM · STAKE · DEU GREEN · …) = assinatura de arena.
+ * loop perfeito; pausa no hover. Server Component — zero JS.
  */
 export function Marquee({
   children,

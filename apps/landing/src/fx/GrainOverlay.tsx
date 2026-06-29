@@ -2,7 +2,7 @@ import type { JSX } from "react";
 
 /**
  * Grão de filme fixo sobre toda a página (SVG feTurbulence inline, sem request).
- * É o detalhe que separa "premium/filme" de "neon chapado de cassino". Sutil
+ * É o detalhe que separa "premium/cartaz impresso" de "neon chapado". Sutil
  * (~4–5% opacity, mix-blend), puramente decorativo, sem custo de JS.
  */
 export function GrainOverlay(): JSX.Element {
