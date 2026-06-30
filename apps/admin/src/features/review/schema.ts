@@ -9,7 +9,8 @@ import { VERDICTS } from "./types";
  * mapa `key → resultado` com chave `string` (e não mais um enum fixo). A
  * consistência das keys é garantida pela UI (renderiza só critérios habilitados).
  */
-const itemResultSchema = z.enum(["ok", "fail", "na"]);
+// Escrita binária: sem N/A. Critérios não-aplicáveis nem aparecem no checklist.
+const itemResultSchema = z.enum(["ok", "fail"]);
 
 const itemsSchema = z.record(z.string(), itemResultSchema);
 

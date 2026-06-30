@@ -32,20 +32,18 @@ const VERDICT_BADGE: Record<Verdict, "approved" | "pending" | "rejected"> = {
   REPROVADO: "rejected",
 };
 
-// Classes do grid e da coluna de evidência compartilhadas entre skeleton e
-// conteúdo final → a estrutura é IDÊNTICA, então não há layout shift na carga.
-// SEM `items-start`: as células esticam até a altura da linha, então o Card de
-// evidência (sticky dentro da célula esticada) fica fixo durante TODO o scroll
-// do checklist — a evidência nunca sai de vista.
-const GRID = "grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]";
-const EVIDENCE_STICKY = "lg:sticky lg:top-6";
+// Layout EMPILHADO (vídeo em cima, checklist embaixo) numa coluna única focada
+// e com largura limitada. O player limita a própria largura quando é UM vídeo só
+// (ver VideoReviewer). Mesma classe de raiz no skeleton → zero layout shift.
+const CONTENT = "mx-auto flex w-full max-w-4xl flex-col gap-6";
 
 /**
  * Tela de revisão de uma pesagem.
  *
- * Estrutura: EVIDÊNCIA protagonista (coluna larga, fixa no topo) | trilha
- * direita com o checklist que rola e o VEREDITO fixo no rodapé (sempre
- * alcançável sem rolar). Carrega com skeleton de mesma estrutura (zero CLS).
+ * Estrutura EMPILHADA: evidência (vídeo) em cima, checklist + veredito embaixo —
+ * coluna única focada (`max-w-4xl`). O player limita a própria largura quando é
+ * um vídeo só. Velocidade vem do TECLADO (A/P/R + Enter), não de fixar o veredito.
+ * Carrega com skeleton de mesma estrutura (zero CLS).
  */
 export function ReviewSessionView({ sessionId }: { sessionId: string }): React.JSX.Element {
   const router = useRouter();
@@ -94,7 +92,7 @@ export function ReviewSessionView({ sessionId }: { sessionId: string }): React.J
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className={CONTENT}>
       <div className="flex flex-col gap-3">
         <button
           type="button"
@@ -148,30 +146,25 @@ export function ReviewSessionView({ sessionId }: { sessionId: string }): React.J
         </header>
       </div>
 
-      <div className={GRID}>
-        <div>
-          <Card className={EVIDENCE_STICKY}>
-            <CardHeader>
-              <CardTitle>Evidência</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <VideoReviewer videos={data.videos} expectedCode={data.expectedCode} />
-            </CardContent>
-          </Card>
-        </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Evidência</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <VideoReviewer videos={data.videos} expectedCode={data.expectedCode} />
+        </CardContent>
+      </Card>
 
-        <div>
-          {data.decided ? (
-            <DecidedSummary decided={data.decided} onBack={goToQueue} />
-          ) : (
-            <ChecklistForm
-              sessionId={data.id}
-              sanityPassed={data.sanityPassed}
-              onSubmitted={onSubmitted}
-            />
-          )}
-        </div>
-      </div>
+      {data.decided ? (
+        <DecidedSummary decided={data.decided} onBack={goToQueue} />
+      ) : (
+        <ChecklistForm
+          sessionId={data.id}
+          sanityPassed={data.sanityPassed}
+          context={data.context}
+          onSubmitted={onSubmitted}
+        />
+      )}
     </div>
   );
 }
@@ -179,7 +172,7 @@ export function ReviewSessionView({ sessionId }: { sessionId: string }): React.J
 /** Skeleton de mesma estrutura do conteúdo final (evita CLS na carga). */
 function ReviewSkeleton(): React.JSX.Element {
   return (
-    <div className="flex flex-col gap-5">
+    <div className={CONTENT}>
       <div className="flex flex-col gap-3">
         <Skeleton className="h-4 w-40" />
         <div className="flex items-start justify-between gap-3">
@@ -190,43 +183,30 @@ function ReviewSkeleton(): React.JSX.Element {
           <Skeleton className="h-6 w-24" />
         </div>
       </div>
-      <div className={GRID}>
-        <div>
-          <Card className={EVIDENCE_STICKY}>
-            <CardHeader>
-              <Skeleton className="h-5 w-24" />
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3">
-              <Skeleton className="h-14 w-full" />
-              <Skeleton className="h-8 w-44" />
-              <Skeleton className="aspect-video w-full" />
-            </CardContent>
-          </Card>
-        </div>
-        <div className="flex flex-col gap-4">
-          <Card>
-            <CardContent className="flex flex-col gap-2.5 pt-6">
-              <Skeleton className="h-5 w-40" />
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="flex items-start justify-between gap-3 py-1.5">
-                  <div className="flex flex-1 flex-col gap-1.5">
-                    <Skeleton className="h-3.5 w-2/5" />
-                    <Skeleton className="h-2.5 w-4/5" />
-                  </div>
-                  <Skeleton className="h-8 w-40" />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="flex flex-col gap-3 pt-6">
-              <Skeleton className="h-14 w-full" />
-              <Skeleton className="h-9 w-full" />
-              <Skeleton className="h-9 w-full" />
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-5 w-24" />
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <Skeleton className="h-14 w-full" />
+          <Skeleton className="h-8 w-60" />
+          <Skeleton className="mx-auto aspect-video w-full max-w-2xl" />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="flex flex-col gap-2.5 pt-6">
+          <Skeleton className="h-5 w-40" />
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="flex items-start justify-between gap-3 py-1.5">
+              <div className="flex flex-1 flex-col gap-1.5">
+                <Skeleton className="h-3.5 w-2/5" />
+                <Skeleton className="h-2.5 w-4/5" />
+              </div>
+              <Skeleton className="h-8 w-40" />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 }

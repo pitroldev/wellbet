@@ -72,8 +72,19 @@ export const CHECKLIST_ITEMS = [
 
 export type ChecklistItemKey = (typeof CHECKLIST_ITEMS)[number]["key"];
 
-/** Resultado por item: ok | reprova | n/a (frame faltando → tende a PENDENTE). */
+/**
+ * Resultado por item. A ESCRITA é binária (`ok` | `fail`) — o N/A foi removido
+ * (critérios não-aplicáveis nem aparecem). `na` permanece no tipo só para LER
+ * revisões legadas já decididas.
+ */
 export type ItemResult = "ok" | "fail" | "na";
+
+/** Fatos de aplicabilidade (substituem o N/A) — vêm do servidor (review-detail). */
+export interface ReviewContext {
+  hasCode: boolean;
+  hasComparison: boolean;
+  hasPreviousWeight: boolean;
+}
 
 // A linha da fila de revisão (ReviewQueueEntryDto) vem de @charya/contracts —
 // gerada do OpenAPI da api, fonte única do contrato.
@@ -114,6 +125,8 @@ export interface ReviewSession {
   submittedAt: string;
   /** Veredito já registrado (decisão única) — null se ainda pendente. */
   decided: DecidedVerdict | null;
+  /** Fatos de aplicabilidade dos critérios (substituem o N/A). */
+  context: ReviewContext;
 }
 
 /**
@@ -130,6 +143,6 @@ export interface VerdictSubmission {
   reason: string;
   /** Keys dos critérios que falharam — flags rotuladas. */
   failedItems: string[];
-  /** Resultado item a item (dataset granular). */
-  items: Record<string, ItemResult>;
+  /** Resultado item a item — ESCRITA binária (sem N/A). */
+  items: Record<string, "ok" | "fail">;
 }

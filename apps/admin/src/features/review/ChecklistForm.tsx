@@ -11,32 +11,49 @@ import { Button, Card, CardContent, Skeleton, Textarea, useToast } from "@/share
 import { cn } from "@/lib/utils";
 import { VerdictActions } from "./verdict-actions";
 import { verdictFormSchema, type VerdictFormValues } from "./schema";
-import type { ItemResult, Verdict, VerdictSubmission } from "./types";
+import type { ReviewContext, Verdict, VerdictSubmission } from "./types";
 
-const ITEM_RESULTS: { value: ItemResult; label: string; key: string }[] = [
+/** Resultado binário (sem N/A): o critério não-aplicável nem aparece. */
+type Choice = "ok" | "fail";
+
+const ITEM_RESULTS: { value: Choice; label: string; key: string }[] = [
   { value: "ok", label: "OK", key: "O" },
   { value: "fail", label: "Reprova", key: "F" },
-  { value: "na", label: "N/A", key: "N" },
 ];
 
 const VERDICT_BY_KEY: Record<string, Verdict> = { a: "APROVADO", p: "PENDENTE", r: "REPROVADO" };
 
-const DOT: Record<"unset" | ItemResult, string> = {
+const DOT: Record<"unset" | Choice, string> = {
   unset: "border-2 border-[var(--color-muted-foreground)]",
   ok: "bg-[var(--color-verdict-approved)]",
   fail: "bg-[var(--color-verdict-rejected)]",
-  na: "bg-[var(--color-muted-foreground)]",
 };
+
+/** Critério aparece? Mapeia `appliesWhen` para os fatos do contexto da revisão. */
+function applies(appliesWhen: string, ctx: ReviewContext): boolean {
+  switch (appliesWhen) {
+    case "has_code":
+      return ctx.hasCode;
+    case "has_comparison":
+      return ctx.hasComparison;
+    case "has_previous_weight":
+      return ctx.hasPreviousWeight;
+    default:
+      return true; // always
+  }
+}
 
 export interface ChecklistFormProps {
   sessionId: string;
   sanityPassed: boolean;
+  context: ReviewContext;
   onSubmitted?: (verdict: Verdict) => void;
 }
 
 export function ChecklistForm({
   sessionId,
   sanityPassed,
+  context,
   onSubmitted,
 }: ChecklistFormProps): React.JSX.Element {
   const toast = useToast();
@@ -63,7 +80,9 @@ export function ChecklistForm({
   const itemsVal = watch("items") ?? {};
   /* eslint-enable react-hooks/incompatible-library */
 
-  const list = criteria ?? [];
+  // Só os critérios APLICÁVEIS aparecem (substitui o N/A). Progresso e aprovação
+  // contam só sobre estes.
+  const list = (criteria ?? []).filter((c) => applies(c.appliesWhen, context));
   const total = list.length;
   const evaluated = list.filter((c) => itemsVal[c.key]).length;
   const failCount = list.filter((c) => itemsVal[c.key] === "fail").length;
@@ -224,7 +243,7 @@ export function ChecklistForm({
                 name={`items.${item.key}` as FieldPath<VerdictFormValues>}
                 control={control}
                 render={({ field }) => {
-                  const current = (field.value as ItemResult | undefined) ?? undefined;
+                  const current = (field.value as Choice | undefined) ?? undefined;
                   function setByKey(e: React.KeyboardEvent): void {
                     const opt = ITEM_RESULTS.find((o) => o.key.toLowerCase() === e.key.toLowerCase());
                     if (opt) {
@@ -302,8 +321,9 @@ export function ChecklistForm({
         </CardContent>
       </Card>
 
-      {/* VEREDITO — fixo (sticky) no rodapé: ação sempre alcançável sem rolar. */}
-      <Card className="lg:sticky lg:bottom-6 lg:z-10 lg:shadow-lg">
+      {/* VEREDITO — no fim da trilha (não sticky, p/ não cobrir os últimos
+          critérios). Velocidade vem do TECLADO (A/P/R + Enter), não de fixar. */}
+      <Card>
         <CardContent className="flex flex-col gap-3 pt-6">
           <div className="flex flex-col gap-1.5">
             <label htmlFor="reason" className="text-sm font-medium">

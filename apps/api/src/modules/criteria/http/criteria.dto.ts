@@ -17,6 +17,9 @@ const label = z.string().trim().min(1, "Informe um rótulo.").max(120);
 const helpText = z.string().trim().max(2000).nullish();
 const sortOrder = z.number().int().min(0).max(10_000);
 
+/** Condição de aparição do critério (substitui o N/A). */
+const appliesWhen = z.enum(["always", "has_code", "has_comparison", "has_previous_weight"]);
+
 export const ListCriteriaQuerySchema = z.object({
   /** `true` → só os habilitados (usado pelo checklist da revisão). */
   enabledOnly: z.coerce.boolean().optional(),
@@ -30,6 +33,7 @@ export const CreateCriterionSchema = z.object({
   failHint: helpText,
   enabled: z.boolean().optional(),
   sortOrder: sortOrder.optional(),
+  appliesWhen: appliesWhen.default("always"),
 });
 export class CreateCriterionDto extends createZodDto(CreateCriterionSchema) {}
 
@@ -41,6 +45,7 @@ export const UpdateCriterionSchema = z
     failHint: helpText,
     enabled: z.boolean(),
     sortOrder,
+    appliesWhen,
   })
   .partial();
 export class UpdateCriterionDto extends createZodDto(UpdateCriterionSchema) {}
@@ -53,6 +58,7 @@ export const CriterionResponseSchema = z.object({
   failHint: z.string().nullable(),
   enabled: z.boolean(),
   sortOrder: z.number().int(),
+  appliesWhen,
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
 });

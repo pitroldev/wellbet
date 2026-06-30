@@ -95,6 +95,7 @@ function toReviewSession(d: ReviewDetailDto): ReviewSession {
     videos: { T0: d.comparison.baseline, T1: d.comparison.mid, T2: d.comparison.final },
     expectedCode: d.expectedCode,
     submittedAt: d.capturedAt,
+    context: d.context,
     decided:
       d.verdict != null
         ? {
@@ -110,7 +111,7 @@ function toReviewSession(d: ReviewDetailDto): ReviewSession {
 function toSubmitVerdictDto(sub: VerdictSubmission): SubmitVerdictDto {
   // As keys do checklist JÁ são os slugs dos critérios (config global) — vão
   // direto para a api, sem mapeamento.
-  const checklist: Record<string, ItemResult> = {};
+  const checklist: Record<string, "ok" | "fail"> = {};
   for (const [key, result] of Object.entries(sub.items)) {
     checklist[key] = result;
   }

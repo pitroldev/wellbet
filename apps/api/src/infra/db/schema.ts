@@ -48,6 +48,20 @@ export const reviewVerdict = pgEnum("review_verdict", [
   "rejected", // REPROVADO
 ]);
 
+/**
+ * Condição de APLICABILIDADE de um critério de aprovação. Substitui o antigo
+ * "N/A": em vez de o revisor marcar não-aplicável, o critério só APARECE quando
+ * a condição vale. Avaliada no client a partir de FATOS calculados no servidor
+ * (review-detail.context). Default `always` é fail-open (na dúvida, aparece —
+ * esconder por engano deixaria passar fraude).
+ */
+export const criterionCondition = pgEnum("criterion_condition", [
+  "always", // sempre aplicável
+  "has_code", // há código dinâmico emitido (expectedCode != null) → anti-replay
+  "has_comparison", // há ≥2 capturas reais para comparar identidade
+  "has_previous_weight", // há peso anterior (não-baseline) para julgar plausibilidade
+]);
+
 export const betStatus = pgEnum("bet_status", [
   "pending_payment", // criada, aguardando o pagamento do stake (Pix)
   "open", // stake pago → aposta ativa
@@ -179,6 +193,8 @@ export const approvalCriteria = pgTable(
     enabled: boolean("enabled").notNull().default(true),
     // Ordem de exibição no checklist (menor primeiro).
     sortOrder: integer("sort_order").notNull().default(0),
+    // Quando o critério aparece (substitui o N/A). Default `always` = fail-open.
+    appliesWhen: criterionCondition("applies_when").notNull().default("always"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

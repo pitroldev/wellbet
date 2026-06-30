@@ -1,0 +1,2 @@
+CREATE TYPE "criterion_condition" AS ENUM('always', 'has_code', 'has_comparison', 'has_previous_weight');--> statement-breakpoint
+ALTER TABLE "approval_criteria" ADD COLUMN "applies_when" "criterion_condition" DEFAULT 'always'::"criterion_condition" NOT NULL;

@@ -1,7 +1,8 @@
 /**
  * Card de CANTO VIVO — casca brutal compartilhada (fio duro 2px, sem rounded).
- * `surface="navy"` (padrão) = card escuro sobre o ground; `surface="paper"` =
- * bloco claro (ritmo claro/escuro). Acento opcional = barra magenta/verde no topo.
+ * `surface="navy"` (padrão) = card escuro; `surface="paper"` = bloco claro.
+ * Acento opcional = barra magenta/verde no topo. (Pop vem de gradiente/animação,
+ * não de sombra — sombra RN colorida não vai bem no Android.)
  */
 import { View, type ViewProps } from "react-native";
 

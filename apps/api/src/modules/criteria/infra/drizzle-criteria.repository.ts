@@ -52,6 +52,7 @@ export class DrizzleCriteriaRepository implements CriteriaRepositoryPort {
         failHint: input.failHint ?? null,
         enabled: input.enabled ?? true,
         sortOrder: input.sortOrder ?? 0,
+        appliesWhen: input.appliesWhen ?? "always",
       })
       .returning();
     return toDomain(row!);
@@ -65,6 +66,7 @@ export class DrizzleCriteriaRepository implements CriteriaRepositoryPort {
     if (patch.failHint !== undefined) set.failHint = patch.failHint;
     if (patch.enabled !== undefined) set.enabled = patch.enabled;
     if (patch.sortOrder !== undefined) set.sortOrder = patch.sortOrder;
+    if (patch.appliesWhen !== undefined) set.appliesWhen = patch.appliesWhen;
 
     const [row] = await this.handle.db
       .update(approvalCriteria)
@@ -84,6 +86,7 @@ function toDomain(row: ApprovalCriterionRow): Criterion {
     failHint: row.failHint,
     enabled: row.enabled,
     sortOrder: row.sortOrder,
+    appliesWhen: row.appliesWhen,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };

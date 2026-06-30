@@ -53,6 +53,7 @@ export class CriteriaController {
       failHint: dto.failHint,
       enabled: dto.enabled,
       sortOrder: dto.sortOrder,
+      appliesWhen: dto.appliesWhen,
     });
     return toResponse(created);
   }
@@ -70,6 +71,7 @@ export class CriteriaController {
       failHint: dto.failHint,
       enabled: dto.enabled,
       sortOrder: dto.sortOrder,
+      appliesWhen: dto.appliesWhen,
     });
     return toResponse(updated);
   }
@@ -84,6 +86,7 @@ function toResponse(c: Criterion): CriterionResponseDto {
     failHint: c.failHint,
     enabled: c.enabled,
     sortOrder: c.sortOrder,
+    appliesWhen: c.appliesWhen,
     createdAt: c.createdAt.toISOString(),
     updatedAt: c.updatedAt.toISOString(),
   };

@@ -20,9 +20,18 @@ const criterionFormSchema = z.object({
   description: z.string().trim().max(2000),
   failHint: z.string().trim().max(2000),
   sortOrder: z.number().int().min(0).max(10_000),
+  // Condição de aparição (substitui o N/A): o critério só aparece quando vale.
+  appliesWhen: z.enum(["always", "has_code", "has_comparison", "has_previous_weight"]),
 });
 
 export type CriterionFormValues = z.infer<typeof criterionFormSchema>;
+
+const APPLIES_OPTIONS: { value: CriterionFormValues["appliesWhen"]; label: string }[] = [
+  { value: "always", label: "Sempre" },
+  { value: "has_code", label: "Quando há código dinâmico (anti-replay)" },
+  { value: "has_comparison", label: "Quando há 2+ capturas (comparar identidade)" },
+  { value: "has_previous_weight", label: "Quando há peso anterior (plausibilidade)" },
+];
 
 export interface CriterionFormProps {
   mode: "create" | "edit";
@@ -55,6 +64,7 @@ export function CriterionForm({
       description: defaultValues?.description ?? "",
       failHint: defaultValues?.failHint ?? "",
       sortOrder: defaultValues?.sortOrder ?? 0,
+      appliesWhen: defaultValues?.appliesWhen ?? "always",
     },
   });
 
@@ -156,25 +166,55 @@ export function CriterionForm({
         />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label className={FIELD_LABEL} htmlFor="crit-order">
-          Ordem
-        </label>
-        <Controller
-          name="sortOrder"
-          control={control}
-          render={({ field }) => (
-            <Input
-              id="crit-order"
-              type="number"
-              min={0}
-              className="w-24"
-              value={String(field.value)}
-              onChange={(e) => field.onChange(e.target.value === "" ? 0 : Number(e.target.value))}
-              onBlur={field.onBlur}
-            />
-          )}
-        />
+      <div className="flex flex-wrap gap-4">
+        <div className="flex flex-col gap-1">
+          <label className={FIELD_LABEL} htmlFor="crit-order">
+            Ordem
+          </label>
+          <Controller
+            name="sortOrder"
+            control={control}
+            render={({ field }) => (
+              <Input
+                id="crit-order"
+                type="number"
+                min={0}
+                className="w-24"
+                value={String(field.value)}
+                onChange={(e) => field.onChange(e.target.value === "" ? 0 : Number(e.target.value))}
+                onBlur={field.onBlur}
+              />
+            )}
+          />
+        </div>
+
+        <div className="flex min-w-[16rem] flex-1 flex-col gap-1">
+          <label className={FIELD_LABEL} htmlFor="crit-applies">
+            Aparece quando
+          </label>
+          <Controller
+            name="appliesWhen"
+            control={control}
+            render={({ field }) => (
+              <select
+                id="crit-applies"
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                className="flex h-9 w-full rounded-md border border-[var(--color-input)] bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ring)]"
+              >
+                {APPLIES_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            )}
+          />
+          <p className="text-[11px] text-[var(--color-muted-foreground)]">
+            Substitui o N/A: o critério só aparece no checklist quando a condição vale.
+          </p>
+        </div>
       </div>
 
       {errorMessage ? (

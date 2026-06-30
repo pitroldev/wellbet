@@ -19,7 +19,7 @@ import { eq, inArray } from "drizzle-orm";
 import { buildAuth } from "@/infra/auth/auth.js";
 import { user as authUser } from "@/infra/db/auth-schema.js";
 import { createDb } from "@/infra/db/client.js";
-import { approvalCriteria, bets, users, weighins } from "@/infra/db/schema.js";
+import { approvalCriteria, bets, challenges, users, weighins } from "@/infra/db/schema.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 const SECRET = process.env.BETTER_AUTH_SECRET ?? "dev-seed-secret-min-32-characters-aaaa";
@@ -67,8 +67,11 @@ const CRITERIA: readonly {
   label: string;
   description: string;
   failHint: string;
+  appliesWhen?: "always" | "has_code" | "has_comparison" | "has_previous_weight";
 }[] = [
   {
+    // O desafio dinâmico é OBRIGATÓRIO em toda captura → freshness é SEMPRE
+    // aplicável. Código ausente é ANOMALIA (o revisor reprova), não some.
     key: "freshness",
     label: "Frescor / anti-replay",
     description:
@@ -111,12 +114,14 @@ const CRITERIA: readonly {
     label: "Mesma pessoa",
     description: "Rosto bate entre T0, T1, T2 (comparação visual dos 3 vídeos).",
     failHint: "Pessoa diferente entre capturas.",
+    appliesWhen: "has_comparison",
   },
   {
     key: "plausibility",
     label: "Plausibilidade",
     description: "A perda faz sentido fisiológico para o prazo/perfil.",
     failHint: "Perda incompatível (regra dura de sanidade, §6).",
+    appliesWhen: "has_previous_weight",
   },
 ];
 
@@ -172,9 +177,37 @@ async function main(): Promise<void> {
   }
 
   // 2) Apostas + pesagens demo — recria (idempotente) para os usuários demo.
+  // Ordem de delete respeita as FKs: weighins → challenges → bets.
   const userIds = Object.values(domainId);
   await db.delete(weighins).where(inArray(weighins.userId, userIds));
+  await db.delete(challenges).where(inArray(challenges.userId, userIds));
   await db.delete(bets).where(inArray(bets.userId, userIds));
+
+  /**
+   * O desafio dinâmico (código anti-replay) é OBRIGATÓRIO em TODA captura. Aqui
+   * cada pesagem nasce com um challenge consumido — assim `expectedCode` nunca é
+   * null e o critério `freshness` (anti-replay) sempre aparece no checklist.
+   */
+  async function makeChallenge(
+    userId: string,
+    word: string,
+    n: number,
+    gesture: string,
+  ): Promise<string> {
+    const id = randomUUID();
+    const now = new Date();
+    await db.insert(challenges).values({
+      id,
+      userId,
+      word,
+      number: n,
+      gesture,
+      nonce: randomUUID(),
+      expiresAt: new Date(now.getTime() + 3_600_000),
+      consumedAt: now,
+    });
+    return id;
+  }
 
   const anaId = domainId["ana@charya.dev"]!;
   const brunoId = domainId["bruno@charya.dev"]!;
@@ -196,6 +229,7 @@ async function main(): Promise<void> {
       id: randomUUID(),
       userId: anaId,
       betId: anaBet,
+      challengeId: await makeChallenge(anaId, "girassol", 47, "mão direita no ombro"),
       kind: "baseline",
       weightKg: 85,
       videoObjectKey: "seed/ana-baseline.webm",
@@ -205,6 +239,7 @@ async function main(): Promise<void> {
       id: randomUUID(),
       userId: anaId,
       betId: anaBet,
+      challengeId: await makeChallenge(anaId, "cascata", 12, "polegar para cima"),
       kind: "mid",
       weightKg: 80.4,
       videoObjectKey: "seed/ana-mid.webm",
@@ -228,6 +263,7 @@ async function main(): Promise<void> {
     id: randomUUID(),
     userId: brunoId,
     betId: brunoBet,
+    challengeId: await makeChallenge(brunoId, "tijolo", 83, "mão na cabeça"),
     kind: "baseline",
     weightKg: 82,
     videoObjectKey: "seed/bruno-baseline.webm",
@@ -238,7 +274,14 @@ async function main(): Promise<void> {
   // 3) Critérios de aprovação (idempotente: insere só os que faltam, por key).
   await db
     .insert(approvalCriteria)
-    .values(CRITERIA.map((c, i) => ({ ...c, sortOrder: i, enabled: true })))
+    .values(
+      CRITERIA.map((c, i) => ({
+        ...c,
+        sortOrder: i,
+        enabled: true,
+        appliesWhen: c.appliesWhen ?? "always",
+      })),
+    )
     .onConflictDoNothing({ target: approvalCriteria.key });
 
   await pool.end();

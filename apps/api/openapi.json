@@ -1097,6 +1097,25 @@
               ]
             },
             "nullable": true
+          },
+          "context": {
+            "type": "object",
+            "properties": {
+              "hasCode": {
+                "type": "boolean"
+              },
+              "hasComparison": {
+                "type": "boolean"
+              },
+              "hasPreviousWeight": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "hasCode",
+              "hasComparison",
+              "hasPreviousWeight"
+            ]
           }
         },
         "required": [
@@ -1116,7 +1135,8 @@
           "verdict",
           "reason",
           "failedChecks",
-          "checklist"
+          "checklist",
+          "context"
         ]
       },
       "SubmitVerdictDto": {
@@ -1160,8 +1180,7 @@
               "type": "string",
               "enum": [
                 "ok",
-                "fail",
-                "na"
+                "fail"
               ]
             },
             "nullable": true
@@ -1224,6 +1243,15 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
+          "appliesWhen": {
+            "type": "string",
+            "enum": [
+              "always",
+              "has_code",
+              "has_comparison",
+              "has_previous_weight"
+            ]
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time",
@@ -1243,6 +1271,7 @@
           "failHint",
           "enabled",
           "sortOrder",
+          "appliesWhen",
           "createdAt",
           "updatedAt"
         ]
@@ -1277,6 +1306,16 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 10000
+          },
+          "appliesWhen": {
+            "default": "always",
+            "type": "string",
+            "enum": [
+              "always",
+              "has_code",
+              "has_comparison",
+              "has_previous_weight"
+            ]
           }
         },
         "required": [
@@ -1309,6 +1348,15 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 10000
+          },
+          "appliesWhen": {
+            "type": "string",
+            "enum": [
+              "always",
+              "has_code",
+              "has_comparison",
+              "has_previous_weight"
+            ]
           }
         }
       },

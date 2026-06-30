@@ -49,6 +49,16 @@ export interface ReviewDetail {
   readonly failedChecks: string[] | null;
   /** Resultado tristate item a item já registrado (Fase 2). */
   readonly checklist: Checklist | null;
+  /**
+   * FATOS de aplicabilidade (substitui o N/A). Calculados no servidor a partir
+   * das capturas REAIS (não da nulidade de URL) — o client mapeia o
+   * `appliesWhen` de cada critério para um destes flags e filtra o checklist.
+   */
+  readonly context: {
+    readonly hasCode: boolean;
+    readonly hasComparison: boolean;
+    readonly hasPreviousWeight: boolean;
+  };
 }
 
 /**
@@ -94,8 +104,11 @@ export class GetReviewDetailUseCase {
     // Plausibilidade: peso da baseline e semanas decorridas até esta captura.
     let previousWeightKg: number | null = null;
     let weeks: number | null = null;
+    // Nº de capturas REAIS da aposta (linhas, não URLs) → base do has_comparison.
+    let captureCount = 1;
     if (w.betId) {
       const captures = (await this.weighins.listByBet(w.betId)).map((c) => c.toJSON());
+      captureCount = captures.length;
       const urls = await Promise.all(
         captures.map(async (cp) => ({
           kind: cp.kind,
@@ -138,6 +151,11 @@ export class GetReviewDetailUseCase {
       reason: r?.reason ?? null,
       failedChecks: r?.failedChecks ?? null,
       checklist: r?.checklist ?? null,
+      context: {
+        hasCode: expectedCode != null,
+        hasComparison: captureCount >= 2,
+        hasPreviousWeight: previousWeightKg != null,
+      },
     };
   }
 }

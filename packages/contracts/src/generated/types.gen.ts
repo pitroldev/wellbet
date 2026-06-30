@@ -120,6 +120,11 @@ export type ReviewDetailDto = {
     checklist: {
         [key: string]: 'ok' | 'fail' | 'na';
     } | null;
+    context: {
+        hasCode: boolean;
+        hasComparison: boolean;
+        hasPreviousWeight: boolean;
+    };
 };
 
 export type SubmitVerdictDto = {
@@ -128,7 +133,7 @@ export type SubmitVerdictDto = {
     reason?: string | null;
     failedChecks?: Array<string> | null;
     checklist?: {
-        [key: string]: 'ok' | 'fail' | 'na';
+        [key: string]: 'ok' | 'fail';
     } | null;
 };
 
@@ -146,6 +151,7 @@ export type CriterionResponseDto = {
     failHint: string | null;
     enabled: boolean;
     sortOrder: number;
+    appliesWhen: 'always' | 'has_code' | 'has_comparison' | 'has_previous_weight';
     createdAt: string;
     updatedAt: string;
 };
@@ -157,6 +163,7 @@ export type CreateCriterionDto = {
     failHint?: string | null;
     enabled?: boolean;
     sortOrder?: number;
+    appliesWhen?: 'always' | 'has_code' | 'has_comparison' | 'has_previous_weight';
 };
 
 export type UpdateCriterionDto = {
@@ -165,6 +172,7 @@ export type UpdateCriterionDto = {
     failHint?: string | null;
     enabled?: boolean;
     sortOrder?: number;
+    appliesWhen?: 'always' | 'has_code' | 'has_comparison' | 'has_previous_weight';
 };
 
 export type BetSummaryDto = {

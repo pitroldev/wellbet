@@ -67,8 +67,10 @@ function Focus({
     <View className="flex-1 justify-between pb-2">
       <View className="gap-4 pt-6">
         <Tag label={eyebrow} tone={tone} />
-        <Text variant="title">{title}</Text>
-        <Text variant="body" className="text-muted">
+        <Text variant="title" className="text-5xl">
+          {title}
+        </Text>
+        <Text variant="body" className="text-lg text-muted">
           {body}
         </Text>
         {extra}
@@ -198,7 +200,7 @@ export default function Home() {
                   accent: true,
                 },
                 { value: days, label: t("journey.status.days") },
-                { value: streak, label: t("journey.status.streak"), prefix: "🔥 " },
+                { value: streak, label: t("journey.status.streak") },
               ]}
             />
 

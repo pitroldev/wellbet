@@ -6,6 +6,13 @@ import { useCreateCriterion, useCriteria, useUpdateCriterion } from "@/shared/ap
 import { cn } from "@/lib/utils";
 import { CriterionForm } from "./CriterionForm";
 
+/** Rótulos curtos das condições de aparição (substituem o N/A). */
+const APPLIES_LABEL: Record<string, string> = {
+  has_code: "só com código",
+  has_comparison: "só com 2+ capturas",
+  has_previous_weight: "só com peso anterior",
+};
+
 /**
  * Gestão global dos critérios de aprovação (checklist da revisão).
  * Criar, editar, habilitar/desabilitar — reflete no checklist que o revisor usa.
@@ -45,6 +52,7 @@ export function CriteriaManager(): React.JSX.Element {
                   description: values.description || undefined,
                   failHint: values.failHint || undefined,
                   sortOrder: values.sortOrder,
+                  appliesWhen: values.appliesWhen,
                 },
                 { onSuccess: () => setCreateKey((k) => k + 1) },
               );
@@ -78,6 +86,7 @@ export function CriteriaManager(): React.JSX.Element {
                       description: c.description ?? "",
                       failHint: c.failHint ?? "",
                       sortOrder: c.sortOrder,
+                      appliesWhen: c.appliesWhen,
                     }}
                     submitting={update.isPending}
                     errorMessage={update.isError ? "Falha ao salvar." : null}
@@ -91,6 +100,7 @@ export function CriteriaManager(): React.JSX.Element {
                             description: values.description || null,
                             failHint: values.failHint || null,
                             sortOrder: values.sortOrder,
+                            appliesWhen: values.appliesWhen,
                           },
                         },
                         { onSuccess: () => setEditingId(null) },
@@ -103,6 +113,11 @@ export function CriteriaManager(): React.JSX.Element {
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-medium">{c.label}</p>
                         <Badge className="font-mono text-xs">{c.key}</Badge>
+                        {c.appliesWhen !== "always" ? (
+                          <Badge variant="approved" title="Condição de aparição">
+                            {APPLIES_LABEL[c.appliesWhen]}
+                          </Badge>
+                        ) : null}
                         {!c.enabled ? <Badge variant="pending">desabilitado</Badge> : null}
                       </div>
                       {c.description ? (

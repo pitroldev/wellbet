@@ -25,8 +25,9 @@ export const SubmitVerdictSchema = z
     verdict: z.enum(["approved", "pending", "rejected"]),
     reason: z.string().max(2000).nullish(),
     failedChecks: z.array(checklistFlag).nullish(),
-    /** Resultado tristate item a item (ok/fail/na) — dataset granular (Fase 2). */
-    checklist: z.record(checklistFlag, z.enum(["ok", "fail", "na"])).nullish(),
+    // ESCRITA binária: sem N/A. O app grava só ok/fail (critérios não-aplicáveis
+    // nem aparecem). Leitura (ReviewDetailSchema) ainda tolera "na" legado.
+    checklist: z.record(checklistFlag, z.enum(["ok", "fail"])).nullish(),
   })
   .refine(
     (v) =>
@@ -91,7 +92,16 @@ export const ReviewDetailSchema = z.object({
   verdict: z.enum(["approved", "pending", "rejected"]).nullable(),
   reason: z.string().nullable(),
   failedChecks: z.array(z.string()).nullable(),
-  /** Resultado tristate item a item já registrado (Fase 2). */
+  /** Resultado item a item já registrado (LEITURA tolera "na" legado). */
   checklist: z.record(z.string(), z.enum(["ok", "fail", "na"])).nullable(),
+  /**
+   * FATOS de aplicabilidade dos critérios (substitui o N/A). O client mapeia o
+   * `appliesWhen` de cada critério para um destes e filtra o checklist.
+   */
+  context: z.object({
+    hasCode: z.boolean(),
+    hasComparison: z.boolean(),
+    hasPreviousWeight: z.boolean(),
+  }),
 });
 export class ReviewDetailDto extends createZodDto(ReviewDetailSchema) {}

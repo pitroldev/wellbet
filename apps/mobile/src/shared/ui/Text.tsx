@@ -18,8 +18,8 @@ import { Text as RNText, type TextProps as RNTextProps } from "react-native";
 type Variant = "title" | "heading" | "body" | "caption" | "label" | "mono" | "numeric";
 
 const variantClass: Record<Variant, string> = {
-  title: "font-display text-4xl uppercase leading-[0.95] tracking-tight text-foreground",
-  heading: "font-display text-xl uppercase leading-[1.05] tracking-tight text-foreground",
+  title: "font-display text-4xl uppercase leading-[1.16] tracking-tight text-foreground",
+  heading: "font-display text-xl uppercase leading-[1.16] tracking-tight text-foreground",
   body: "font-sans text-base leading-relaxed text-foreground",
   caption: "font-sans text-sm text-muted",
   label: "font-mono-bold text-[11px] uppercase tracking-[0.18em] text-muted-foreground",

@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Monitor, Moon, Sun } from "lucide-react";
 import { Button } from "@/shared/ui";
+import { cn } from "@/lib/utils";
 import { THEME_STORAGE_KEY } from "./theme-script";
 
 /**
@@ -32,7 +33,7 @@ const ICON: Record<Theme, React.ReactNode> = {
 };
 const LABEL: Record<Theme, string> = { light: "Claro", dark: "Escuro", system: "Sistema" };
 
-export function ThemeToggle(): React.JSX.Element {
+export function ThemeToggle({ collapsed }: { collapsed?: boolean } = {}): React.JSX.Element {
   const [theme, setTheme] = React.useState<Theme>("system");
 
   // Lê a preferência salva no mount (cliente) e mantém o <html> em sincronia com
@@ -60,12 +61,12 @@ export function ThemeToggle(): React.JSX.Element {
       variant="ghost"
       size="sm"
       onClick={cycle}
-      className="w-full justify-start"
+      className={cn("w-full justify-start", collapsed && "md:justify-center md:px-2")}
       aria-label={`Tema: ${LABEL[theme]}. Clique para alternar.`}
       title={`Tema: ${LABEL[theme]}`}
     >
       {ICON[theme]}
-      Tema: {LABEL[theme]}
+      <span className={cn("max-md:hidden", collapsed && "md:hidden")}>Tema: {LABEL[theme]}</span>
     </Button>
   );
 }
