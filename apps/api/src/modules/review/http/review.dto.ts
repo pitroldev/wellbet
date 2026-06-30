@@ -2,10 +2,16 @@ import { WeighInStatus } from "@charya/schemas";
 import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
 
-import { CHECKLIST_FLAGS } from "@/modules/review/domain/review.entity.js";
-
-/** Flags do checklist do revisor (doc de Validação §5). */
-const checklistFlag = z.enum(CHECKLIST_FLAGS);
+/**
+ * Chave de um critério do checklist. Antes era um enum fixo (CHECKLIST_FLAGS);
+ * agora os critérios são CONFIGURÁVEIS (tabela approval_criteria), então o
+ * veredito aceita qualquer slug de critério (snake_case). A consistência é
+ * garantida pela UI, que só envia keys de critérios existentes/habilitados.
+ */
+const checklistFlag = z
+  .string()
+  .regex(/^[a-z][a-z0-9_]*$/)
+  .max(64);
 
 export const ListReviewQueueSchema = z.object({
   limit: z.coerce.number().int().min(1).max(200).default(50),
@@ -64,6 +70,10 @@ export const ReviewDetailSchema = z.object({
   userName: z.string().nullable(),
   kind: z.enum(["baseline", "mid", "final"]),
   weightKg: z.number(),
+  /** Peso da baseline (T0) da aposta — base p/ tendência/plausibilidade. */
+  previousWeightKg: z.number().nullable(),
+  /** Semanas decorridas entre a baseline e esta captura. */
+  weeks: z.number().nullable(),
   lossPerWeekKg: z.number().nullable(),
   status: WeighInStatus,
   capturedAt: z.iso.datetime(),

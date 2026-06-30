@@ -56,4 +56,6 @@ export const StorageKeys = {
   lastCameraDevice: "camera.lastDevice",
   /** Idioma escolhido manualmente (override da detecção do dispositivo). */
   language: "app.language",
+  /** Estado local-first da jornada (a espinha — ver features/journey). */
+  journey: "journey.v1",
 } as const;

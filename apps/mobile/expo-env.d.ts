@@ -1,4 +1,3 @@
 /// <reference types="expo/types" />
 
-// Gerado/garantido pelo Expo. Mantém os tipos globais do Expo (incl. typed
-// routes do expo-router quando `experiments.typedRoutes` está ligado).
+// NOTE: This file should not be edited and should be in your git ignore

@@ -154,6 +154,37 @@ export const reviews = pgTable(
   ],
 );
 
+/**
+ * Critérios de aprovação configuráveis (checklist do revisor — §5).
+ *
+ * Antes eram hardcoded (CHECKLIST_FLAGS). Agora são GLOBAIS e editáveis pelo
+ * console: o admin cria/edita/habilita/desabilita itens. A `key` é o slug
+ * estável usado no JSON de `reviews.checklist`/`failedChecks` (dataset Fase 2),
+ * por isso é única e imutável após criada (a UI edita label/ajuda, não a key).
+ */
+export const approvalCriteria = pgTable(
+  "approval_criteria",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    // Slug estável (ex.: "scale_zero") — chave no checklist e no dataset.
+    key: text("key").notNull(),
+    // Nome curto exibido ao revisor (ex.: "Balança zerada").
+    label: text("label").notNull(),
+    // O que conferir (orientação positiva).
+    description: text("description"),
+    // Quando reprovar (orientação de falha).
+    failHint: text("fail_hint"),
+    // Habilitado → aparece no checklist da revisão. Desabilitar é o "remover"
+    // seguro (preserva o histórico/dataset que já referencia a key).
+    enabled: boolean("enabled").notNull().default(true),
+    // Ordem de exibição no checklist (menor primeiro).
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("approval_criteria_key_uq").on(t.key)],
+);
+
 export const bets = pgTable(
   "bets",
   {
@@ -206,6 +237,8 @@ export type WeighInRow = typeof weighins.$inferSelect;
 export type NewWeighInRow = typeof weighins.$inferInsert;
 export type ReviewRow = typeof reviews.$inferSelect;
 export type NewReviewRow = typeof reviews.$inferInsert;
+export type ApprovalCriterionRow = typeof approvalCriteria.$inferSelect;
+export type NewApprovalCriterionRow = typeof approvalCriteria.$inferInsert;
 export type BetRow = typeof bets.$inferSelect;
 export type NewBetRow = typeof bets.$inferInsert;
 export type IdempotencyKeyRow = typeof idempotencyKeys.$inferSelect;
@@ -216,6 +249,7 @@ export const schema = {
   challenges,
   weighins,
   reviews,
+  approvalCriteria,
   bets,
   idempotencyKeys,
 };

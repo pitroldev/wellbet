@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { BetControllerDetailData, BetControllerDetailResponses, BetControllerListAllData, BetControllerListAllResponses, BetControllerListData, BetControllerListResponses, BetControllerPlaceData, BetControllerPlaceResponses, ChallengeControllerIssueData, ChallengeControllerIssueResponses, HealthControllerCheckData, HealthControllerCheckResponses, IdentityControllerMeData, IdentityControllerMeResponses, IdentityControllerSetProfileData, IdentityControllerSetProfileResponses, ReviewControllerDetailData, ReviewControllerDetailResponses, ReviewControllerQueueData, ReviewControllerQueueResponses, ReviewControllerVerdictData, ReviewControllerVerdictResponses, WeighInControllerListData, WeighInControllerListResponses, WeighInControllerStartData, WeighInControllerStartResponses, WeighInControllerSubmitData, WeighInControllerSubmitResponses } from './types.gen';
+import type { BetControllerDetailData, BetControllerDetailResponses, BetControllerListAllData, BetControllerListAllResponses, BetControllerListData, BetControllerListResponses, BetControllerPlaceData, BetControllerPlaceResponses, ChallengeControllerIssueData, ChallengeControllerIssueResponses, CriteriaControllerCreateData, CriteriaControllerCreateResponses, CriteriaControllerListData, CriteriaControllerListResponses, CriteriaControllerUpdateData, CriteriaControllerUpdateResponses, HealthControllerCheckData, HealthControllerCheckResponses, IdentityControllerMeData, IdentityControllerMeResponses, IdentityControllerSetProfileData, IdentityControllerSetProfileResponses, ReviewControllerDetailData, ReviewControllerDetailResponses, ReviewControllerQueueData, ReviewControllerQueueResponses, ReviewControllerVerdictData, ReviewControllerVerdictResponses, WeighInControllerListData, WeighInControllerListResponses, WeighInControllerStartData, WeighInControllerStartResponses, WeighInControllerSubmitData, WeighInControllerSubmitResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -96,6 +96,35 @@ export const reviewControllerDetail = <ThrowOnError extends boolean = false>(opt
  */
 export const reviewControllerVerdict = <ThrowOnError extends boolean = false>(options: Options<ReviewControllerVerdictData, ThrowOnError>): RequestResult<ReviewControllerVerdictResponses, unknown, ThrowOnError> => (options.client ?? client).post<ReviewControllerVerdictResponses, unknown, ThrowOnError>({
     url: '/api/reviews/verdict',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Lista os critérios de aprovação.
+ */
+export const criteriaControllerList = <ThrowOnError extends boolean = false>(options?: Options<CriteriaControllerListData, ThrowOnError>): RequestResult<CriteriaControllerListResponses, unknown, ThrowOnError> => (options?.client ?? client).get<CriteriaControllerListResponses, unknown, ThrowOnError>({ url: '/api/criteria', ...options });
+
+/**
+ * Cria um critério de aprovação.
+ */
+export const criteriaControllerCreate = <ThrowOnError extends boolean = false>(options: Options<CriteriaControllerCreateData, ThrowOnError>): RequestResult<CriteriaControllerCreateResponses, unknown, ThrowOnError> => (options.client ?? client).post<CriteriaControllerCreateResponses, unknown, ThrowOnError>({
+    url: '/api/criteria',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Edita ou habilita/desabilita um critério.
+ */
+export const criteriaControllerUpdate = <ThrowOnError extends boolean = false>(options: Options<CriteriaControllerUpdateData, ThrowOnError>): RequestResult<CriteriaControllerUpdateResponses, unknown, ThrowOnError> => (options.client ?? client).patch<CriteriaControllerUpdateResponses, unknown, ThrowOnError>({
+    url: '/api/criteria/{id}',
     ...options,
     headers: {
         'Content-Type': 'application/json',

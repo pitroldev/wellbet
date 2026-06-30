@@ -80,7 +80,6 @@
         "typescript-eslint",
         "knip",
         "syncpack",
-        "lefthook",
         "vitest",
         "@manypkg/cli",
         "publint",

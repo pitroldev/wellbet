@@ -98,6 +98,8 @@ export type ReviewDetailDto = {
     userName: string | null;
     kind: 'baseline' | 'mid' | 'final';
     weightKg: number;
+    previousWeightKg: number | null;
+    weeks: number | null;
     lossPerWeekKg: number | null;
     status: 'pending' | 'blocked' | 'in_review' | 'approved' | 'rejected' | 'recapture';
     capturedAt: string;
@@ -124,7 +126,7 @@ export type SubmitVerdictDto = {
     weighinId: string;
     verdict: 'approved' | 'pending' | 'rejected';
     reason?: string | null;
-    failedChecks?: Array<'freshness' | 'continuous_video' | 'scale_zero' | 'floor_scene' | 'no_body_trick' | 'display_integrity' | 'same_person' | 'plausibility'> | null;
+    failedChecks?: Array<string> | null;
     checklist?: {
         [key: string]: 'ok' | 'fail' | 'na';
     } | null;
@@ -134,6 +136,35 @@ export type VerdictResponseDto = {
     reviewId: string;
     weighinId: string;
     verdict: 'approved' | 'pending' | 'rejected';
+};
+
+export type CriterionResponseDto = {
+    id: string;
+    key: string;
+    label: string;
+    description: string | null;
+    failHint: string | null;
+    enabled: boolean;
+    sortOrder: number;
+    createdAt: string;
+    updatedAt: string;
+};
+
+export type CreateCriterionDto = {
+    key: string;
+    label: string;
+    description?: string | null;
+    failHint?: string | null;
+    enabled?: boolean;
+    sortOrder?: number;
+};
+
+export type UpdateCriterionDto = {
+    label?: string;
+    description?: string | null;
+    failHint?: string | null;
+    enabled?: boolean;
+    sortOrder?: number;
 };
 
 export type BetSummaryDto = {
@@ -322,6 +353,49 @@ export type ReviewControllerVerdictResponses = {
 };
 
 export type ReviewControllerVerdictResponse = ReviewControllerVerdictResponses[keyof ReviewControllerVerdictResponses];
+
+export type CriteriaControllerListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        enabledOnly?: boolean;
+    };
+    url: '/api/criteria';
+};
+
+export type CriteriaControllerListResponses = {
+    200: Array<CriterionResponseDto>;
+};
+
+export type CriteriaControllerListResponse = CriteriaControllerListResponses[keyof CriteriaControllerListResponses];
+
+export type CriteriaControllerCreateData = {
+    body: CreateCriterionDto;
+    path?: never;
+    query?: never;
+    url: '/api/criteria';
+};
+
+export type CriteriaControllerCreateResponses = {
+    200: CriterionResponseDto;
+};
+
+export type CriteriaControllerCreateResponse = CriteriaControllerCreateResponses[keyof CriteriaControllerCreateResponses];
+
+export type CriteriaControllerUpdateData = {
+    body: UpdateCriterionDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/criteria/{id}';
+};
+
+export type CriteriaControllerUpdateResponses = {
+    200: CriterionResponseDto;
+};
+
+export type CriteriaControllerUpdateResponse = CriteriaControllerUpdateResponses[keyof CriteriaControllerUpdateResponses];
 
 export type BetControllerListData = {
     body?: never;

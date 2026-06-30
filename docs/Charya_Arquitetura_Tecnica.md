@@ -297,10 +297,9 @@ infra/terraform/
 | Tema                     | Padrão                                                                                             |
 | ------------------------ | -------------------------------------------------------------------------------------------------- |
 | Lint type-aware          | **ESLint flat + typescript-eslint** (fonte da verdade) — preset em `packages/config`               |
-| Lint rápido              | **oxlint** como pré-passo (50-100× mais rápido) em pre-commit/CI, antes do ESLint                  |
+| Lint rápido              | **oxlint** como pré-passo (50-100× mais rápido) no CI, antes do ESLint                             |
 | Format                   | **Prettier**                                                                                       |
 | Commits                  | **Conventional Commits** (convenção, sem gate)                                                     |
-| Pre-commit               | **Lefthook** (paralelo, monorepo-aware; substitui Husky+lint-staged)                               |
 | Branching                | **Trunk-based**: `main` sempre deployável; branches curtas; PR + **merge queue**                   |
 | Versionamento de pacotes | **Changesets**                                                                                     |
 | Toolchain                | **mise** (Node/pnpm pinados e reprodutíveis)                                                       |
@@ -389,7 +388,7 @@ merge na main → tofu apply em STAGING (auto)
 | **Admin**         | Next.js 16 + shadcn/Base UI + Tailwind v4 + TanStack Table/Query + **`<video>`/Media Chrome**, container standalone                                                                          |
 | **Compartilhado** | Zod 4 schemas + cliente OpenAPI (Hey API) + **t3-env** + presets de config + tokens                                                                                                          |
 | **Infra**         | OpenTofu (Cloud Run + Postgres + R2 + Cloudflare), state remoto                                                                                                                              |
-| **CI/CD**         | GitHub Actions + Turborepo (remote cache, affected) + **merge queue**; **Lefthook**; container promovido staging→prod; EAS Workflows p/ mobile                                               |
+| **CI/CD**         | GitHub Actions + Turborepo (remote cache, affected) + **merge queue**; container promovido staging→prod; EAS Workflows p/ mobile                                               |
 
 > Tudo amarrado por: **TypeScript único**, **Zod como fonte da verdade**, **OpenAPI como contrato**, **OpenTelemetry para observabilidade**, **container/S3/Postgres como padrões trocáveis**.
 
@@ -404,7 +403,6 @@ Auditoria do stack contra o estado da arte de meados de 2026. As escolhas grande
 | Item                 | De → Para                                                                   | Motivo                                                            |
 | -------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | Testes mobile        | Vitest → **Jest + jest-expo**                                               | Vitest **não suporta React Native**                               |
-| Git hooks            | Husky+lint-staged → **Lefthook**                                            | Husky parado desde nov/2024; Lefthook é paralelo e monorepo-aware |
 | Player admin         | Vidstack → **`<video>` / Media Chrome**                                     | Vidstack em manutenção reduzida                                   |
 | Animação declarativa | Moti → **Reanimated 4 CSS API**                                             | Moti quebra no Reanimated 4                                       |
 | Majors mobile        | → **vision-camera 5, MMKV 4, FlashList 2, gesture-handler 3, Reanimated 4** | Nitro (~15×), auto-sizing, hooks sem re-render                    |

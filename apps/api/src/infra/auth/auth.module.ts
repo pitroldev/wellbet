@@ -24,6 +24,7 @@ import { AUTH, type Auth, buildAuth } from "./auth.js";
           db: handle.db,
           secret: env.BETTER_AUTH_SECRET,
           baseUrl: env.BETTER_AUTH_URL,
+          adminOrigin: env.ADMIN_ORIGIN,
           isProduction: env.NODE_ENV === "production",
         }),
       inject: [ENV, DATABASE],
@@ -35,9 +36,12 @@ export class AuthModule implements NestModule {
   constructor(@Inject(AUTH) private readonly auth: Auth) {}
 
   configure(consumer: MiddlewareConsumer): void {
-    // Better Auth expõe seu próprio router; montado sob /api/auth/*.
+    // Better Auth expõe seu próprio router; servido sob /api/auth/*. O caminho
+    // do forRoutes é RELATIVO ao global prefix ("api") — o Nest o prepõe aos
+    // middlewares. Por isso "/auth/*path" (NÃO "/api/auth/...", que viraria
+    // "/api/api/auth/..." e nunca casaria → 404 em sign-in/get-session).
     const handler = toNodeHandler(this.auth);
-    consumer.apply((req: Request, res: Response) => handler(req, res)).forRoutes("/api/auth/*path");
+    consumer.apply((req: Request, res: Response) => handler(req, res)).forRoutes("/auth/*path");
 
     // Middleware de sessão: em TODA request resolve a sessão do Better Auth e
     // popula `req.user` (ou deixa `undefined`). Não bloqueia nada — quem

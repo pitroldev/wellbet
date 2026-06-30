@@ -2,6 +2,12 @@ packages:
   - apps/*
   - packages/*
 
+# node-linker: Expo/React Native exigem layout HASTEADO (binários nativos + C++
+# em node_modules raso). pnpm 11 lê isto AQUI (no .npmrc a chave é ignorada,
+# igual `overrides` no package.json). Isolado (.pnpm) gera caminhos de ~190 chars
+# que estouram o limite de 250 do CMake no build Android em Windows (worklets/nitro).
+nodeLinker: hoisted
+
 # Build scripts aprovados (pnpm 11 bloqueia postinstall por padrão — segurança).
 # true = roda o build do pacote; false = bloqueia (telemetria etc.).
 allowBuilds:
@@ -9,7 +15,6 @@ allowBuilds:
   "@swc/core": true # compilador SWC (dev rápido: nest start -b swc)
   cpu-features: false # otimização opcional do ssh2; desnecessária p/ docker local
   esbuild: true # binário de bundling (Vitest/tsx)
-  lefthook: true # instala os git hooks
   protobufjs: true # usado pelo exporter OTLP
   sharp: true # otimização de imagem do next/image (admin)
   ssh2: false # dep do testcontainers; build nativo só p/ docker REMOTO (SSH) — local usa npipe
@@ -44,7 +49,6 @@ catalog:
   eslint: ^9.34.0
   typescript-eslint: ^8.61.0
   oxlint: ^1.0.0
-  lefthook: ^2.1.0
   knip: ^6.0.0
   syncpack: ^15.0.0
   "@changesets/cli": ^2.31.0

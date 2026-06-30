@@ -314,6 +314,111 @@
         ]
       }
     },
+    "/api/criteria": {
+      "get": {
+        "operationId": "CriteriaController_list",
+        "parameters": [
+          {
+            "name": "enabledOnly",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CriterionResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Lista os critérios de aprovação.",
+        "tags": [
+          "criteria"
+        ]
+      },
+      "post": {
+        "operationId": "CriteriaController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCriterionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CriterionResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Cria um critério de aprovação.",
+        "tags": [
+          "criteria"
+        ]
+      }
+    },
+    "/api/criteria/{id}": {
+      "patch": {
+        "operationId": "CriteriaController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCriterionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CriterionResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Edita ou habilita/desabilita um critério.",
+        "tags": [
+          "criteria"
+        ]
+      }
+    },
     "/api/bets": {
       "get": {
         "operationId": "BetController_list",
@@ -882,6 +987,14 @@
           "weightKg": {
             "type": "number"
           },
+          "previousWeightKg": {
+            "type": "number",
+            "nullable": true
+          },
+          "weeks": {
+            "type": "number",
+            "nullable": true
+          },
           "lossPerWeekKg": {
             "type": "number",
             "nullable": true
@@ -992,6 +1105,8 @@
           "userName",
           "kind",
           "weightKg",
+          "previousWeightKg",
+          "weeks",
           "lossPerWeekKg",
           "status",
           "capturedAt",
@@ -1029,16 +1144,8 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": [
-                "freshness",
-                "continuous_video",
-                "scale_zero",
-                "floor_scene",
-                "no_body_trick",
-                "display_integrity",
-                "same_person",
-                "plausibility"
-              ]
+              "maxLength": 64,
+              "pattern": "^[a-z][a-z0-9_]*$"
             },
             "nullable": true
           },
@@ -1046,16 +1153,8 @@
             "type": "object",
             "propertyNames": {
               "type": "string",
-              "enum": [
-                "freshness",
-                "continuous_video",
-                "scale_zero",
-                "floor_scene",
-                "no_body_trick",
-                "display_integrity",
-                "same_person",
-                "plausibility"
-              ]
+              "maxLength": 64,
+              "pattern": "^[a-z][a-z0-9_]*$"
             },
             "additionalProperties": {
               "type": "string",
@@ -1065,16 +1164,6 @@
                 "na"
               ]
             },
-            "required": [
-              "freshness",
-              "continuous_video",
-              "scale_zero",
-              "floor_scene",
-              "no_body_trick",
-              "display_integrity",
-              "same_person",
-              "plausibility"
-            ],
             "nullable": true
           }
         },
@@ -1106,6 +1195,122 @@
           "weighinId",
           "verdict"
         ]
+      },
+      "CriterionResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "failHint": {
+            "type": "string",
+            "nullable": true
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "label",
+          "description",
+          "failHint",
+          "enabled",
+          "sortOrder",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CreateCriterionDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000,
+            "nullable": true
+          },
+          "failHint": {
+            "type": "string",
+            "maxLength": 2000,
+            "nullable": true
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          }
+        },
+        "required": [
+          "key",
+          "label"
+        ]
+      },
+      "UpdateCriterionDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000,
+            "nullable": true
+          },
+          "failHint": {
+            "type": "string",
+            "maxLength": 2000,
+            "nullable": true
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          }
+        }
       },
       "BetSummaryDto": {
         "type": "object",

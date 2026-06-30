@@ -26,6 +26,6 @@ pnpm-lock.yaml
 **/.terraform/
 
 # Playground experimental: fica FORA do gate de formatação, igual já está fora
-# do gate de ESLint (ver lefthook.yml). É um sandbox de design e tem arquivos
+# do gate de ESLint. É um sandbox de design e tem arquivos
 # marcados "do not edit" (ex.: lib/brand.ts) que não seguem o estilo do Prettier.
 apps/playground/

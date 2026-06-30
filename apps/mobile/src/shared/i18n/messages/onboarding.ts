@@ -11,7 +11,7 @@ export const onboarding = {
       miss: "seu valor vai pro bolo de quem conseguiu. Por isso dói.",
       proof:
         "Cada pesagem é gravada em vídeo e revisada por gente. Sem trapaça, sem balança maquiada.",
-      cta: "Como funciona a pesagem",
+      cta: "Bora começar",
     },
     guide: {
       eyebrow: "A prova",
@@ -39,7 +39,7 @@ export const onboarding = {
       miss: "your money goes to whoever made it. That's why it stings.",
       proof:
         "Every weigh-in is recorded on video and reviewed by a person. No cheating, no rigged scale.",
-      cta: "How the weigh-in works",
+      cta: "Let's start",
     },
     guide: {
       eyebrow: "The proof",

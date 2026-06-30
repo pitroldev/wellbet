@@ -19,7 +19,7 @@ import { eq, inArray } from "drizzle-orm";
 import { buildAuth } from "@/infra/auth/auth.js";
 import { user as authUser } from "@/infra/db/auth-schema.js";
 import { createDb } from "@/infra/db/client.js";
-import { bets, users, weighins } from "@/infra/db/schema.js";
+import { approvalCriteria, bets, users, weighins } from "@/infra/db/schema.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 const SECRET = process.env.BETTER_AUTH_SECRET ?? "dev-seed-secret-min-32-characters-aaaa";
@@ -57,9 +57,78 @@ const DEMO: readonly DemoUser[] = [
   },
 ];
 
+/**
+ * Critérios de aprovação iniciais (antes hardcoded em CHECKLIST_FLAGS / o
+ * console). Agora vivem na tabela `approval_criteria` e são editáveis pelo
+ * admin. Seed idempotente: só insere os que faltam (não sobrescreve edições).
+ */
+const CRITERIA: readonly {
+  key: string;
+  label: string;
+  description: string;
+  failHint: string;
+}[] = [
+  {
+    key: "freshness",
+    label: "Frescor / anti-replay",
+    description:
+      "O código dinâmico no vídeo é o mesmo emitido para esta sessão e o gesto foi feito.",
+    failHint: "Código errado/ausente, gesto não feito.",
+  },
+  {
+    key: "continuous_video",
+    label: "Vídeo contínuo",
+    description: "Take único, sem corte/emenda; gravado no app (não upload).",
+    failHint: "Cortes, reencode de editor, origem externa.",
+  },
+  {
+    key: "scale_zero",
+    label: "Balança zerada (âncora do instrumento)",
+    description:
+      "Antes de subir, balança vazia marca 0,0 limpo e estável; número sai do zero ao subir.",
+    failHint: "Não mostra o zero, zero instável/deslocado, ou não está vazia.",
+  },
+  {
+    key: "floor_scene",
+    label: "Piso / cena",
+    description: "Chão plano e nivelado, balança não inclinada, sem calço/tapete grosso.",
+    failHint: "Piso torto, balança tombada, calço aparente.",
+  },
+  {
+    key: "no_body_trick",
+    label: "Sem truque de corpo",
+    description: "Sobe sem apoio, mãos visíveis, peso estável.",
+    failHint: "Apoio em parede/móvel, descarga de peso.",
+  },
+  {
+    key: "display_integrity",
+    label: "Visor íntegro",
+    description: "Número se firma do zero; sem visor sobreposto (borda/reflexo/fonte estranhos).",
+    failHint: "Sinais de display falso.",
+  },
+  {
+    key: "same_person",
+    label: "Mesma pessoa",
+    description: "Rosto bate entre T0, T1, T2 (comparação visual dos 3 vídeos).",
+    failHint: "Pessoa diferente entre capturas.",
+  },
+  {
+    key: "plausibility",
+    label: "Plausibilidade",
+    description: "A perda faz sentido fisiológico para o prazo/perfil.",
+    failHint: "Perda incompatível (regra dura de sanidade, §6).",
+  },
+];
+
 async function main(): Promise<void> {
   const { db, pool } = createDb(DATABASE_URL as string);
-  const auth = buildAuth({ db, secret: SECRET, baseUrl: BASE_URL, isProduction: false });
+  const auth = buildAuth({
+    db,
+    secret: SECRET,
+    baseUrl: BASE_URL,
+    adminOrigin: BASE_URL,
+    isProduction: false,
+  });
 
   // 1) Usuários do Better Auth (idempotente) + papel + usuário de domínio.
   const domainId: Record<string, string> = {};
@@ -165,6 +234,12 @@ async function main(): Promise<void> {
     status: "in_review",
     lossPerWeekKg: 0,
   });
+
+  // 3) Critérios de aprovação (idempotente: insere só os que faltam, por key).
+  await db
+    .insert(approvalCriteria)
+    .values(CRITERIA.map((c, i) => ({ ...c, sortOrder: i, enabled: true })))
+    .onConflictDoNothing({ target: approvalCriteria.key });
 
   await pool.end();
 

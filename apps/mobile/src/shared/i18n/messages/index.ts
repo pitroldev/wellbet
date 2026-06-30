@@ -11,6 +11,8 @@ import { onboarding } from "./onboarding";
 import { weighin } from "./weighin";
 import { bet } from "./bet";
 import { profile } from "./profile";
+import { quiz } from "./quiz";
+import { journey } from "./journey";
 
 export const resources = {
   pt: {
@@ -21,6 +23,8 @@ export const resources = {
       weighin: weighin.pt,
       bet: bet.pt,
       profile: profile.pt,
+      quiz: quiz.pt,
+      journey: journey.pt,
     },
   },
   en: {
@@ -31,6 +35,8 @@ export const resources = {
       weighin: weighin.en,
       bet: bet.en,
       profile: profile.en,
+      quiz: quiz.en,
+      journey: journey.en,
     },
   },
 } as const;

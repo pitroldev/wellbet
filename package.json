@@ -38,15 +38,13 @@
     "lint:packages": "manypkg check",
     "publint": "pnpm -r --filter './packages/*' exec publint",
     "attw": "pnpm -r --filter './packages/*' exec attw --pack",
-    "changeset": "changeset",
-    "prepare": "lefthook install"
+    "changeset": "changeset"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
     "@changesets/cli": "catalog:",
     "@manypkg/cli": "^0.25.1",
     "knip": "catalog:",
-    "lefthook": "catalog:",
     "oxlint": "catalog:",
     "prettier": "catalog:",
     "publint": "^0.3.14",

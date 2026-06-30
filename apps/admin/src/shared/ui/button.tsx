@@ -50,12 +50,19 @@ export function Button({
   variant,
   size,
   render,
+  type,
   ...props
 }: ButtonProps): React.JSX.Element {
-  const defaultRender = <button type="button" />;
+  // `type` NÃO pode ser fixado no `defaultRender`: o `useRender` da Base UI dá
+  // precedência às props do elemento de render sobre as props mescladas, então
+  // um `<button type="button" />` aqui descartaria o `type="submit"` do consumidor
+  // (era por isso que o botão de login não submetia o form). Passamos `type` pelas
+  // props mescladas, com default "button" (evita submit acidental dos demais botões).
+  const defaultRender = <button />;
   const element = useRender({
     render: render ?? defaultRender,
     props: {
+      type: type ?? "button",
       className: cn(buttonVariants({ variant, size, className })),
       ...props,
     },

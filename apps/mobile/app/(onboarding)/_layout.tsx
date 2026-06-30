@@ -15,8 +15,8 @@ export default function OnboardingLayout() {
         animation: "fade",
       }}
     >
-      <Stack.Screen name="index" />
-      <Stack.Screen name="capture-guide" />
+      <Stack.Screen name="welcome" />
+      <Stack.Screen name="quiz" />
     </Stack>
   );
 }

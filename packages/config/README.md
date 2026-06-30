@@ -42,7 +42,7 @@ export { default } from '@charya/config/prettier';
 
 ## oxlint (pré-passo rápido)
 
-`@charya/config/oxlint` aponta para o `.oxlintrc` base (categorias `correctness`/`suspicious`/`perf`). Roda em pre-commit (Lefthook) e no CI **antes** do ESLint — 50–100× mais rápido, pega o óbvio cedo.
+`@charya/config/oxlint` aponta para o `.oxlintrc` base (categorias `correctness`/`suspicious`/`perf`). Roda no CI **antes** do ESLint — 50–100× mais rápido, pega o óbvio cedo.
 
 ```jsonc
 // .oxlintrc.json de um app

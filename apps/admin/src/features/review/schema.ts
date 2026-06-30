@@ -1,32 +1,17 @@
 import { z } from "zod";
-import { CHECKLIST_ITEMS, VERDICTS } from "./types";
-import type { ChecklistItemKey } from "./types";
+import { VERDICTS } from "./types";
 
 /**
  * Schema Zod do veredito de revisão.
  *
- * A fonte da verdade dos schemas de domínio é @charya/schemas (Zod 4). Este
- * schema é local e específico do formulário do console; quando o pacote expuser
- * `reviewVerdictSchema`, importá-lo daqui:
- *
- *   import { reviewVerdictSchema } from "@charya/schemas";
- *
- * e remover esta cópia. Mantido coerente com `VerdictSubmission` de ./types.
+ * Os itens do checklist são DINÂMICOS (critérios configuráveis em
+ * `approval_criteria`, carregados via @charya/contracts), por isso `items` é um
+ * mapa `key → resultado` com chave `string` (e não mais um enum fixo). A
+ * consistência das keys é garantida pela UI (renderiza só critérios habilitados).
  */
-
 const itemResultSchema = z.enum(["ok", "fail", "na"]);
 
-const checklistKeys = CHECKLIST_ITEMS.map((i) => i.key) as [
-  ChecklistItemKey,
-  ...ChecklistItemKey[],
-];
-
-/**
- * Mapa item → resultado. `z.record` com chave enumerada garante que todos os
- * itens do checklist (§5) estejam presentes, mantendo o tipo
- * `Record<ChecklistItemKey, ItemResult>`.
- */
-const itemsSchema = z.record(z.enum(checklistKeys), itemResultSchema);
+const itemsSchema = z.record(z.string(), itemResultSchema);
 
 export const verdictFormSchema = z
   .object({

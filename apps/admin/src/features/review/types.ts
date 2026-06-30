@@ -78,6 +78,21 @@ export type ItemResult = "ok" | "fail" | "na";
 // A linha da fila de revisão (ReviewQueueEntryDto) vem de @charya/contracts —
 // gerada do OpenAPI da api, fonte única do contrato.
 
+/** Código dinâmico esperado (anti-replay) — estruturado p/ exibição legível. */
+export interface ExpectedCode {
+  word: string;
+  number: number;
+  gesture: string;
+}
+
+/** Veredito já registrado (decisão única) — usado no modo somente-leitura. */
+export interface DecidedVerdict {
+  verdict: Verdict;
+  reason: string | null;
+  failedItems: string[];
+  items: Record<string, ItemResult>;
+}
+
 /** Sessão de revisão completa (player + 3 vídeos para comparação). */
 export interface ReviewSession {
   id: string;
@@ -85,24 +100,36 @@ export interface ReviewSession {
   userName: string;
   capture: CaptureKind;
   weightKg: number;
+  /** Peso da baseline (T0) da aposta — base para tendência/plausibilidade. */
   previousWeightKg: number | null;
-  weeks: number;
+  /** Semanas decorridas entre a baseline e esta captura. */
+  weeks: number | null;
+  /** Perda por semana calculada (regra de sanidade) — null se indisponível. */
+  lossPerWeekKg: number | null;
   sanityPassed: boolean;
   /** URLs dos vídeos das 3 capturas (T0/T1/T2) para comparação de identidade. */
   videos: Record<CaptureKind, string | null>;
   /** Código dinâmico que o app emitiu para esta sessão (anti-replay). */
-  expectedCode: string;
+  expectedCode: ExpectedCode | null;
   submittedAt: string;
+  /** Veredito já registrado (decisão única) — null se ainda pendente. */
+  decided: DecidedVerdict | null;
 }
 
-/** Payload do veredito gravado pelo revisor — vira dataset Fase 2 (§9). */
+/**
+ * Payload do veredito gravado pelo revisor — vira dataset Fase 2 (§9).
+ *
+ * As chaves são `string` (slug do critério configurável), não mais o enum fixo:
+ * o checklist é montado a partir dos critérios habilitados (tabela
+ * `approval_criteria`).
+ */
 export interface VerdictSubmission {
   sessionId: string;
   verdict: Verdict;
   /** Motivo livre do revisor (obrigatório em PENDENTE/REPROVADO). */
   reason: string;
-  /** Itens do checklist que falharam — flags rotuladas. */
-  failedItems: ChecklistItemKey[];
+  /** Keys dos critérios que falharam — flags rotuladas. */
+  failedItems: string[];
   /** Resultado item a item (dataset granular). */
-  items: Record<ChecklistItemKey, ItemResult>;
+  items: Record<string, ItemResult>;
 }

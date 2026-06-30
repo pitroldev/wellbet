@@ -50,6 +50,12 @@ async function bootstrap(): Promise<void> {
     }),
   );
 
+  // CORS: o console admin roda em OUTRA origem no dev (:3001 → api :3000), então
+  // o navegador exige CORS com credenciais para enviar/receber o cookie de sessão
+  // do Better Auth. `credentials: true` + origem específica (NUNCA `*` com
+  // credenciais — o navegador rejeita a combinação).
+  app.enableCors({ origin: env.ADMIN_ORIGIN, credentials: true });
+
   app.setGlobalPrefix("api", { exclude: ["docs", "docs-json"] });
   app.enableShutdownHooks();
 

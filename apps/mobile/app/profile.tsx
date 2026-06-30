@@ -12,6 +12,8 @@ import { apiErrorMessage } from "@/shared/lib/http";
 import { useLocale } from "@/shared/i18n/useLocale";
 import { useMe } from "@/features/profile/api/useMe";
 import { useUpdateProfile } from "@/features/profile/api/useUpdateProfile";
+import { signOut } from "@/features/auth";
+import { useJourney } from "@/features/journey";
 
 const LANGUAGE_LABEL = {
   pt: "common.languagePt",
@@ -23,6 +25,7 @@ export default function ProfileScreen() {
   const { language, languages, setLanguage } = useLocale();
   const { data: me, isLoading } = useMe();
   const update = useUpdateProfile();
+  const setHasAccount = useJourney((s) => s.setHasAccount);
 
   const [taxId, setTaxId] = useState("");
   const [pixKey, setPixKey] = useState("");
@@ -35,6 +38,12 @@ export default function ProfileScreen() {
     setHydratedId(me.id);
     setTaxId(me.taxId ?? "");
     setPixKey(me.pixKey ?? "");
+  }
+
+  async function onSignOut(): Promise<void> {
+    await signOut();
+    setHasAccount(false);
+    router.replace("/");
   }
 
   async function onSave(): Promise<void> {
@@ -122,6 +131,11 @@ export default function ProfileScreen() {
             disabled={update.isPending || isLoading}
           />
           <Button label={t("common.cancel")} tone="ghost" onPress={() => router.back()} />
+          <Button
+            label={t("journey.auth.signOut")}
+            tone="secondary"
+            onPress={() => void onSignOut()}
+          />
         </View>
       </View>
     </Screen>

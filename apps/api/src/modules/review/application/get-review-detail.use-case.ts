@@ -31,6 +31,10 @@ export interface ReviewDetail {
   readonly userName: string | null;
   readonly kind: WeighInKind;
   readonly weightKg: number;
+  /** Peso da captura inicial (baseline/T0) da mesma aposta — base p/ tendência/plausibilidade. */
+  readonly previousWeightKg: number | null;
+  /** Semanas decorridas entre a baseline e esta captura (plausibilidade da perda). */
+  readonly weeks: number | null;
   readonly lossPerWeekKg: number | null;
   readonly status: WeighInStatus;
   readonly capturedAt: string;
@@ -87,18 +91,27 @@ export class GetReviewDetailUseCase {
       mid: null,
       final: null,
     };
+    // Plausibilidade: peso da baseline e semanas decorridas até esta captura.
+    let previousWeightKg: number | null = null;
+    let weeks: number | null = null;
     if (w.betId) {
-      const captures = await this.weighins.listByBet(w.betId);
+      const captures = (await this.weighins.listByBet(w.betId)).map((c) => c.toJSON());
       const urls = await Promise.all(
-        captures.map(async (capture) => {
-          const cp = capture.toJSON();
-          const url = (await this.storage.presignDownload({ key: cp.videoObjectKey })).url;
-          return { kind: cp.kind, url };
-        }),
+        captures.map(async (cp) => ({
+          kind: cp.kind,
+          url: (await this.storage.presignDownload({ key: cp.videoObjectKey })).url,
+        })),
       );
       // listByBet vem em ordem asc → a captura mais recente de cada tipo sobrescreve.
       for (const { kind, url } of urls) {
         comparison[kind] = url;
+      }
+
+      const baseline = captures.find((c) => c.kind === "baseline");
+      if (baseline && baseline.id !== w.id) {
+        previousWeightKg = baseline.weightKg;
+        const ms = w.capturedAt.getTime() - baseline.capturedAt.getTime();
+        weeks = ms > 0 ? Math.round((ms / (7 * 24 * 60 * 60 * 1000)) * 10) / 10 : 0;
       }
     } else {
       comparison[w.kind] = presigned.url;
@@ -113,6 +126,8 @@ export class GetReviewDetailUseCase {
       userName: user?.name ?? null,
       kind: w.kind,
       weightKg: w.weightKg,
+      previousWeightKg,
+      weeks,
       lossPerWeekKg: w.lossPerWeekKg ?? null,
       status: w.status,
       capturedAt: w.capturedAt.toISOString(),

@@ -8,12 +8,7 @@ import {
   WEIGHIN_REPOSITORY,
   type WeighInRepositoryPort,
 } from "@/modules/weighin/application/weighin.repository.port.js";
-import {
-  type Checklist,
-  type ChecklistFlag,
-  Review,
-  type Verdict,
-} from "@/modules/review/domain/review.entity.js";
+import { type Checklist, Review, type Verdict } from "@/modules/review/domain/review.entity.js";
 import { REVIEW_REPOSITORY, type ReviewRepositoryPort } from "./review.repository.port.js";
 
 export interface SubmitVerdictCommand {
@@ -21,7 +16,7 @@ export interface SubmitVerdictCommand {
   readonly weighinId: string;
   readonly verdict: Verdict;
   readonly reason?: string | null;
-  readonly failedChecks?: ChecklistFlag[] | null;
+  readonly failedChecks?: string[] | null;
   readonly checklist?: Checklist | null;
 }
 

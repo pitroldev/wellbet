@@ -212,5 +212,5 @@ pnpm dev:up         # infra local (uma vez por sessão)
 pnpm dev            # api + admin com hot reload
 # (outra aba) pnpm dev:mobile   — se for mexer no app
 # ... codar ...
-pnpm typecheck && pnpm test     # antes de abrir PR (o Lefthook também roda no commit)
+pnpm typecheck && pnpm test     # antes de abrir PR
 ```

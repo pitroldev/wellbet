@@ -18,6 +18,7 @@
  */
 import "../global.css";
 
+import { useEffect } from "react";
 import { View } from "react-native";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
@@ -31,6 +32,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import i18n from "@/shared/i18n";
 import { queryClient } from "@/shared/lib/query-client";
 import { setupApiClient } from "@/shared/lib/http";
+import { tokenStore } from "@/shared/lib/secure-store";
+import { useJourney } from "@/features/journey";
 import { arena } from "@/theme/arena";
 import { fontMap } from "@/theme/fonts";
 
@@ -39,6 +42,16 @@ setupApiClient();
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts(fontMap);
+
+  // Reconcilia a sessão no boot: se o app acha que tem conta mas o token sumiu
+  // (expirou ou foi limpo num 401), volta pro estado deslogado.
+  useEffect(() => {
+    void (async () => {
+      const token = await tokenStore.getAccessToken();
+      const journey = useJourney.getState();
+      if (journey.hasAccount && token == null) journey.setHasAccount(false);
+    })();
+  }, []);
 
   // Gate curto: espera as fontes (ou um erro de carga) antes do primeiro render
   // para não piscar do system font para Archivo/Jakarta. Fundo navy = sem flash.
@@ -63,6 +76,8 @@ export default function RootLayout() {
             >
               <Stack.Screen name="index" />
               <Stack.Screen name="(onboarding)" />
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen name="bet" />
               <Stack.Screen name="weighin" />
             </Stack>
           </QueryClientProvider>

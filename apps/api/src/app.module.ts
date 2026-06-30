@@ -7,6 +7,7 @@ import { ConfigModule } from "./config/config.module.js";
 import { InfraModule } from "./infra/infra.module.js";
 import { BetModule } from "./modules/bet/bet.module.js";
 import { ChallengeModule } from "./modules/challenge/challenge.module.js";
+import { CriteriaModule } from "./modules/criteria/criteria.module.js";
 import { HealthModule } from "./modules/health/health.module.js";
 import { IdentityModule } from "./modules/identity/identity.module.js";
 import { PaymentWebhookModule } from "./modules/payment-webhook/payment-webhook.module.js";
@@ -58,6 +59,7 @@ import { SharedModule } from "./shared/shared.module.js";
     ChallengeModule,
     WeighInModule,
     ReviewModule,
+    CriteriaModule,
     BetModule,
     PaymentWebhookModule,
   ],

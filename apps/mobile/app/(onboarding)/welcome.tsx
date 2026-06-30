@@ -62,7 +62,7 @@ export default function OnboardingWelcome() {
 
         <Button
           label={t("onboarding.welcome.cta")}
-          onPress={() => router.push("/(onboarding)/capture-guide")}
+          onPress={() => router.push("/(onboarding)/quiz")}
         />
       </View>
     </Screen>

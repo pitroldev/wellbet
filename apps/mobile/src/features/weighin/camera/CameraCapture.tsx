@@ -61,12 +61,21 @@ export function CameraCapture({ challenge, onRecordingFinished, onError }: Camer
 
   const currentStep = useWeighInStore(selectCurrentStep);
   const setPhase = useWeighInStore((s) => s.setPhase);
+  const nextStep = useWeighInStore((s) => s.nextStep);
 
   // Pede permissões ao montar. Sem galeria envolvida: só câmera + microfone.
   useEffect(() => {
     if (!hasPermission) void requestPermission();
     if (!hasMic) void requestMic();
   }, [hasPermission, hasMic, requestPermission, requestMic]);
+
+  // Avança o roteiro de 6 passos enquanto grava (antes ficava travado no passo 1
+  // — nextStep nunca era chamado). nextStep já trava no último passo.
+  useEffect(() => {
+    if (!isRecording) return;
+    const id = setInterval(() => nextStep(), 4000);
+    return () => clearInterval(id);
+  }, [isRecording, nextStep]);
 
   const startRecording = useCallback(() => {
     if (isRecording || recorderRef.current != null) return;

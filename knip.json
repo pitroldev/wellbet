@@ -2,8 +2,8 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "workspaces": {
     ".": {
-      "entry": ["lefthook.yml", "knip.json", ".changeset/config.json"],
-      "ignoreDependencies": ["lefthook", "syncpack", "@changesets/cli"]
+      "entry": ["knip.json", ".changeset/config.json"],
+      "ignoreDependencies": ["syncpack", "@changesets/cli"]
     },
     "packages/config": {
       "entry": ["src/eslint.base.js", "src/eslint.*.js", "prettier.config.mjs"],

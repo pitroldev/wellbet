@@ -1,149 +1,134 @@
 /**
- * Nova aposta. Coleta a meta de peso + o valor do stake, cria a aposta e mostra
- * o BR Code (Pix copia-e-cola) para pagar. A aposta nasce `pending_payment`; o
- * webhook do Stark Bank confirma o pagamento e a abre.
+ * Montar a aposta (o BILHETE VIVO). Ancorado no baseline verificado (pesar→pagar).
+ *
+ * Cria a aposta local (betPhase=payment) e VOLTA PRA HOME — daí a home orquestra o
+ * commitment: se ainda não há conta, pede a conta (compromisso antes do dinheiro);
+ * só depois o Pix (`bet/pay`). O placeBet real (com sessão) é a próxima costura.
  */
 import { useState } from "react";
-import { View } from "react-native";
-import { Link, router } from "expo-router";
+import { ScrollView, View } from "react-native";
+import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { Button, Input, Screen, Text } from "@/shared/ui";
-import { apiErrorMessage } from "@/shared/lib/http";
-import { usePlaceBet } from "@/features/bet/api/usePlaceBet";
-import { uuidV4 } from "@/shared/lib/uuid";
+import { Button, Card, Input, PressableScale, Screen, Tag, Text } from "@/shared/ui";
+import { formatKg, formatMoney, useJourney } from "@/features/journey";
 
-function parseWeight(v: string): number {
-  return Number(v.replace(",", ".").trim());
+const WEEK_MS = 7 * 86_400_000;
+const DURATIONS = [4, 8, 12];
+
+function Outcome({ ok, text }: { ok: boolean; text: string }) {
+  return (
+    <View className="flex-row items-start gap-3">
+      <View
+        className={`h-7 w-7 items-center justify-center ${ok ? "bg-arena-green" : "bg-surface-elevated"}`}
+      >
+        <Text className={`font-mono-bold text-base ${ok ? "text-arena-green-ink" : "text-muted"}`}>
+          {ok ? "✓" : "✕"}
+        </Text>
+      </View>
+      <Text variant="body" className="flex-1">
+        {text}
+      </Text>
+    </View>
+  );
 }
 
-export default function NewBetScreen() {
+export default function NewBet() {
+  const router = useRouter();
   const { t } = useTranslation();
-  const place = usePlaceBet();
-  // Chave de idempotência fixa por tela (reusada em retries).
-  const [idempotencyKey] = useState(() => uuidV4());
-  const [targetWeight, setTargetWeight] = useState("");
-  const [startWeight, setStartWeight] = useState("");
-  const [stake, setStake] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const s = useJourney();
 
-  // Aposta criada → tela de pagamento (BR Code).
-  if (place.data) {
-    const bet = place.data;
-    return (
-      <Screen>
-        <View className="flex-1 gap-8 py-6">
-          <View className="gap-2">
-            <Text variant="label" className="text-arena-magenta">
-              Pix
-            </Text>
-            <Text variant="title">{t("bet.pay.title")}</Text>
-            <Text variant="body" className="text-muted">
-              {t("bet.pay.body")}
-            </Text>
-          </View>
+  const baseline = s.baselineWeightKg ?? 0;
+  const [target, setTarget] = useState("");
+  const [weeks, setWeeks] = useState(8);
+  const [stakeStr, setStakeStr] = useState("");
 
-          <View className="gap-2">
-            <Text variant="label">{t("bet.pay.label")}</Text>
-            <View className="border-2 border-border bg-arena-ink px-4 py-3">
-              <Text variant="mono" selectable className="text-xs">
-                {bet.brcode}
-              </Text>
-            </View>
-            <Text variant="caption" className="text-muted">
-              {t("bet.pay.expires", {
-                date: new Date(bet.chargeExpiresAt).toLocaleString("pt-BR"),
-              })}
-            </Text>
-          </View>
+  const targetKg = parseFloat(target.replace(",", "."));
+  const stake = parseFloat(stakeStr.replace(",", "."));
+  const lossKg = baseline - targetKg;
+  const targetValid = Number.isFinite(targetKg) && targetKg > 30 && lossKg >= baseline * 0.03;
+  const stakeValid = Number.isFinite(stake) && stake >= 20;
+  const valid = targetValid && stakeValid;
 
-          <View className="mt-auto gap-3">
-            <Link href="/" asChild>
-              <Button label={t("common.backHome")} />
-            </Link>
-          </View>
-        </View>
-      </Screen>
-    );
-  }
-
-  async function onSubmit(): Promise<void> {
-    setError(null);
-    const target = parseWeight(targetWeight);
-    const start = startWeight.trim() ? parseWeight(startWeight) : null;
-    const stakeAmount = stake.replace(",", ".").trim();
-
-    if (!Number.isFinite(target) || target <= 0) {
-      setError(t("bet.error.target"));
-      return;
-    }
-    if (start !== null && (!Number.isFinite(start) || start <= target)) {
-      setError(t("bet.error.start"));
-      return;
-    }
-    if (stakeAmount.length === 0 || !Number.isFinite(Number(stakeAmount))) {
-      setError(t("bet.error.stake"));
-      return;
-    }
-    try {
-      await place.mutateAsync({
-        idempotencyKey,
-        body: { targetWeightKg: target, startWeightKg: start, stakeAmount, currency: "BRL" },
-      });
-    } catch (e) {
-      setError(apiErrorMessage(e) ?? t("bet.error.create"));
-    }
+  function submit() {
+    if (!valid) return;
+    s.createBet({
+      startWeightKg: baseline,
+      targetWeightKg: targetKg,
+      stakeAmount: stake,
+      deadlineAt: Date.now() + weeks * WEEK_MS,
+    });
+    router.replace("/"); // a home decide o próximo passo: conta (se faltar) → Pix
   }
 
   return (
     <Screen>
-      <View className="flex-1 gap-8 py-6">
-        <View className="gap-2">
-          <Text variant="label" className="text-arena-magenta">
-            Charya
-          </Text>
-          <Text variant="title">{t("bet.create.title")}</Text>
-          <Text variant="body" className="text-muted">
-            {t("bet.create.body")}
-          </Text>
-        </View>
-
-        <View className="gap-4">
-          <Input
-            label={t("bet.field.target")}
-            value={targetWeight}
-            onChangeText={setTargetWeight}
-            placeholder={t("bet.field.targetPlaceholder")}
-            keyboardType="decimal-pad"
-          />
-          <Input
-            label={t("bet.field.start")}
-            value={startWeight}
-            onChangeText={setStartWeight}
-            placeholder={t("bet.field.startPlaceholder")}
-            keyboardType="decimal-pad"
-          />
-          <Input
-            label={t("bet.field.stake")}
-            value={stake}
-            onChangeText={setStake}
-            placeholder={t("bet.field.stakePlaceholder")}
-            keyboardType="decimal-pad"
-          />
-          {error != null ? (
-            <Text variant="caption" className="text-danger">
-              {error}
+      <View className="flex-1 py-4">
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 20 }}>
+          <View className="gap-2">
+            <Tag label={t("journey.bilhete.eyebrow")} />
+            <Text variant="title">{t("journey.bilhete.title")}</Text>
+            <Text className="font-mono text-sm text-muted">
+              {t("journey.bilhete.anchored", { weight: formatKg(baseline) })}
             </Text>
-          ) : null}
-        </View>
+          </View>
 
-        <View className="mt-auto gap-3">
-          <Button
-            label={place.isPending ? t("bet.create.submitting") : t("bet.create.submit")}
-            onPress={() => void onSubmit()}
-            disabled={place.isPending}
+          <Input
+            label={t("journey.bilhete.targetLabel")}
+            value={target}
+            onChangeText={setTarget}
+            keyboardType="decimal-pad"
+            placeholder={formatKg(Math.max(30, baseline - 6))}
           />
-          <Button label={t("common.cancel")} tone="ghost" onPress={() => router.back()} />
+
+          <View className="gap-2">
+            <Text variant="label">{t("journey.bilhete.durationLabel")}</Text>
+            <View className="flex-row gap-2">
+              {DURATIONS.map((w) => (
+                <PressableScale key={w} onPress={() => setWeeks(w)}>
+                  <View
+                    className={`px-4 py-2.5 ${
+                      weeks === w ? "bg-arena-magenta" : "border-2 border-border bg-arena-navy-soft"
+                    }`}
+                  >
+                    <Text
+                      className={`font-mono-bold text-sm ${
+                        weeks === w ? "text-on-primary" : "text-foreground"
+                      }`}
+                    >
+                      {t("journey.bilhete.weeks", { n: w })}
+                    </Text>
+                  </View>
+                </PressableScale>
+              ))}
+            </View>
+          </View>
+
+          <Input
+            label={t("journey.bilhete.stakeLabel")}
+            value={stakeStr}
+            onChangeText={setStakeStr}
+            keyboardType="decimal-pad"
+            placeholder="200"
+          />
+          <Text variant="caption" className="text-muted">
+            {t("journey.bilhete.stakeHint")}
+          </Text>
+
+          <Card>
+            <View className="gap-3">
+              <Outcome ok text={t("journey.bilhete.hit")} />
+              <Outcome ok={false} text={t("journey.bilhete.miss")} />
+            </View>
+          </Card>
+        </ScrollView>
+
+        <View className="pt-3">
+          <Button
+            label={t("journey.bilhete.cta", { money: formatMoney(stakeValid ? stake : 0) })}
+            onPress={submit}
+            disabled={!valid}
+          />
         </View>
       </View>
     </Screen>

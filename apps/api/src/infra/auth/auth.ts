@@ -8,16 +8,23 @@
  * exposto aqui é montado como rota Express em `auth.module.ts` e resolve a
  * sessão que popula `req.user` (ver guards em shared/).
  */
+import { Logger } from "@nestjs/common";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { bearer } from "better-auth/plugins";
 
 import type { Database } from "@/infra/db/client.js";
 import { authSchema } from "@/infra/db/auth-schema.js";
+
+/** Logger das mensagens do Better Auth (ex.: link de reset de senha em dev). */
+const authLogger = new Logger("BetterAuth");
 
 export interface BuildAuthOptions {
   readonly db: Database;
   readonly secret: string;
   readonly baseUrl: string;
+  /** Origem do console admin — entra nos `trustedOrigins` (CSRF) por ser cross-origin no dev. */
+  readonly adminOrigin: string;
   /** Em produção forçamos cookies `Secure` e CSRF estrito. */
   readonly isProduction: boolean;
 }
@@ -32,7 +39,12 @@ export function buildAuth(opts: BuildAuthOptions) {
     // lista. Por padrão o Better Auth já confia no `baseURL`; mantemos
     // explícito para deixar claro que a checagem está LIGADA (não desabilitamos
     // `advanced.disableCSRFCheck`, que fica no default `false`).
-    trustedOrigins: [opts.baseUrl],
+    trustedOrigins: [opts.baseUrl, opts.adminOrigin],
+    // Plugin BEARER: além do cookie (admin/web), aceita `Authorization: Bearer
+    // <token>` e devolve o token de sessão no header `set-auth-token`. É o que o
+    // app MOBILE usa — guarda o token no SecureStore e injeta nas requests do
+    // contrato (o middleware de sessão já lê o header via fromNodeHeaders).
+    plugins: [bearer()],
     database: drizzleAdapter(opts.db, {
       provider: "pg",
       // Tabelas próprias do Better Auth (user/session/account/verification),
@@ -41,6 +53,14 @@ export function buildAuth(opts: BuildAuthOptions) {
     }),
     emailAndPassword: {
       enabled: true,
+      // Recuperação de senha: o Better Auth gera o link (token de uso único) e
+      // chama este callback para entregá-lo. TODO(infra): plugar um provedor de
+      // email (Resend/SES/SMTP) em produção. Em dev, logamos o link para o fluxo
+      // ser testável ponta a ponta (o app abre via deep link `charya://`).
+      sendResetPassword: ({ user, url }) => {
+        authLogger.warn(`Reset de senha para ${user.email}: ${url}`);
+        return Promise.resolve();
+      },
     },
     user: {
       // RBAC mínimo (@charya/schemas `Role`): o papel vive na sessão do

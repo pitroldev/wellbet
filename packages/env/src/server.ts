@@ -41,6 +41,11 @@ export const serverEnv = createEnv({
     // --- Better Auth (self-hosted; pinar core ≥ 1.6.14, ver §2 da Arquitetura) ---
     BETTER_AUTH_SECRET: z.string().min(32, "BETTER_AUTH_SECRET deve ter ao menos 32 caracteres"),
     BETTER_AUTH_URL: z.url(),
+    // Origem do console admin (Next.js). No dev roda em :3001 (a api ocupa :3000),
+    // logo é cross-origin: usada para (1) liberar CORS com credenciais na api e
+    // (2) entrar nos `trustedOrigins` do Better Auth (checagem de Origin/CSRF no
+    // login). Em prod, a origem pública do admin.
+    ADMIN_ORIGIN: z.url().default("http://localhost:3001"),
 
     // --- Logging ---
     LOG_LEVEL: z

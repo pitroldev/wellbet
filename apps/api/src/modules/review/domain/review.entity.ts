@@ -8,9 +8,10 @@
 export type Verdict = "approved" | "pending" | "rejected";
 
 /**
- * Itens do checklist do revisor (doc de Validação §5). Fonte única (tupla
- * `const`) — o tipo é DERIVADO dela, então `z.enum(CHECKLIST_FLAGS)` preserva os
- * literais sem cast forçado.
+ * Conjunto SEMENTE de critérios (doc de Validação §5). Antes era a fonte fixa do
+ * checklist; hoje os critérios são CONFIGURÁVEIS (tabela `approval_criteria`),
+ * então esta tupla serve só de referência/seed. As keys do checklist e do
+ * `failedChecks` são agora `string` (slug do critério), não mais este enum.
  */
 export const CHECKLIST_FLAGS = [
   "freshness", // frescor / anti-replay (código + gesto)
@@ -28,8 +29,11 @@ export type ChecklistFlag = (typeof CHECKLIST_FLAGS)[number];
 /** Resultado tristate de um item do checklist (dataset granular da Fase 2). */
 export type ChecklistResult = "ok" | "fail" | "na";
 
-/** Mapa item→resultado tristate (§9): rótulos granulares por item. */
-export type Checklist = Partial<Record<ChecklistFlag, ChecklistResult>>;
+/**
+ * Mapa critério→resultado tristate (§9). A chave é o slug do critério
+ * (configurável), por isso `string` e não mais o enum `ChecklistFlag`.
+ */
+export type Checklist = Record<string, ChecklistResult>;
 
 export interface ReviewProps {
   readonly id: string;
@@ -37,7 +41,8 @@ export interface ReviewProps {
   readonly reviewerId?: string | null;
   readonly verdict?: Verdict | null;
   readonly reason?: string | null;
-  readonly failedChecks?: ChecklistFlag[] | null;
+  /** Slugs dos critérios que falharam (dataset Fase 2). */
+  readonly failedChecks?: string[] | null;
   /** Resultado item a item (ok/fail/na) — dataset granular da Fase 2. */
   readonly checklist?: Checklist | null;
   readonly decidedAt?: Date | null;
@@ -72,7 +77,7 @@ export class Review {
     reviewerId: string;
     verdict: Verdict;
     reason?: string | null;
-    failedChecks?: ChecklistFlag[] | null;
+    failedChecks?: string[] | null;
     checklist?: Checklist | null;
     now?: Date;
   }): void {

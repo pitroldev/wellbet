@@ -17,7 +17,6 @@ import {
 } from "@charya/contracts";
 import type {
   CaptureKind,
-  ChecklistItemKey,
   ItemResult,
   ReviewSession,
   Verdict,
@@ -53,9 +52,34 @@ const API_VERDICT: Record<Verdict, SubmitVerdictDto["verdict"]> = {
   REPROVADO: "rejected",
 };
 
-// Chaves do checklist do console → flags da api (único descompasso: scale_zeroed).
-const API_FLAG: Partial<Record<ChecklistItemKey, string>> = { scale_zeroed: "scale_zero" };
-const toFlag = (key: ChecklistItemKey): string => API_FLAG[key] ?? key;
+// Reverso: veredito gravado (api) → rótulo do console (modo somente-leitura).
+const CONSOLE_VERDICT: Record<ReviewDetailDto["verdict"] & string, Verdict> = {
+  approved: "APROVADO",
+  pending: "PENDENTE",
+  rejected: "REPROVADO",
+};
+
+/** Erro tipado de gravação de veredito (distingue 409 "já decidida"). */
+export class VerdictError extends Error {
+  constructor(
+    message: string,
+    readonly alreadyDecided: boolean,
+  ) {
+    super(message);
+    this.name = "VerdictError";
+  }
+}
+
+function isAlreadyDecided(err: unknown): boolean {
+  if (err && typeof err === "object") {
+    const e = err as Record<string, unknown>;
+    if (e.code === "REVIEW_ALREADY_DECIDED") return true;
+    if (e.statusCode === 409) return true;
+    const details = e.details as Record<string, unknown> | undefined;
+    if (details && details.statusCode === 409) return true;
+  }
+  return false;
+}
 
 function toReviewSession(d: ReviewDetailDto): ReviewSession {
   return {
@@ -64,27 +88,37 @@ function toReviewSession(d: ReviewDetailDto): ReviewSession {
     userName: d.userName ?? "—",
     capture: CAPTURE_BY_KIND[d.kind],
     weightKg: d.weightKg,
-    previousWeightKg: null,
-    weeks: 0,
+    previousWeightKg: d.previousWeightKg,
+    weeks: d.weeks,
+    lossPerWeekKg: d.lossPerWeekKg,
     sanityPassed: d.status !== "blocked",
     videos: { T0: d.comparison.baseline, T1: d.comparison.mid, T2: d.comparison.final },
-    expectedCode: d.expectedCode
-      ? `${d.expectedCode.word} ${String(d.expectedCode.number)} (${d.expectedCode.gesture})`
-      : "—",
+    expectedCode: d.expectedCode,
     submittedAt: d.capturedAt,
+    decided:
+      d.verdict != null
+        ? {
+            verdict: CONSOLE_VERDICT[d.verdict],
+            reason: d.reason,
+            failedItems: d.failedChecks ?? [],
+            items: (d.checklist ?? {}) as Record<string, ItemResult>,
+          }
+        : null,
   };
 }
 
 function toSubmitVerdictDto(sub: VerdictSubmission): SubmitVerdictDto {
-  const checklist: Record<string, "ok" | "fail" | "na"> = {};
-  for (const [key, result] of Object.entries(sub.items) as [ChecklistItemKey, ItemResult][]) {
-    checklist[toFlag(key)] = result;
+  // As keys do checklist JÁ são os slugs dos critérios (config global) — vão
+  // direto para a api, sem mapeamento.
+  const checklist: Record<string, ItemResult> = {};
+  for (const [key, result] of Object.entries(sub.items)) {
+    checklist[key] = result;
   }
   return {
     weighinId: sub.sessionId,
     verdict: API_VERDICT[sub.verdict],
     reason: sub.reason,
-    failedChecks: sub.failedItems.map(toFlag) as SubmitVerdictDto["failedChecks"],
+    failedChecks: sub.failedItems,
     checklist,
   };
 }
@@ -95,9 +129,13 @@ export function useReviewQueue(): UseQueryResult<ReviewQueueEntryDto[]> {
   return useQuery({
     queryKey: reviewKeys.queue(),
     queryFn: async () => {
-      const { data } = await reviewControllerQueue({ throwOnError: true });
+      // limit alto: a fila do revisor é triada inteira; paginação é client-side.
+      const { data } = await reviewControllerQueue({ query: { limit: 200 }, throwOnError: true });
       return data;
     },
+    // Fila viva: revalida sozinha e ao voltar o foco (não decidir sobre dado velho).
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -119,7 +157,17 @@ export function useSubmitVerdict(): UseMutationResult<void, Error, VerdictSubmis
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (submission: VerdictSubmission) => {
-      await reviewControllerVerdict({ body: toSubmitVerdictDto(submission), throwOnError: true });
+      try {
+        await reviewControllerVerdict({ body: toSubmitVerdictDto(submission), throwOnError: true });
+      } catch (err) {
+        const already = isAlreadyDecided(err);
+        throw new VerdictError(
+          already
+            ? "Esta pesagem já recebeu veredito por outro revisor."
+            : "Falha ao gravar o veredito. Tente novamente.",
+          already,
+        );
+      }
     },
     onSuccess: (_data, submission) => {
       // Recarrega a fila e a sessão revisada.

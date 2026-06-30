@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { JSX, ReactNode } from "react";
 import { Providers } from "@/shared/providers";
+import { themeNoFlashScript } from "@/shared/theme-script";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,6 +14,8 @@ export default function RootLayout({ children }: { children: ReactNode }): JSX.E
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body className="min-h-screen antialiased">
+        {/* Aplica o tema salvo antes do paint (evita flash de tema errado). */}
+        <script dangerouslySetInnerHTML={{ __html: themeNoFlashScript }} />
         <Providers>{children}</Providers>
       </body>
     </html>
