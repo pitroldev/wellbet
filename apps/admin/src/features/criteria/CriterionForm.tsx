@@ -4,7 +4,7 @@ import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button, Input, Textarea } from "@/shared/ui";
+import { Button, Input, Select, Textarea } from "@/shared/ui";
 
 /**
  * Formulário de critério (criar/editar). A `key` (slug do dataset) só é editável
@@ -196,19 +196,18 @@ export function CriterionForm({
             name="appliesWhen"
             control={control}
             render={({ field }) => (
-              <select
+              <Select
                 id="crit-applies"
                 value={field.value}
                 onChange={field.onChange}
                 onBlur={field.onBlur}
-                className="flex h-9 w-full rounded-md border border-[var(--color-input)] bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ring)]"
               >
                 {APPLIES_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>
                     {o.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             )}
           />
           <p className="text-[11px] text-[var(--color-muted-foreground)]">

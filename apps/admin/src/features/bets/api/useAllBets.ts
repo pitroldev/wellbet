@@ -19,5 +19,9 @@ export function useAllBets(status?: AdminBetRowDto["status"]): UseQueryResult<Ad
       });
       return data;
     },
+    // Settlement é assíncrono (open→won/lost, settling→…): revalida sozinho e ao
+    // voltar o foco, para o operador não monitorar dado velho.
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
   });
 }

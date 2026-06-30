@@ -16,6 +16,7 @@ import {
 import { type ReviewQueueEntryDto } from "@charya/contracts";
 import { RotateCw } from "lucide-react";
 import { reviewKeys, useReviewQueue } from "@/shared/api/review";
+import { AGE_CLASS, relativeAge } from "@/shared/lib/relative-age";
 import { Badge, Button, Input } from "@/shared/ui";
 import { cn } from "@/lib/utils";
 
@@ -23,23 +24,6 @@ const KIND_LABEL: Record<ReviewQueueEntryDto["kind"], string> = {
   baseline: "Inicial (T0)",
   mid: "Meio (T1)",
   final: "Final (T2)",
-};
-
-/** Idade relativa legível + nível de urgência (cor) para triagem por SLA. */
-function relativeAge(iso: string): { label: string; level: "fresh" | "warn" | "late" } {
-  const diffMin = Math.floor((Date.now() - new Date(iso).getTime()) / 60_000);
-  if (diffMin < 1) return { label: "agora", level: "fresh" };
-  if (diffMin < 60) return { label: `há ${String(diffMin)} min`, level: "fresh" };
-  const h = Math.floor(diffMin / 60);
-  if (h < 24) return { label: `há ${String(h)} h`, level: h >= 12 ? "warn" : "fresh" };
-  const d = Math.floor(h / 24);
-  return { label: `há ${String(d)} d`, level: "late" };
-}
-
-const AGE_CLASS: Record<"fresh" | "warn" | "late", string> = {
-  fresh: "text-[var(--color-muted-foreground)]",
-  warn: "text-[var(--color-verdict-pending)] font-medium",
-  late: "text-[var(--color-verdict-rejected)] font-medium",
 };
 
 const columns: ColumnDef<ReviewQueueEntryDto>[] = [
@@ -252,24 +236,29 @@ export function QueueTable(): React.JSX.Element {
         </table>
       </div>
 
-      <div className="flex items-center justify-end gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Anterior
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Próxima
-        </Button>
-      </div>
+      {table.getPageCount() > 1 ? (
+        <div className="flex items-center justify-end gap-2">
+          <span className="mr-auto text-xs text-[var(--color-muted-foreground)] tabular-nums">
+            Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Anterior
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Próxima
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }
