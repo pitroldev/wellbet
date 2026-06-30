@@ -81,7 +81,6 @@ export type ItemResult = "ok" | "fail" | "na";
 
 /** Fatos de aplicabilidade (substituem o N/A) — vêm do servidor (review-detail). */
 export interface ReviewContext {
-  hasCode: boolean;
   hasComparison: boolean;
   hasPreviousWeight: boolean;
 }

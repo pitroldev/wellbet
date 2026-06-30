@@ -7,9 +7,9 @@
  * - I18nextProvider (i18n pt/en — instância inicializada no import de @/shared/i18n).
  * - QueryClientProvider (TanStack Query — estado de servidor).
  *
- * Tipografia brutal: as fontes (Anton/Plus Jakarta/Space Mono) são carregadas em
- * runtime com `useFonts`; seguramos o render num fundo escuro até carregarem
- * para evitar flash da fonte do sistema.
+ * Tipografia Midnight Aurora: as fontes (Outfit/Plus Jakarta/Geist Mono) são
+ * carregadas em runtime com `useFonts`; seguramos o render num fundo escuro até
+ * carregarem para evitar flash da fonte do sistema.
  *
  * `ReducedMotionConfig` no nível raiz respeita a preferência do sistema para
  * todas as animações declarativas (acessibilidade, §3).
@@ -54,7 +54,7 @@ export default function RootLayout() {
   }, []);
 
   // Gate curto: espera as fontes (ou um erro de carga) antes do primeiro render
-  // para não piscar do system font para Archivo/Jakarta. Fundo navy = sem flash.
+  // para não piscar do system font para Outfit/Jakarta. Fundo navy = sem flash.
   if (!fontsLoaded && fontError == null) {
     return <View style={{ flex: 1, backgroundColor: arena.navy }} />;
   }

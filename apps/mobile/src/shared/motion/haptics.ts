@@ -29,6 +29,16 @@ export function hapticSuccess(): void {
   scheduleOnRN(notifySuccess);
 }
 
+/**
+ * Sucesso na THREAD JS — chame de handlers de evento (NÃO worklet) ao concluir um
+ * marco: aposta no ar, pesagem registrada, check-in, lição concluída. É o retorno
+ * tátil de CONQUISTA (à la Duolingo) — use só em momentos de conclusão, não em todo
+ * toque (o PressableScale já dá o tick leve de toque).
+ */
+export function hapticDone(): void {
+  void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+}
+
 // Funções "na thread JS" chamadas a partir do worklet. expo-haptics é async;
 // não precisamos aguardar dentro do worklet.
 function impactLight(): void {

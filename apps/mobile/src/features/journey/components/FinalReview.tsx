@@ -6,12 +6,13 @@
 import { useEffect } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
+import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Tag, Text } from "@/shared/ui";
 import { pulse, useMotionDuration } from "@/shared/motion";
-import { durations } from "@/theme/tokens";
+import { arena, arenaAlpha, durations } from "@/theme/tokens";
 
 import { useJourney } from "../model/store";
 
@@ -35,18 +36,22 @@ export function FinalReview() {
   }, [resolveFinal, router]);
 
   return (
-    <View className="flex-1 items-center justify-center gap-6">
+    <View className="flex-1 items-center justify-center gap-7">
       <Animated.View
-        className="h-16 w-16 bg-arena-magenta"
-        style={pulseDur > 0 ? pulse(pulseDur) : undefined}
-      />
-      <Tag label="Em revisão" tone="ink" />
-      <Text variant="title" className="text-center">
-        {t("journey.home.reviewTitle")}
-      </Text>
-      <Text variant="body" className="text-center text-muted">
-        {t("journey.home.reviewBody")}
-      </Text>
+        style={[{ backgroundColor: arenaAlpha.magentaWash }, pulseDur > 0 ? pulse(pulseDur) : undefined]}
+        className="h-28 w-28 items-center justify-center rounded-full border border-arena-hairline-strong"
+      >
+        <Feather name="eye" size={40} color={arena.magenta} />
+      </Animated.View>
+      <Tag label="Em revisão" tone="magenta" />
+      <View className="gap-3 px-4">
+        <Text variant="title" className="text-center">
+          {t("journey.home.reviewTitle")}
+        </Text>
+        <Text variant="body" className="text-center text-muted">
+          {t("journey.home.reviewBody")}
+        </Text>
+      </View>
     </View>
   );
 }

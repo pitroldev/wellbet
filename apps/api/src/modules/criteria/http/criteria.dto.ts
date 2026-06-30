@@ -18,7 +18,7 @@ const helpText = z.string().trim().max(2000).nullish();
 const sortOrder = z.number().int().min(0).max(10_000);
 
 /** Condição de aparição do critério (substitui o N/A). */
-const appliesWhen = z.enum(["always", "has_code", "has_comparison", "has_previous_weight"]);
+const appliesWhen = z.enum(["always", "has_comparison", "has_previous_weight"]);
 
 export const ListCriteriaQuerySchema = z.object({
   /** `true` → só os habilitados (usado pelo checklist da revisão). */

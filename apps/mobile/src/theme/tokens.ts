@@ -14,7 +14,7 @@ import { colors, spacing, radii, durationsMs, springs, easing, tokens } from "@c
 import { arena } from "./arena";
 
 export { colors, spacing, radii, durationsMs, springs, easing, tokens };
-export { arena, arenaAlpha, gradients, glow } from "./arena";
+export { arena, arenaAlpha, gradients, glow, radius } from "./arena";
 export { fontFamilies, fontMap } from "./fonts";
 
 /**

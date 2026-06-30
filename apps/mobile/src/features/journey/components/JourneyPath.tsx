@@ -1,13 +1,14 @@
 /**
  * O caminho — mecânica do DUOLINGO. 2 nós: Início → Final. O trilho ENCHE
- * (AnimatedBar) com o progresso e o nó final PULSA quando a janela abre.
+ * (AnimatedBar arredondado) com o progresso e o nó final PULSA quando a janela
+ * abre. Usado como rail secundário onde o anel não cabe.
  */
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 
 import { Text } from "@/shared/ui";
 import { pulse, useMotionDuration } from "@/shared/motion";
-import { durations } from "@/theme/tokens";
+import { arena, arenaAlpha, durations, gradients } from "@/theme/tokens";
 
 import { AnimatedBar } from "./AnimatedBar";
 
@@ -34,35 +35,33 @@ export function JourneyPath({
 
   return (
     <View className="py-1">
-      <View className="h-4 flex-row items-center">
-        {/* nó de partida — cumprido */}
-        <View className="h-3 w-3 bg-arena-green" />
-        {/* trilho que enche */}
-        <View className="mx-1 flex-1">
-          <AnimatedBar
-            progress={progress}
-            trackClassName="h-1 bg-border"
-            fillClassName="h-1 bg-arena-magenta"
-          />
+      <View className="h-5 flex-row items-center">
+        <View style={{ backgroundColor: arena.green }} className="h-3.5 w-3.5 rounded-full" />
+        <View className="mx-2 flex-1">
+          <AnimatedBar progress={progress} height={6} colors={gradients.gymbet} />
         </View>
-        {/* nó final — pulsa na janela */}
         <Animated.View
+          style={[
+            windowOpen
+              ? { backgroundColor: arena.magenta }
+              : { backgroundColor: arenaAlpha.magentaWash, borderColor: arena.magenta },
+            windowOpen && pulseDur > 0 ? pulse(pulseDur) : undefined,
+          ]}
           className={
             windowOpen
-              ? "h-4 w-4 bg-arena-magenta"
-              : "h-3 w-3 border-2 border-arena-magenta bg-background"
+              ? "h-4 w-4 rounded-full"
+              : "h-3.5 w-3.5 rounded-full border border-arena-hairline-strong"
           }
-          style={windowOpen && pulseDur > 0 ? pulse(pulseDur) : undefined}
         />
       </View>
       <View className="mt-2 flex-row justify-between">
         <View>
           <Text variant="label">{startLabel}</Text>
-          <Text className="font-mono text-xs text-muted">{startSub}</Text>
+          <Text className="font-mono text-xs text-muted-foreground">{startSub}</Text>
         </View>
         <View className="items-end">
           <Text variant="label">{endLabel}</Text>
-          <Text className="font-mono text-xs text-muted">{endSub}</Text>
+          <Text className="font-mono text-xs text-muted-foreground">{endSub}</Text>
         </View>
       </View>
     </View>

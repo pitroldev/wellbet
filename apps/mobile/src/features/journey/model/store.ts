@@ -4,22 +4,30 @@
  * Modela o estágio da jornada e dirige a home: cada estágio expõe exatamente um
  * próximo passo (Duolingo). A API real entra como costura nas actions; aqui o
  * estado é local-autoritativo, então o app fica 100% navegável sem backend.
+ *
+ * O ONBOARDING agora é um funil linear (welcome→quiz→motivação→medidas→meta→odds→
+ * conta→vídeo) que vai ACUMULANDO no store (quiz, medidas, betDraft) e fecha tudo
+ * em `completeOnboarding()` (cria a bet + marca baseline revisado + onboardingDone).
  */
 import { create } from "zustand";
 
 import { kv, StorageKeys } from "@/shared/lib/storage";
 
 import { hitTarget } from "./derive";
-import type { BetPhase, CheckIn, JourneyBet, JourneyStage, QuizAnswers } from "./types";
+import type { BetDraft, BetPhase, CheckIn, JourneyBet, JourneyStage, QuizAnswers } from "./types";
 
 /** Quanto antes do prazo a janela da pesagem final abre (24h). */
 const WINDOW_LEAD_MS = 24 * 60 * 60 * 1000;
+const WEEK_MS = 7 * 86_400_000;
 
 interface Persisted {
   hasAccount: boolean;
   name: string | null;
   onboardingDone: boolean;
   quiz: QuizAnswers | null;
+  heightCm: number | null;
+  /** Rascunho da aposta coletado no onboarding (meta+prazo+valor). */
+  betDraft: BetDraft | null;
   baselineWeightKg: number | null;
   baselineReviewedAt: number | null;
   bet: JourneyBet | null;
@@ -41,7 +49,14 @@ interface JourneyActions {
   createAccount(name: string): void;
   /** Sincroniza o flag de conta com a sessão real (login/logout). */
   setHasAccount(v: boolean): void;
-  finishOnboarding(quiz: QuizAnswers): void;
+  /** Onboarding passo 2 — guarda as respostas do quiz (NÃO finaliza o onboarding). */
+  setQuiz(quiz: QuizAnswers): void;
+  /** Onboarding passo 4 — peso + altura (baseline ainda NÃO revisado: falta o vídeo). */
+  setMeasures(weightKg: number, heightCm: number): void;
+  /** Onboarding passos 5–6 — meta, prazo e valor da aposta (rascunho). */
+  setBetDraft(draft: BetDraft): void;
+  /** Onboarding passo 10 — fecha o funil: cria a bet, marca baseline revisado, conclui. */
+  completeOnboarding(): void;
   /** Registra o baseline e, no MVP local, aprova na hora (sem revisor real). */
   setBaseline(weightKg: number): void;
   createBet(input: NewBetInput): void;
@@ -67,6 +82,8 @@ const initial: Persisted = {
   name: null,
   onboardingDone: false,
   quiz: null,
+  heightCm: null,
+  betDraft: null,
   baselineWeightKg: null,
   baselineReviewedAt: null,
   bet: null,
@@ -90,6 +107,8 @@ export const useJourney = create<JourneyState>((set, get) => {
       name: s.name,
       onboardingDone: s.onboardingDone,
       quiz: s.quiz,
+      heightCm: s.heightCm,
+      betDraft: s.betDraft,
       baselineWeightKg: s.baselineWeightKg,
       baselineReviewedAt: s.baselineReviewedAt,
       bet: s.bet,
@@ -107,7 +126,25 @@ export const useJourney = create<JourneyState>((set, get) => {
 
     createAccount: (name) => commit({ hasAccount: true, name }),
     setHasAccount: (v) => commit({ hasAccount: v }),
-    finishOnboarding: (quiz) => commit({ onboardingDone: true, quiz }),
+    setQuiz: (quiz) => commit({ quiz }),
+    setMeasures: (weightKg, heightCm) => commit({ baselineWeightKg: weightKg, heightCm }),
+    setBetDraft: (draft) => commit({ betDraft: draft }),
+    completeOnboarding: () => {
+      const { baselineWeightKg, betDraft } = get();
+      if (baselineWeightKg == null || betDraft == null) return;
+      commit({
+        baselineReviewedAt: Date.now(),
+        bet: {
+          createdAt: Date.now(),
+          startWeightKg: baselineWeightKg,
+          targetWeightKg: betDraft.targetWeightKg,
+          stakeAmount: betDraft.stakeAmount,
+          deadlineAt: Date.now() + betDraft.weeks * WEEK_MS,
+        },
+        betPhase: "payment",
+        onboardingDone: true,
+      });
+    },
     setBaseline: (weightKg) =>
       commit({ baselineWeightKg: weightKg, baselineReviewedAt: Date.now() }),
     createBet: (input) =>
@@ -121,7 +158,7 @@ export const useJourney = create<JourneyState>((set, get) => {
     },
     settle: (won) => commit({ betPhase: won ? "won" : "lost" }),
     newRound: () =>
-      commit({ bet: null, betPhase: "none", pendingFinalKg: null, checkIns: [] }),
+      commit({ bet: null, betPhase: "none", pendingFinalKg: null, checkIns: [], betDraft: null }),
     addCheckIn: (weightKg) =>
       commit({ checkIns: [...get().checkIns, { at: Date.now(), weightKg }] }),
     markLessonSeen: (id) =>

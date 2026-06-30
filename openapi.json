@@ -1,0 +1,1591 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/health": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Liveness/readiness da API.",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/api/me": {
+      "get": {
+        "operationId": "IdentityController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Perfil do usuário autenticado.",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/me/profile": {
+      "put": {
+        "operationId": "IdentityController_setProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Define CPF/CNPJ e chave Pix (necessários para apostar e sacar).",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/challenges": {
+      "post": {
+        "operationId": "ChallengeController_issue",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IssueChallengeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChallengeResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Emite um código dinâmico para a captura.",
+        "tags": [
+          "challenge"
+        ]
+      }
+    },
+    "/api/weighins": {
+      "get": {
+        "operationId": "WeighInController_list",
+        "parameters": [
+          {
+            "name": "kind",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "baseline",
+                "mid",
+                "final"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeighInSummaryDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Histórico de pesagens do usuário autenticado.",
+        "tags": [
+          "weighin"
+        ]
+      },
+      "post": {
+        "operationId": "WeighInController_submit",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitWeighInDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitWeighInResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Submete a pesagem capturada.",
+        "tags": [
+          "weighin"
+        ]
+      }
+    },
+    "/api/weighins/start": {
+      "post": {
+        "operationId": "WeighInController_start",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartWeighInDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartWeighInResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Abre uma sessão de captura (código dinâmico + URL de upload).",
+        "tags": [
+          "weighin"
+        ]
+      }
+    },
+    "/api/reviews/queue": {
+      "get": {
+        "operationId": "ReviewController_queue",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 9007199254740991,
+              "default": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReviewQueueEntryDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Fila de revisão humana (pesagens in_review).",
+        "tags": [
+          "review"
+        ]
+      }
+    },
+    "/api/reviews/{weighinId}": {
+      "get": {
+        "operationId": "ReviewController_detail",
+        "parameters": [
+          {
+            "name": "weighinId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Detalhe de uma pesagem para revisão.",
+        "tags": [
+          "review"
+        ]
+      }
+    },
+    "/api/reviews/verdict": {
+      "post": {
+        "operationId": "ReviewController_verdict",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitVerdictDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerdictResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Registra o veredito da revisão humana.",
+        "tags": [
+          "review"
+        ]
+      }
+    },
+    "/api/criteria": {
+      "get": {
+        "operationId": "CriteriaController_list",
+        "parameters": [
+          {
+            "name": "enabledOnly",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CriterionResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Lista os critérios de aprovação.",
+        "tags": [
+          "criteria"
+        ]
+      },
+      "post": {
+        "operationId": "CriteriaController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCriterionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CriterionResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Cria um critério de aprovação.",
+        "tags": [
+          "criteria"
+        ]
+      }
+    },
+    "/api/criteria/{id}": {
+      "patch": {
+        "operationId": "CriteriaController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCriterionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CriterionResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Edita ou habilita/desabilita um critério.",
+        "tags": [
+          "criteria"
+        ]
+      }
+    },
+    "/api/bets": {
+      "get": {
+        "operationId": "BetController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BetSummaryDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Lista as apostas do usuário autenticado.",
+        "tags": [
+          "bet"
+        ]
+      },
+      "post": {
+        "operationId": "BetController_place",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Chave de idempotência (escrita financeira).",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceBetDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BetResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Cria uma aposta (idempotente).",
+        "tags": [
+          "bet"
+        ]
+      }
+    },
+    "/api/bets/all": {
+      "get": {
+        "operationId": "BetController_listAll",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending_payment",
+                "open",
+                "settling",
+                "won",
+                "lost",
+                "voided"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 9007199254740991,
+              "default": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminBetRowDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Lista TODAS as apostas (ops). Restrito a admin/reviewer.",
+        "tags": [
+          "bet"
+        ]
+      }
+    },
+    "/api/bets/{id}": {
+      "get": {
+        "operationId": "BetController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BetDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Detalhe de uma aposta (BR Code se pendente de pagamento).",
+        "tags": [
+          "bet"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Charya API",
+    "description": "Backend Charya Bet — pesagem, desafio, revisão, aposta.",
+    "version": "0.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "cookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "better-auth.session_token"
+      }
+    },
+    "schemas": {
+      "MeResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "reviewer",
+              "admin"
+            ]
+          },
+          "taxId": {
+            "type": "string",
+            "nullable": true
+          },
+          "pixKey": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "name",
+          "role",
+          "taxId",
+          "pixKey"
+        ]
+      },
+      "UpdateProfileDto": {
+        "type": "object",
+        "properties": {
+          "taxId": {
+            "type": "string"
+          },
+          "pixKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 140
+          }
+        },
+        "required": [
+          "taxId",
+          "pixKey"
+        ]
+      },
+      "IssueChallengeDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "ChallengeResponseDto": {
+        "type": "object",
+        "properties": {
+          "challengeId": {
+            "type": "string"
+          },
+          "word": {
+            "type": "string"
+          },
+          "number": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "gesture": {
+            "type": "string"
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          }
+        },
+        "required": [
+          "challengeId",
+          "word",
+          "number",
+          "gesture",
+          "nonce",
+          "expiresAt"
+        ]
+      },
+      "WeighInSummaryDto": {
+        "type": "object",
+        "properties": {
+          "weighinId": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "baseline",
+              "mid",
+              "final"
+            ]
+          },
+          "weightKg": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "blocked",
+              "in_review",
+              "approved",
+              "rejected",
+              "recapture"
+            ]
+          },
+          "lossPerWeekKg": {
+            "type": "number",
+            "nullable": true
+          },
+          "betId": {
+            "type": "string",
+            "nullable": true
+          },
+          "capturedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          }
+        },
+        "required": [
+          "weighinId",
+          "kind",
+          "weightKg",
+          "status",
+          "lossPerWeekKg",
+          "betId",
+          "capturedAt"
+        ]
+      },
+      "StartWeighInDto": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "baseline",
+              "mid",
+              "final"
+            ]
+          },
+          "betId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "nullable": true
+          },
+          "contentType": {
+            "default": "video/mp4",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "StartWeighInResponseDto": {
+        "type": "object",
+        "properties": {
+          "challenge": {
+            "type": "object",
+            "properties": {
+              "challengeId": {
+                "type": "string"
+              },
+              "word": {
+                "type": "string"
+              },
+              "number": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "gesture": {
+                "type": "string"
+              },
+              "nonce": {
+                "type": "string"
+              },
+              "expiresAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+              }
+            },
+            "required": [
+              "challengeId",
+              "word",
+              "number",
+              "gesture",
+              "nonce",
+              "expiresAt"
+            ]
+          },
+          "upload": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "objectKey": {
+                "type": "string"
+              },
+              "expiresAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+              },
+              "requiredHeaders": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "url",
+              "objectKey",
+              "expiresAt"
+            ]
+          }
+        },
+        "required": [
+          "challenge",
+          "upload"
+        ]
+      },
+      "SubmitWeighInDto": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "baseline",
+              "mid",
+              "final"
+            ]
+          },
+          "betId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "nullable": true
+          },
+          "weightKg": {
+            "type": "number",
+            "exclusiveMinimum": true,
+            "maximum": 500,
+            "minimum": 0
+          },
+          "nonce": {
+            "type": "string",
+            "minLength": 1
+          },
+          "videoObjectKey": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "kind",
+          "weightKg",
+          "nonce",
+          "videoObjectKey"
+        ]
+      },
+      "SubmitWeighInResponseDto": {
+        "type": "object",
+        "properties": {
+          "weighinId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "blocked",
+              "in_review",
+              "approved",
+              "rejected",
+              "recapture"
+            ]
+          },
+          "lossPerWeekKg": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "weighinId",
+          "status",
+          "lossPerWeekKg"
+        ]
+      },
+      "ReviewQueueEntryDto": {
+        "type": "object",
+        "properties": {
+          "weighinId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "baseline",
+              "mid",
+              "final"
+            ]
+          },
+          "weightKg": {
+            "type": "number"
+          },
+          "lossPerWeekKg": {
+            "type": "number",
+            "nullable": true
+          },
+          "capturedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "reviewId": {
+            "type": "string",
+            "nullable": true
+          },
+          "videoUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "weighinId",
+          "userId",
+          "userName",
+          "kind",
+          "weightKg",
+          "lossPerWeekKg",
+          "capturedAt",
+          "reviewId",
+          "videoUrl"
+        ]
+      },
+      "ReviewDetailDto": {
+        "type": "object",
+        "properties": {
+          "weighinId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "baseline",
+              "mid",
+              "final"
+            ]
+          },
+          "weightKg": {
+            "type": "number"
+          },
+          "previousWeightKg": {
+            "type": "number",
+            "nullable": true
+          },
+          "weeks": {
+            "type": "number",
+            "nullable": true
+          },
+          "lossPerWeekKg": {
+            "type": "number",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "blocked",
+              "in_review",
+              "approved",
+              "rejected",
+              "recapture"
+            ]
+          },
+          "capturedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "videoUrl": {
+            "type": "string"
+          },
+          "comparison": {
+            "type": "object",
+            "properties": {
+              "baseline": {
+                "type": "string",
+                "nullable": true
+              },
+              "mid": {
+                "type": "string",
+                "nullable": true
+              },
+              "final": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": [
+              "baseline",
+              "mid",
+              "final"
+            ]
+          },
+          "expectedCode": {
+            "type": "object",
+            "properties": {
+              "word": {
+                "type": "string"
+              },
+              "number": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "gesture": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "word",
+              "number",
+              "gesture"
+            ],
+            "nullable": true
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "pending",
+              "rejected",
+              null
+            ],
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "failedChecks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "checklist": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "fail",
+                "na"
+              ]
+            },
+            "nullable": true
+          },
+          "context": {
+            "type": "object",
+            "properties": {
+              "hasComparison": {
+                "type": "boolean"
+              },
+              "hasPreviousWeight": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "hasComparison",
+              "hasPreviousWeight"
+            ]
+          }
+        },
+        "required": [
+          "weighinId",
+          "userId",
+          "userName",
+          "kind",
+          "weightKg",
+          "previousWeightKg",
+          "weeks",
+          "lossPerWeekKg",
+          "status",
+          "capturedAt",
+          "videoUrl",
+          "comparison",
+          "expectedCode",
+          "verdict",
+          "reason",
+          "failedChecks",
+          "checklist",
+          "context"
+        ]
+      },
+      "SubmitVerdictDto": {
+        "type": "object",
+        "properties": {
+          "weighinId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "pending",
+              "rejected"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 2000,
+            "nullable": true
+          },
+          "failedChecks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[a-z][a-z0-9_]*$"
+            },
+            "nullable": true
+          },
+          "checklist": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[a-z][a-z0-9_]*$"
+            },
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "fail"
+              ]
+            },
+            "nullable": true
+          }
+        },
+        "required": [
+          "weighinId",
+          "verdict"
+        ]
+      },
+      "VerdictResponseDto": {
+        "type": "object",
+        "properties": {
+          "reviewId": {
+            "type": "string"
+          },
+          "weighinId": {
+            "type": "string"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "pending",
+              "rejected"
+            ]
+          }
+        },
+        "required": [
+          "reviewId",
+          "weighinId",
+          "verdict"
+        ]
+      },
+      "CriterionResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "failHint": {
+            "type": "string",
+            "nullable": true
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "appliesWhen": {
+            "type": "string",
+            "enum": [
+              "always",
+              "has_comparison",
+              "has_previous_weight"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "label",
+          "description",
+          "failHint",
+          "enabled",
+          "sortOrder",
+          "appliesWhen",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CreateCriterionDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000,
+            "nullable": true
+          },
+          "failHint": {
+            "type": "string",
+            "maxLength": 2000,
+            "nullable": true
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "appliesWhen": {
+            "default": "always",
+            "type": "string",
+            "enum": [
+              "always",
+              "has_comparison",
+              "has_previous_weight"
+            ]
+          }
+        },
+        "required": [
+          "key",
+          "label"
+        ]
+      },
+      "UpdateCriterionDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000,
+            "nullable": true
+          },
+          "failHint": {
+            "type": "string",
+            "maxLength": 2000,
+            "nullable": true
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "appliesWhen": {
+            "type": "string",
+            "enum": [
+              "always",
+              "has_comparison",
+              "has_previous_weight"
+            ]
+          }
+        }
+      },
+      "BetSummaryDto": {
+        "type": "object",
+        "properties": {
+          "betId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_payment",
+              "open",
+              "settling",
+              "won",
+              "lost",
+              "voided"
+            ]
+          },
+          "targetWeightKg": {
+            "type": "number"
+          },
+          "startWeightKg": {
+            "type": "number",
+            "nullable": true
+          },
+          "stakeAmount": {
+            "type": "string"
+          },
+          "payoutAmount": {
+            "type": "string",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "betId",
+          "status",
+          "targetWeightKg",
+          "startWeightKg",
+          "stakeAmount",
+          "payoutAmount",
+          "currency"
+        ]
+      },
+      "AdminBetRowDto": {
+        "type": "object",
+        "properties": {
+          "betId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_payment",
+              "open",
+              "settling",
+              "won",
+              "lost",
+              "voided"
+            ]
+          },
+          "targetWeightKg": {
+            "type": "number"
+          },
+          "startWeightKg": {
+            "type": "number",
+            "nullable": true
+          },
+          "stakeAmount": {
+            "type": "string"
+          },
+          "payoutAmount": {
+            "type": "string",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          }
+        },
+        "required": [
+          "betId",
+          "userId",
+          "userName",
+          "status",
+          "targetWeightKg",
+          "startWeightKg",
+          "stakeAmount",
+          "payoutAmount",
+          "currency",
+          "createdAt"
+        ]
+      },
+      "BetDetailDto": {
+        "type": "object",
+        "properties": {
+          "betId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_payment",
+              "open",
+              "settling",
+              "won",
+              "lost",
+              "voided"
+            ]
+          },
+          "targetWeightKg": {
+            "type": "number"
+          },
+          "startWeightKg": {
+            "type": "number",
+            "nullable": true
+          },
+          "stakeAmount": {
+            "type": "string"
+          },
+          "payoutAmount": {
+            "type": "string",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string"
+          },
+          "pixCharge": {
+            "type": "object",
+            "properties": {
+              "brcode": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "expiresAt": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "brcode",
+              "status",
+              "expiresAt"
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "betId",
+          "status",
+          "targetWeightKg",
+          "startWeightKg",
+          "stakeAmount",
+          "payoutAmount",
+          "currency",
+          "pixCharge"
+        ]
+      },
+      "PlaceBetDto": {
+        "type": "object",
+        "properties": {
+          "targetWeightKg": {
+            "type": "number",
+            "exclusiveMinimum": true,
+            "maximum": 500,
+            "minimum": 0
+          },
+          "startWeightKg": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 500,
+            "nullable": true
+          },
+          "stakeAmount": {
+            "type": "string",
+            "pattern": "^\\d+(\\.\\d{1,2})?$"
+          },
+          "currency": {
+            "default": "BRL",
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3
+          }
+        },
+        "required": [
+          "targetWeightKg",
+          "stakeAmount"
+        ]
+      },
+      "BetResponseDto": {
+        "type": "object",
+        "properties": {
+          "betId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_payment",
+              "open",
+              "settling",
+              "won",
+              "lost",
+              "voided"
+            ]
+          },
+          "brcode": {
+            "type": "string"
+          },
+          "chargeExpiresAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "betId",
+          "status",
+          "brcode",
+          "chargeExpiresAt"
+        ]
+      }
+    }
+  }
+}

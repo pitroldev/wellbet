@@ -1,16 +1,19 @@
 /**
- * Tailwind config (TW3, exigido pelo NativeWind v4) — TEMA SPORTSBOOK BRUTAL.
+ * Tailwind config (TW3, exigido pelo NativeWind v4) — TEMA MIDNIGHT AURORA.
  *
- * O app de consumidor adotou a direção da landing WellBet: ground escuro, blocos
- * CHAPADOS de magenta (sem gradiente/glow no dia a dia), CANTO VIVO (radius ~0),
- * Anton nas manchetes e Space Mono nos números. Em vez de reescrever `className`
- * em toda tela, OVERRIDAMOS aqui os aliases semânticos que as telas já usam
- * (`bg-background`, `text-foreground`, `text-muted`, `border-border`,
- * `bg-primary-600`, `text-on-primary`, …). Assim a marca propaga sozinha.
+ * Premium escuro com glow: grounds em índigo profundo, superfícies de VIDRO
+ * translúcido, CANTOS GENEROSOS (radius 14→34), Outfit nas manchetes e Geist Mono
+ * nos números. Em vez de reescrever `className` em toda tela, OVERRIDAMOS aqui os
+ * aliases semânticos que as telas já usam (`bg-background`, `text-foreground`,
+ * `text-muted`, `border-border`, `bg-primary-600`, `text-on-primary`, …). Assim a
+ * marca propaga sozinha.
  *
  * Mantemos o `charyaPreset` por baixo (espaçamento, motion, escalas neutras) —
  * trocamos COR, TIPOGRAFIA e RAIO. O `@charya/ui-tokens` (sóbrio) segue intocado
  * e serve o admin; este tema é local a este app.
+ *
+ * IMPORTANTE: esta paleta é o espelho de src/theme/arena.ts — mantenha os dois
+ * em sincronia.
  *
  * Lembrete (Orçamento de performance): NativeWind só para estilo ESTÁTICO.
  *
@@ -20,20 +23,24 @@ const { charyaPreset } = require("@charya/ui-tokens/tailwind");
 
 // Paleta espelhada de src/theme/arena.ts (mantenha os dois em sincronia).
 const A = {
-  navy: "#0A0D16",
-  navySoft: "#1C1A2C",
-  navyLine: "#2C2548",
-  ink: "#06070D",
-  paper: "#F1EFE9",
-  paperInk: "#0A0D16",
-  paperMute: "#565163",
-  magenta: "#FF00FF",
+  void: "#080612",
+  ink: "#0C0A1C",
+  navy: "#0E0B20",
+  navySoft: "#181434",
+  navyLine: "#2B2552",
+  elevate: "#221C46",
+  paper: "#F4F1FB",
+  paperInk: "#0E0B20",
+  paperMute: "#5B5476",
+  magenta: "#FF2BD6",
   magentaDeep: "#C026D3",
+  orchid: "#B765FF",
   purple: "#7A1BD6",
   purpleDeep: "#5A12A0",
-  indigo: "#3215AD",
+  indigo: "#3D1F9E",
   green: "#41FFCA",
   greenDeep: "#10B981",
+  mint: "#7BFFDC",
   greenText: "#047857",
   greenInk: "#04231A",
   pink: "#FF80E1",
@@ -41,21 +48,26 @@ const A = {
   danger: "#FF4D6D",
   dangerDeep: "#E23A57",
   white: "#FFFFFF",
-  fog: "#AAA2C8",
-  fogMute: "#8B84A6",
+  fog: "#B7B0DC",
+  fogMute: "#8A83B2",
+  // Translúcidos (frosted).
+  glass: "rgba(255,255,255,0.045)",
+  glassStrong: "rgba(255,255,255,0.07)",
+  hairline: "rgba(255,255,255,0.10)",
+  hairlineStrong: "rgba(255,255,255,0.18)",
 };
 
 // Escala magenta (alias `primary`) — para `bg-primary-600`, `text-primary-400`.
 const magenta = {
   50: "#FFE9FF",
   100: "#FFD1FF",
-  200: "#FFA3FF",
-  300: "#FF6BFF",
-  400: "#FF3DFF",
-  500: "#FF00FF",
-  600: "#E600EC",
-  700: "#C800D6",
-  800: "#A100B0",
+  200: "#FFA8F4",
+  300: "#FF7BEA",
+  400: "#FF4DDF",
+  500: "#FF2BD6",
+  600: "#E600C0",
+  700: "#C200A2",
+  800: "#990081",
   900: "#6E0080",
   950: "#3D0048",
 };
@@ -81,16 +93,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Aliases semânticos (mobile) — apontam para o tema brutal.
+        // Aliases semânticos (mobile) — apontam para o tema Midnight Aurora.
         background: A.navy,
         surface: A.navySoft,
-        "surface-elevated": A.navyLine,
+        "surface-elevated": A.elevate,
         foreground: A.white,
         muted: A.fog,
         "muted-foreground": A.fogMute,
         border: A.navyLine,
-        // Texto sobre o bloco PRIMÁRIO (magenta chapado) = ink, não branco.
-        "on-primary": A.ink,
+        // Texto sobre o bloco PRIMÁRIO (magenta chapado) = void escuro.
+        "on-primary": A.void,
         danger: A.danger,
 
         // Superfície CLARA ocasional (ritmo claro/escuro).
@@ -103,22 +115,26 @@ module.exports = {
         accent: pink,
 
         // Cores nomeadas — para realces explícitos
-        // (`bg-arena-magenta`, `text-arena-green`, `text-arena-green-text`, …).
+        // (`bg-arena-magenta`, `text-arena-green`, `bg-arena-glass`, …).
         arena: {
+          void: A.void,
+          ink: A.ink,
           navy: A.navy,
           "navy-soft": A.navySoft,
           "navy-line": A.navyLine,
-          ink: A.ink,
+          elevate: A.elevate,
           paper: A.paper,
           "paper-ink": A.paperInk,
           "paper-mute": A.paperMute,
           magenta: A.magenta,
           "magenta-deep": A.magentaDeep,
+          orchid: A.orchid,
           purple: A.purple,
           "purple-deep": A.purpleDeep,
           indigo: A.indigo,
           green: A.green,
           "green-deep": A.greenDeep,
+          mint: A.mint,
           "green-text": A.greenText,
           "green-ink": A.greenInk,
           pink: A.pink,
@@ -128,6 +144,10 @@ module.exports = {
           white: A.white,
           fog: A.fog,
           "fog-mute": A.fogMute,
+          glass: A.glass,
+          "glass-strong": A.glassStrong,
+          hairline: A.hairline,
+          "hairline-strong": A.hairlineStrong,
         },
       },
       // Famílias por papel (ver src/theme/fonts.ts). Cada peso é uma família
@@ -137,21 +157,25 @@ module.exports = {
         "sans-semibold": ["PlusJakartaSans_600SemiBold"],
         "sans-bold": ["PlusJakartaSans_700Bold"],
         "sans-extra": ["PlusJakartaSans_800ExtraBold"],
-        display: ["Anton_400Regular"],
-        mono: ["SpaceMono_400Regular"],
-        "mono-bold": ["SpaceMono_700Bold"],
+        display: ["Outfit_800ExtraBold"],
+        "display-black": ["Outfit_900Black"],
+        "display-bold": ["Outfit_700Bold"],
+        "display-semibold": ["Outfit_600SemiBold"],
+        mono: ["GeistMono_400Regular"],
+        "mono-medium": ["GeistMono_500Medium"],
+        "mono-bold": ["GeistMono_700Bold"],
       },
-      // CANTO VIVO — radius ~0 em tudo (mata rounded-lg/xl/2xl/3xl de uma vez).
-      // `rounded-full` segue redondo (pontos de status, etc.).
+      // CANTOS GENEROSOS — Midnight Aurora é macio. `rounded-2xl`=28, `-3xl`=34.
       borderRadius: {
         none: "0px",
-        sm: "0px",
-        DEFAULT: "0px",
-        md: "0px",
-        lg: "0px",
-        xl: "1px",
-        "2xl": "2px",
-        "3xl": "2px",
+        sm: "10px",
+        DEFAULT: "14px",
+        md: "14px",
+        lg: "18px",
+        xl: "22px",
+        "2xl": "28px",
+        "3xl": "34px",
+        full: "9999px",
       },
     },
   },

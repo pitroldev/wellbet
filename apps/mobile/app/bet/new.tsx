@@ -7,10 +7,12 @@
  */
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { Button, Card, Input, PressableScale, Screen, Tag, Text } from "@/shared/ui";
+import { Button, Card, Chip, Input, Screen, Tag, Text } from "@/shared/ui";
+import { arena, arenaAlpha } from "@/theme/tokens";
 import { formatKg, formatMoney, useJourney } from "@/features/journey";
 
 const WEEK_MS = 7 * 86_400_000;
@@ -18,13 +20,12 @@ const DURATIONS = [4, 8, 12];
 
 function Outcome({ ok, text }: { ok: boolean; text: string }) {
   return (
-    <View className="flex-row items-start gap-3">
+    <View className="flex-row items-center gap-3">
       <View
-        className={`h-7 w-7 items-center justify-center ${ok ? "bg-arena-green" : "bg-surface-elevated"}`}
+        style={{ backgroundColor: ok ? arenaAlpha.greenWash : arenaAlpha.glass }}
+        className="h-8 w-8 items-center justify-center rounded-full border border-arena-hairline"
       >
-        <Text className={`font-mono-bold text-base ${ok ? "text-arena-green-ink" : "text-muted"}`}>
-          {ok ? "✓" : "✕"}
-        </Text>
+        <Feather name={ok ? "check" : "x"} size={16} color={ok ? arena.green : arena.fogMute} />
       </View>
       <Text variant="body" className="flex-1">
         {text}
@@ -64,11 +65,11 @@ export default function NewBet() {
   return (
     <Screen>
       <View className="flex-1 py-4">
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 20 }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 22 }}>
           <View className="gap-2">
             <Tag label={t("journey.bilhete.eyebrow")} />
             <Text variant="title">{t("journey.bilhete.title")}</Text>
-            <Text className="font-mono text-sm text-muted">
+            <Text className="font-mono text-sm text-muted-foreground">
               {t("journey.bilhete.anchored", { weight: formatKg(baseline) })}
             </Text>
           </View>
@@ -81,42 +82,35 @@ export default function NewBet() {
             placeholder={formatKg(Math.max(30, baseline - 6))}
           />
 
-          <View className="gap-2">
+          <View className="gap-2.5">
             <Text variant="label">{t("journey.bilhete.durationLabel")}</Text>
-            <View className="flex-row gap-2">
+            <View className="flex-row gap-2.5">
               {DURATIONS.map((w) => (
-                <PressableScale key={w} onPress={() => setWeeks(w)}>
-                  <View
-                    className={`px-4 py-2.5 ${
-                      weeks === w ? "bg-arena-magenta" : "border-2 border-border bg-arena-navy-soft"
-                    }`}
-                  >
-                    <Text
-                      className={`font-mono-bold text-sm ${
-                        weeks === w ? "text-on-primary" : "text-foreground"
-                      }`}
-                    >
-                      {t("journey.bilhete.weeks", { n: w })}
-                    </Text>
-                  </View>
-                </PressableScale>
+                <Chip
+                  key={w}
+                  label={t("journey.bilhete.weeks", { n: w })}
+                  selected={weeks === w}
+                  onPress={() => setWeeks(w)}
+                />
               ))}
             </View>
           </View>
 
-          <Input
-            label={t("journey.bilhete.stakeLabel")}
-            value={stakeStr}
-            onChangeText={setStakeStr}
-            keyboardType="decimal-pad"
-            placeholder="200"
-          />
-          <Text variant="caption" className="text-muted">
-            {t("journey.bilhete.stakeHint")}
-          </Text>
+          <View className="gap-2.5">
+            <Input
+              label={t("journey.bilhete.stakeLabel")}
+              value={stakeStr}
+              onChangeText={setStakeStr}
+              keyboardType="decimal-pad"
+              placeholder="200"
+            />
+            <Text variant="caption" className="text-muted">
+              {t("journey.bilhete.stakeHint")}
+            </Text>
+          </View>
 
-          <Card>
-            <View className="gap-3">
+          <Card glow>
+            <View className="gap-3.5">
               <Outcome ok text={t("journey.bilhete.hit")} />
               <Outcome ok={false} text={t("journey.bilhete.miss")} />
             </View>
@@ -126,6 +120,7 @@ export default function NewBet() {
         <View className="pt-3">
           <Button
             label={t("journey.bilhete.cta", { money: formatMoney(stakeValid ? stake : 0) })}
+            icon="zap"
             onPress={submit}
             disabled={!valid}
           />

@@ -36,7 +36,7 @@ export default function LoginPage(): React.JSX.Element {
       setError(authError.message ?? "Falha ao entrar.");
       return;
     }
-    router.replace("/review");
+    router.replace("/");
     router.refresh();
   }
 

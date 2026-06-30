@@ -3,7 +3,7 @@ export const weighin = {
   pt: {
     noBet: {
       title: "Nenhuma aposta ativa",
-      body: "Crie uma aposta e pague o stake para começar a pesar.",
+      body: "Crie uma aposta e ponha seu valor em jogo para começar a pesar.",
       cta: "Criar aposta",
     },
     done: {
@@ -70,7 +70,7 @@ export const weighin = {
   en: {
     noBet: {
       title: "No active bet",
-      body: "Create a bet and pay the stake to start weighing in.",
+      body: "Create a bet and put your money in play to start weighing in.",
       cta: "Create bet",
     },
     done: {

@@ -2,19 +2,28 @@
  * Quiz de personalização (NOOM) — objetivo, porquê, o que travou. Conclui o
  * onboarding e guarda o "porquê" pra munição do treinador (Fase 5). Local.
  *
- * Visual: barra de progresso, ÍCONE (Feather) por passo num tile, escolhas com
- * ícone + check ao selecionar. Animação: cada passo entra deslizando, o tile dá
- * zoom e as escolhas entram em cascata (stagger).
+ * Visual: progresso em segmentos de gradiente, tile de ÍCONE (Feather) por passo,
+ * escolhas frosted com ícone + check. Animação: cada passo entra deslizando, o
+ * tile dá zoom e as escolhas entram em cascata (stagger).
  */
-import { useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
-import Animated, { FadeInDown, FadeInRight, ZoomIn } from "react-native-reanimated";
+import Animated, {
+  FadeInDown,
+  FadeInRight,
+  ZoomIn,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Button, Input, PressableScale, Screen, Tag, Text } from "@/shared/ui";
-import { arena } from "@/theme/tokens";
+import { hapticDone, useMotionDuration } from "@/shared/motion";
+import { arena, arenaAlpha, durations, gradients } from "@/theme/tokens";
 import { type QuizBlocker, type QuizGoal, useJourney } from "@/features/journey";
 
 type FeatherName = keyof typeof Feather.glyphMap;
@@ -33,6 +42,30 @@ const BLOCKERS: { key: QuizBlocker; icon: FeatherName }[] = [
 ];
 const STEP_ICON: FeatherName[] = ["target", "heart", "shield"];
 
+function Segment({ filled }: { filled: boolean }) {
+  const sv = useSharedValue(filled ? 1 : 0);
+  const dur = useMotionDuration(durations.base);
+
+  useEffect(() => {
+    sv.value = withTiming(filled ? 1 : 0, { duration: dur });
+  }, [filled, dur, sv]);
+
+  const style = useAnimatedStyle(() => ({ width: `${sv.value * 100}%` }));
+
+  return (
+    <View className="h-1.5 flex-1 overflow-hidden rounded-full bg-arena-ink">
+      <Animated.View style={[{ height: "100%" }, style]}>
+        <LinearGradient
+          colors={gradients.gymbet}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={{ flex: 1 }}
+        />
+      </Animated.View>
+    </View>
+  );
+}
+
 function Choice({
   icon,
   label,
@@ -47,24 +80,32 @@ function Choice({
   return (
     <PressableScale onPress={onPress}>
       <View
-        className={`flex-row items-center gap-3 border-2 px-4 py-4 ${
-          selected ? "border-arena-magenta bg-arena-navy-soft" : "border-border bg-arena-ink"
-        }`}
+        style={{
+          backgroundColor: selected ? arenaAlpha.magentaWash : arenaAlpha.glass,
+          borderColor: selected ? arena.magenta : arena.navyLine,
+        }}
+        className="flex-row items-center gap-3 rounded-2xl border px-4 py-3.5"
       >
-        <Feather name={icon} size={22} color={selected ? arena.magenta : arena.fog} />
+        <View className="h-9 w-9 items-center justify-center rounded-xl border border-arena-hairline bg-arena-glass">
+          <Feather name={icon} size={18} color={selected ? arena.magenta : arena.fog} />
+        </View>
         <Text variant="body" className={`flex-1 ${selected ? "text-foreground" : "text-muted"}`}>
           {label}
         </Text>
-        {selected ? <Feather name="check" size={20} color={arena.magenta} /> : null}
+        {selected ? <Feather name="check-circle" size={20} color={arena.magenta} /> : null}
       </View>
     </PressableScale>
   );
 }
 
+function StepFrame({ children }: { children: ReactNode }) {
+  return <View className="gap-3">{children}</View>;
+}
+
 export default function Quiz() {
   const router = useRouter();
   const { t } = useTranslation();
-  const finishOnboarding = useJourney((s) => s.finishOnboarding);
+  const setQuiz = useJourney((s) => s.setQuiz);
 
   const [step, setStep] = useState(0);
   const [goal, setGoal] = useState<QuizGoal | null>(null);
@@ -80,8 +121,9 @@ export default function Quiz() {
       return;
     }
     if (goal == null || blocker == null) return;
-    finishOnboarding({ goal, why: why.trim(), blocker });
-    router.replace("/");
+    setQuiz({ goal, why: why.trim(), blocker });
+    hapticDone();
+    router.push("/(onboarding)/motivation");
   }
 
   return (
@@ -89,7 +131,7 @@ export default function Quiz() {
       <View className="flex-1 py-4">
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ gap: 22 }}
+          contentContainerStyle={{ gap: 24 }}
           keyboardShouldPersistTaps="handled"
         >
           <View className="gap-3">
@@ -101,24 +143,24 @@ export default function Quiz() {
             </View>
             <View className="flex-row gap-2">
               {[0, 1, 2].map((i) => (
-                <View
-                  key={i}
-                  className={`h-1.5 flex-1 ${i <= step ? "bg-arena-magenta" : "bg-border"}`}
-                />
+                <Segment key={i} filled={i <= step} />
               ))}
             </View>
           </View>
 
-          <Animated.View key={step} entering={FadeInRight.duration(300)} className="gap-5">
+          <Animated.View key={step} entering={FadeInRight.duration(300)} className="gap-6">
             <Animated.View entering={ZoomIn.delay(60).springify()} className="items-center">
-              <View className="h-20 w-20 items-center justify-center bg-arena-magenta">
-                <Feather name={STEP_ICON[step] ?? "zap"} size={34} color={arena.ink} />
+              <View
+                style={{ backgroundColor: arenaAlpha.magentaWash }}
+                className="h-20 w-20 items-center justify-center rounded-3xl border border-arena-hairline-strong"
+              >
+                <Feather name={STEP_ICON[step] ?? "zap"} size={32} color={arena.magenta} />
               </View>
             </Animated.View>
 
             {step === 0 ? (
-              <View className="gap-3">
-                <Text variant="title" className="text-center text-3xl">
+              <StepFrame>
+                <Text variant="title" className="text-center">
                   {t("quiz.goalQ")}
                 </Text>
                 <View className="gap-2.5">
@@ -133,12 +175,12 @@ export default function Quiz() {
                     </Animated.View>
                   ))}
                 </View>
-              </View>
+              </StepFrame>
             ) : null}
 
             {step === 1 ? (
-              <View className="gap-3">
-                <Text variant="title" className="text-center text-3xl">
+              <StepFrame>
+                <Text variant="title" className="text-center">
                   {t("quiz.whyQ")}
                 </Text>
                 <Input
@@ -151,12 +193,12 @@ export default function Quiz() {
                 <Text variant="caption" className="text-center text-muted">
                   {t("quiz.whyHint")}
                 </Text>
-              </View>
+              </StepFrame>
             ) : null}
 
             {step === 2 ? (
-              <View className="gap-3">
-                <Text variant="title" className="text-center text-3xl">
+              <StepFrame>
+                <Text variant="title" className="text-center">
                   {t("quiz.blockerQ")}
                 </Text>
                 <View className="gap-2.5">
@@ -171,7 +213,7 @@ export default function Quiz() {
                     </Animated.View>
                   ))}
                 </View>
-              </View>
+              </StepFrame>
             ) : null}
           </Animated.View>
         </ScrollView>
@@ -179,6 +221,7 @@ export default function Quiz() {
         <View className="pt-3">
           <Button
             label={step < 2 ? t("quiz.next") : t("quiz.finish")}
+            icon={step < 2 ? "arrow-right" : "check"}
             onPress={advance}
             disabled={!canAdvance}
           />

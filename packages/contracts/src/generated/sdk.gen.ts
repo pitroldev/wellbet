@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { BetControllerDetailData, BetControllerDetailResponses, BetControllerListAllData, BetControllerListAllResponses, BetControllerListData, BetControllerListResponses, BetControllerPlaceData, BetControllerPlaceResponses, ChallengeControllerIssueData, ChallengeControllerIssueResponses, CriteriaControllerCreateData, CriteriaControllerCreateResponses, CriteriaControllerListData, CriteriaControllerListResponses, CriteriaControllerUpdateData, CriteriaControllerUpdateResponses, HealthControllerCheckData, HealthControllerCheckResponses, IdentityControllerMeData, IdentityControllerMeResponses, IdentityControllerSetProfileData, IdentityControllerSetProfileResponses, ReviewControllerDetailData, ReviewControllerDetailResponses, ReviewControllerQueueData, ReviewControllerQueueResponses, ReviewControllerVerdictData, ReviewControllerVerdictResponses, WeighInControllerListData, WeighInControllerListResponses, WeighInControllerStartData, WeighInControllerStartResponses, WeighInControllerSubmitData, WeighInControllerSubmitResponses } from './types.gen';
+import type { AdminUserControllerBanData, AdminUserControllerBanResponses, AdminUserControllerDetailData, AdminUserControllerDetailResponses, AdminUserControllerListData, AdminUserControllerListResponses, AdminUserControllerResetPasswordData, AdminUserControllerResetPasswordResponses, AdminUserControllerUnbanData, AdminUserControllerUnbanResponses, AdminUserControllerUpdateData, AdminUserControllerUpdateResponses, BetControllerDetailData, BetControllerDetailResponses, BetControllerListAllData, BetControllerListAllResponses, BetControllerListData, BetControllerListResponses, BetControllerPlaceData, BetControllerPlaceResponses, ChallengeControllerIssueData, ChallengeControllerIssueResponses, CriteriaControllerCreateData, CriteriaControllerCreateResponses, CriteriaControllerListData, CriteriaControllerListResponses, CriteriaControllerUpdateData, CriteriaControllerUpdateResponses, HealthControllerCheckData, HealthControllerCheckResponses, IdentityControllerMeData, IdentityControllerMeResponses, IdentityControllerSetProfileData, IdentityControllerSetProfileResponses, ReviewControllerDetailData, ReviewControllerDetailResponses, ReviewControllerQueueData, ReviewControllerQueueResponses, ReviewControllerVerdictData, ReviewControllerVerdictResponses, WeighInControllerListData, WeighInControllerListResponses, WeighInControllerStartData, WeighInControllerStartResponses, WeighInControllerSubmitData, WeighInControllerSubmitResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -158,3 +158,47 @@ export const betControllerListAll = <ThrowOnError extends boolean = false>(optio
  * Detalhe de uma aposta (BR Code se pendente de pagamento).
  */
 export const betControllerDetail = <ThrowOnError extends boolean = false>(options: Options<BetControllerDetailData, ThrowOnError>): RequestResult<BetControllerDetailResponses, unknown, ThrowOnError> => (options.client ?? client).get<BetControllerDetailResponses, unknown, ThrowOnError>({ url: '/api/bets/{id}', ...options });
+
+/**
+ * Busca/lista usuários (suporte).
+ */
+export const adminUserControllerList = <ThrowOnError extends boolean = false>(options?: Options<AdminUserControllerListData, ThrowOnError>): RequestResult<AdminUserControllerListResponses, unknown, ThrowOnError> => (options?.client ?? client).get<AdminUserControllerListResponses, unknown, ThrowOnError>({ url: '/api/admin/users', ...options });
+
+/**
+ * 360 do usuário (identidade + perfil + histórico + sinais + payout).
+ */
+export const adminUserControllerDetail = <ThrowOnError extends boolean = false>(options: Options<AdminUserControllerDetailData, ThrowOnError>): RequestResult<AdminUserControllerDetailResponses, unknown, ThrowOnError> => (options.client ?? client).get<AdminUserControllerDetailResponses, unknown, ThrowOnError>({ url: '/api/admin/users/{authUserId}', ...options });
+
+/**
+ * Edita name/role/emailVerified/taxId/pixKey.
+ */
+export const adminUserControllerUpdate = <ThrowOnError extends boolean = false>(options: Options<AdminUserControllerUpdateData, ThrowOnError>): RequestResult<AdminUserControllerUpdateResponses, unknown, ThrowOnError> => (options.client ?? client).patch<AdminUserControllerUpdateResponses, unknown, ThrowOnError>({
+    url: '/api/admin/users/{authUserId}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Dispara o link de redefinição de senha (Better Auth).
+ */
+export const adminUserControllerResetPassword = <ThrowOnError extends boolean = false>(options: Options<AdminUserControllerResetPasswordData, ThrowOnError>): RequestResult<AdminUserControllerResetPasswordResponses, unknown, ThrowOnError> => (options.client ?? client).post<AdminUserControllerResetPasswordResponses, unknown, ThrowOnError>({ url: '/api/admin/users/{authUserId}/reset-password', ...options });
+
+/**
+ * Bane a conta (revoga sessões; bloqueia todo acesso).
+ */
+export const adminUserControllerBan = <ThrowOnError extends boolean = false>(options: Options<AdminUserControllerBanData, ThrowOnError>): RequestResult<AdminUserControllerBanResponses, unknown, ThrowOnError> => (options.client ?? client).post<AdminUserControllerBanResponses, unknown, ThrowOnError>({
+    url: '/api/admin/users/{authUserId}/ban',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Remove o ban da conta.
+ */
+export const adminUserControllerUnban = <ThrowOnError extends boolean = false>(options: Options<AdminUserControllerUnbanData, ThrowOnError>): RequestResult<AdminUserControllerUnbanResponses, unknown, ThrowOnError> => (options.client ?? client).post<AdminUserControllerUnbanResponses, unknown, ThrowOnError>({ url: '/api/admin/users/{authUserId}/unban', ...options });

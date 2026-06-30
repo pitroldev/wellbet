@@ -5,6 +5,7 @@ import { ZodValidationPipe } from "nestjs-zod";
 
 import { ConfigModule } from "./config/config.module.js";
 import { InfraModule } from "./infra/infra.module.js";
+import { AdminUserModule } from "./modules/admin-user/admin-user.module.js";
 import { BetModule } from "./modules/bet/bet.module.js";
 import { ChallengeModule } from "./modules/challenge/challenge.module.js";
 import { CriteriaModule } from "./modules/criteria/criteria.module.js";
@@ -61,6 +62,7 @@ import { SharedModule } from "./shared/shared.module.js";
     ReviewModule,
     CriteriaModule,
     BetModule,
+    AdminUserModule,
     PaymentWebhookModule,
   ],
   providers: [

@@ -56,8 +56,7 @@ export const reviewVerdict = pgEnum("review_verdict", [
  * esconder por engano deixaria passar fraude).
  */
 export const criterionCondition = pgEnum("criterion_condition", [
-  "always", // sempre aplicável
-  "has_code", // há código dinâmico emitido (expectedCode != null) → anti-replay
+  "always", // sempre aplicável (inclui freshness: o desafio é SEMPRE obrigatório)
   "has_comparison", // há ≥2 capturas reais para comparar identidade
   "has_previous_weight", // há peso anterior (não-baseline) para julgar plausibilidade
 ]);

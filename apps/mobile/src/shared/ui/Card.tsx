@@ -1,47 +1,95 @@
 /**
- * Card de CANTO VIVO — casca brutal compartilhada (fio duro 2px, sem rounded).
- * `surface="navy"` (padrão) = card escuro; `surface="paper"` = bloco claro.
- * Acento opcional = barra magenta/verde no topo. (Pop vem de gradiente/animação,
- * não de sombra — sombra RN colorida não vai bem no Android.)
+ * Card FROSTED — a casca padrão do Midnight Aurora. Vidro translúcido sobre a
+ * aurora, canto generoso (rounded-3xl), sheen de luz no topo e hairline que capta
+ * o brilho. Profundidade vem de vidro + sheen + aurora (NUNCA sombra RN colorida,
+ * que vira cinza no Android).
+ *
+ *  - `surface="glass"` (padrão) = vidro translúcido; `"solid"` = navy elevado;
+ *    `"paper"` = bloco claro (ritmo claro/escuro).
+ *  - `accent`  = barra de gradiente no topo (magenta ou verde).
+ *  - `glow`    = borda HAIRLINE em gradiente (card de herói, luminoso).
  */
 import { View, type ViewProps } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
-type Surface = "navy" | "paper";
+import { gradients, radius } from "@/theme/tokens";
+
+type Surface = "glass" | "solid" | "paper";
 type Accent = "none" | "magenta" | "green";
 
 export interface CardProps extends ViewProps {
   surface?: Surface;
   accent?: Accent;
+  /** Borda hairline em gradiente — para cards de herói. */
+  glow?: boolean;
   className?: string;
 }
 
 const surfaceClass: Record<Surface, string> = {
-  navy: "border-2 border-border bg-arena-navy-soft",
-  paper: "border-2 border-arena-navy bg-paper",
+  glass: "bg-arena-glass",
+  solid: "bg-arena-navy-soft",
+  paper: "bg-paper",
 };
 
-const accentClass: Record<Accent, string> = {
-  none: "",
-  magenta: "bg-arena-magenta",
-  green: "bg-arena-green",
+const accentColors: Record<Exclude<Accent, "none">, readonly [string, string]> = {
+  magenta: [gradients.gymbet[0], gradients.gymbetSoft[1]],
+  green: [gradients.victory[0], "#7BFFDC"],
 };
 
 export function Card({
-  surface = "navy",
+  surface = "glass",
   accent = "none",
+  glow = false,
   className,
   children,
+  style,
   ...props
 }: CardProps) {
-  return (
+  const inner = (
     <View
       {...props}
-      className={`relative overflow-hidden p-5 ${surfaceClass[surface]}${className ? ` ${className}` : ""}`}
+      style={[{ borderRadius: glow ? radius["2xl"] - 1 : radius["2xl"] }, style]}
+      className={`relative overflow-hidden p-5 ${surfaceClass[surface]} ${
+        glow ? "" : surface === "paper" ? "" : "border border-arena-hairline"
+      }${className ? ` ${className}` : ""}`}
     >
-      {accent !== "none" ? (
-        <View className={`absolute left-0 right-0 top-0 h-1 ${accentClass[accent]}`} />
+      {/* sheen de luz no topo (profundidade premium) */}
+      {surface !== "paper" ? (
+        <LinearGradient
+          colors={gradients.glassSheen}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          pointerEvents="none"
+          style={{ position: "absolute", left: 0, right: 0, top: 0, height: 64 }}
+        />
       ) : null}
+
+      {/* barra de acento no topo */}
+      {accent !== "none" ? (
+        <LinearGradient
+          colors={accentColors[accent]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          pointerEvents="none"
+          style={{ position: "absolute", left: 0, right: 0, top: 0, height: 3 }}
+        />
+      ) : null}
+
       {children}
     </View>
+  );
+
+  if (!glow) return inner;
+
+  // Card de herói: borda hairline em gradiente (índigo→magenta→verde).
+  return (
+    <LinearGradient
+      colors={gradients.hairline}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={{ borderRadius: radius["2xl"], padding: 1.2 }}
+    >
+      {inner}
+    </LinearGradient>
   );
 }

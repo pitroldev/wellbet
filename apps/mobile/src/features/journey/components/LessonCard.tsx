@@ -1,10 +1,14 @@
 /**
  * Cartão da lição do dia — mecânica do NOOM (a tarefa/lição de hoje), na voz do
- * treinador. Acento verde (a casa do "green"). Toque leva ao leitor da lição.
+ * treinador. Card frosted, acento verde, tile de ícone + chevron. Toque leva ao
+ * leitor da lição.
  */
+import { View } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 
 import { Card, PressableScale, Text } from "@/shared/ui";
+import { arena, arenaAlpha } from "@/theme/tokens";
 
 export interface LessonCardProps {
   title: string;
@@ -17,16 +21,25 @@ export function LessonCard({ title, minutes, onPress }: LessonCardProps) {
 
   return (
     <PressableScale onPress={onPress}>
-      <Card accent="green">
-        <Text variant="label" className="text-arena-green">
-          {t("journey.lesson.today")}
-        </Text>
-        <Text variant="heading" className="mt-1">
-          {title}
-        </Text>
-        <Text className="mt-2 font-mono text-xs text-muted">
-          {t("journey.lesson.minutes", { n: minutes })} ▸
-        </Text>
+      <Card accent="green" className="flex-row items-center gap-4">
+        <View
+          style={{ backgroundColor: arenaAlpha.greenWash }}
+          className="h-12 w-12 items-center justify-center rounded-2xl border border-arena-hairline"
+        >
+          <Feather name="book-open" size={22} color={arena.green} />
+        </View>
+        <View className="flex-1 gap-0.5">
+          <Text variant="label" className="text-arena-mint">
+            {t("journey.lesson.today")}
+          </Text>
+          <Text variant="heading" className="text-lg">
+            {title}
+          </Text>
+          <Text className="font-mono text-xs text-muted-foreground">
+            {t("journey.lesson.minutes", { n: minutes })}
+          </Text>
+        </View>
+        <Feather name="chevron-right" size={22} color={arena.fogMute} />
       </Card>
     </PressableScale>
   );

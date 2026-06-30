@@ -60,7 +60,7 @@ export default function ResetPassword() {
         {done ? (
           <Button label={t("journey.auth.signIn")} onPress={() => router.replace("/(auth)/sign-in")} />
         ) : (
-          <Button label={loading ? "…" : t("journey.auth.resetCta")} onPress={submit} disabled={!valid} />
+          <Button label={t("journey.auth.resetCta")} onPress={submit} disabled={!valid} loading={loading} icon="check" />
         )}
       </View>
     </Screen>

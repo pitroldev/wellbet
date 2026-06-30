@@ -99,7 +99,6 @@ export const ReviewDetailSchema = z.object({
    * `appliesWhen` de cada critério para um destes e filtra o checklist.
    */
   context: z.object({
-    hasCode: z.boolean(),
     hasComparison: z.boolean(),
     hasPreviousWeight: z.boolean(),
   }),

@@ -61,9 +61,11 @@ export default function Forgot() {
         ) : (
           <View className="gap-3">
             <Button
-              label={loading ? "…" : t("journey.auth.forgotCta")}
+              label={t("journey.auth.forgotCta")}
               onPress={submit}
               disabled={!emailOk || loading}
+              loading={loading}
+              icon="mail"
             />
             <Button label={t("journey.auth.back")} tone="ghost" onPress={() => router.back()} />
           </View>

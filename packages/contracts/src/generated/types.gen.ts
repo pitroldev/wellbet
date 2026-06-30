@@ -121,7 +121,6 @@ export type ReviewDetailDto = {
         [key: string]: 'ok' | 'fail' | 'na';
     } | null;
     context: {
-        hasCode: boolean;
         hasComparison: boolean;
         hasPreviousWeight: boolean;
     };
@@ -151,7 +150,7 @@ export type CriterionResponseDto = {
     failHint: string | null;
     enabled: boolean;
     sortOrder: number;
-    appliesWhen: 'always' | 'has_code' | 'has_comparison' | 'has_previous_weight';
+    appliesWhen: 'always' | 'has_comparison' | 'has_previous_weight';
     createdAt: string;
     updatedAt: string;
 };
@@ -163,7 +162,7 @@ export type CreateCriterionDto = {
     failHint?: string | null;
     enabled?: boolean;
     sortOrder?: number;
-    appliesWhen?: 'always' | 'has_code' | 'has_comparison' | 'has_previous_weight';
+    appliesWhen?: 'always' | 'has_comparison' | 'has_previous_weight';
 };
 
 export type UpdateCriterionDto = {
@@ -172,7 +171,7 @@ export type UpdateCriterionDto = {
     failHint?: string | null;
     enabled?: boolean;
     sortOrder?: number;
-    appliesWhen?: 'always' | 'has_code' | 'has_comparison' | 'has_previous_weight';
+    appliesWhen?: 'always' | 'has_comparison' | 'has_previous_weight';
 };
 
 export type BetSummaryDto = {
@@ -225,6 +224,95 @@ export type BetResponseDto = {
     status: 'pending_payment' | 'open' | 'settling' | 'won' | 'lost' | 'voided';
     brcode: string;
     chargeExpiresAt: string;
+};
+
+export type ListUsersResponseDto = {
+    items: Array<{
+        authUserId: string;
+        email: string;
+        name: string | null;
+        role: 'user' | 'reviewer' | 'admin';
+        emailVerified: boolean;
+        banned: boolean;
+        createdAt: string;
+        domainUserId: string | null;
+        hasTaxId: boolean;
+        hasPixKey: boolean;
+        betsCount: number;
+        weighinsCount: number;
+    }>;
+    total: number;
+};
+
+export type UserDetailDto = {
+    identity: {
+        authUserId: string;
+        email: string;
+        name: string | null;
+        emailVerified: boolean;
+        role: 'user' | 'reviewer' | 'admin';
+        image: string | null;
+        banned: boolean;
+        banReason: string | null;
+        bannedAt: string | null;
+        createdAt: string;
+        updatedAt: string;
+    };
+    domain: {
+        userId: string;
+        name: string | null;
+        taxId: string | null;
+        pixKey: string | null;
+        createdAt: string;
+    } | null;
+    signals: {
+        newAccount: boolean;
+        rejectionsCount: number;
+        payoutPending: boolean;
+        noFinancialProfile: boolean;
+        emailUnverified: boolean;
+        orphan: boolean;
+    };
+    payout: {
+        verdict: 'pago' | 'a_liquidar' | 'bloqueado_sem_pix' | 'bloqueado_pesagem_final' | 'sem_payout';
+        payoutTransferId: string | null;
+    };
+    bets: Array<{
+        betId: string;
+        status: 'pending_payment' | 'open' | 'settling' | 'won' | 'lost' | 'voided';
+        targetWeightKg: number;
+        stakeAmount: string;
+        payoutAmount: string | null;
+        currency: string;
+        payoutTransferId: string | null;
+        createdAt: string;
+        settledAt: string | null;
+    }>;
+    weighins: Array<{
+        id: string;
+        kind: 'baseline' | 'mid' | 'final';
+        status: 'pending' | 'blocked' | 'in_review' | 'approved' | 'rejected' | 'recapture';
+        weightKg: number;
+        lossPerWeekKg: number | null;
+        capturedAt: string;
+        verdict: 'approved' | 'pending' | 'rejected' | null;
+    }>;
+};
+
+export type UpdateUserDto = {
+    name?: string;
+    role?: 'user' | 'reviewer' | 'admin';
+    emailVerified?: boolean;
+    taxId?: string | null;
+    pixKey?: string | null;
+};
+
+export type ResetPasswordResponseDto = {
+    sent: boolean;
+};
+
+export type BanUserDto = {
+    reason?: string;
 };
 
 export type HealthControllerCheckData = {
@@ -468,3 +556,97 @@ export type BetControllerDetailResponses = {
 };
 
 export type BetControllerDetailResponse = BetControllerDetailResponses[keyof BetControllerDetailResponses];
+
+export type AdminUserControllerListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        q?: string;
+        role?: 'user' | 'reviewer' | 'admin';
+        emailVerified?: boolean;
+        limit?: number;
+        offset?: number;
+    };
+    url: '/api/admin/users';
+};
+
+export type AdminUserControllerListResponses = {
+    200: ListUsersResponseDto;
+};
+
+export type AdminUserControllerListResponse = AdminUserControllerListResponses[keyof AdminUserControllerListResponses];
+
+export type AdminUserControllerDetailData = {
+    body?: never;
+    path: {
+        authUserId: string;
+    };
+    query?: never;
+    url: '/api/admin/users/{authUserId}';
+};
+
+export type AdminUserControllerDetailResponses = {
+    200: UserDetailDto;
+};
+
+export type AdminUserControllerDetailResponse = AdminUserControllerDetailResponses[keyof AdminUserControllerDetailResponses];
+
+export type AdminUserControllerUpdateData = {
+    body: UpdateUserDto;
+    path: {
+        authUserId: string;
+    };
+    query?: never;
+    url: '/api/admin/users/{authUserId}';
+};
+
+export type AdminUserControllerUpdateResponses = {
+    200: UserDetailDto;
+};
+
+export type AdminUserControllerUpdateResponse = AdminUserControllerUpdateResponses[keyof AdminUserControllerUpdateResponses];
+
+export type AdminUserControllerResetPasswordData = {
+    body?: never;
+    path: {
+        authUserId: string;
+    };
+    query?: never;
+    url: '/api/admin/users/{authUserId}/reset-password';
+};
+
+export type AdminUserControllerResetPasswordResponses = {
+    200: ResetPasswordResponseDto;
+};
+
+export type AdminUserControllerResetPasswordResponse = AdminUserControllerResetPasswordResponses[keyof AdminUserControllerResetPasswordResponses];
+
+export type AdminUserControllerBanData = {
+    body: BanUserDto;
+    path: {
+        authUserId: string;
+    };
+    query?: never;
+    url: '/api/admin/users/{authUserId}/ban';
+};
+
+export type AdminUserControllerBanResponses = {
+    200: UserDetailDto;
+};
+
+export type AdminUserControllerBanResponse = AdminUserControllerBanResponses[keyof AdminUserControllerBanResponses];
+
+export type AdminUserControllerUnbanData = {
+    body?: never;
+    path: {
+        authUserId: string;
+    };
+    query?: never;
+    url: '/api/admin/users/{authUserId}/unban';
+};
+
+export type AdminUserControllerUnbanResponses = {
+    200: UserDetailDto;
+};
+
+export type AdminUserControllerUnbanResponse = AdminUserControllerUnbanResponses[keyof AdminUserControllerUnbanResponses];

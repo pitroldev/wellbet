@@ -21,7 +21,7 @@ import { arena } from "@/theme/tokens";
 
 const DURATION_MS = 1800;
 const COUNT = 22;
-const COLORS = [arena.magenta, arena.pink, arena.green, arena.white, arena.purple, "#3945FF"];
+const COLORS = [arena.magenta, arena.pink, arena.green, arena.white, arena.orchid, arena.indigo];
 
 /** PRNG determinística por índice — estável entre renders e PURA (sem Math.random). */
 function rand(i: number, salt: number): number {

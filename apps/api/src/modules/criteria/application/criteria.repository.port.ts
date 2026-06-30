@@ -8,7 +8,7 @@
  * Condição de aplicabilidade do critério (substitui o N/A). O critério só
  * aparece no checklist quando a condição vale; `always` = sempre.
  */
-export type AppliesWhen = "always" | "has_code" | "has_comparison" | "has_previous_weight";
+export type AppliesWhen = "always" | "has_comparison" | "has_previous_weight";
 
 export interface Criterion {
   readonly id: string;

@@ -78,6 +78,7 @@ export class AuthModule implements NestModule {
     id: string;
     email: string;
     role?: AuthenticatedUser["role"] | null;
+    banned?: boolean | null;
   }): AuthenticatedUser {
     return {
       id: user.id,
@@ -85,6 +86,7 @@ export class AuthModule implements NestModule {
       // `role` é um additionalField com defaultValue "user"; o `?? 'user'`
       // cobre sessões antigas emitidas antes do campo existir.
       role: user.role ?? "user",
+      banned: user.banned ?? false,
     };
   }
 }

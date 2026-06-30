@@ -1,22 +1,23 @@
 /**
- * Layout do grupo de onboarding. Transições entre telas via
- * react-native-screen-transitions (Shared Element Transitions do Reanimated
- * seguem experimentais atrás de flag — §3).
+ * Layout do grupo de onboarding — funil LINEAR (welcome → quiz → motivação →
+ * medidas → meta → odds → conta → guia de captura → câmera → revisão). Avança
+ * deslizando pra frente; cada tela navega pra próxima (não pela home).
  */
 import { Stack } from "expo-router";
 
 export default function OnboardingLayout() {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        // TODO: aplicar presets de react-native-screen-transitions aqui quando
-        // o pacote estiver instalado (transição custom entre passos).
-        animation: "fade",
-      }}
-    >
+    <Stack screenOptions={{ headerShown: false, animation: "slide_from_right" }}>
       <Stack.Screen name="welcome" />
       <Stack.Screen name="quiz" />
+      <Stack.Screen name="motivation" />
+      <Stack.Screen name="measures" />
+      <Stack.Screen name="goal" />
+      <Stack.Screen name="odds" />
+      <Stack.Screen name="account" />
+      <Stack.Screen name="capture-intro" />
+      <Stack.Screen name="capture" />
+      <Stack.Screen name="capture-review" />
     </Stack>
   );
 }

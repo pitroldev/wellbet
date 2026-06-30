@@ -20,6 +20,12 @@ export const user = pgTable("user", {
   image: text("image"),
   // RBAC — additionalField `role` do auth.ts (user | reviewer | admin).
   role: text("role").notNull().default("user"),
+  // Banimento (additionalField `banned`): conta bloqueada pelo suporte. O
+  // AuthGuard rejeita (403) qualquer request de conta banida; o ban revoga as
+  // sessões ativas (efeito imediato).
+  banned: boolean("banned").notNull().default(false),
+  banReason: text("ban_reason"),
+  bannedAt: ts("banned_at"),
   createdAt: ts("created_at").notNull().defaultNow(),
   updatedAt: ts("updated_at").notNull().defaultNow(),
 });

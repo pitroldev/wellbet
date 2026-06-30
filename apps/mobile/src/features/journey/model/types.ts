@@ -36,6 +36,16 @@ export interface JourneyBet {
   brcode?: string;
 }
 
+/**
+ * Rascunho da aposta coletado DURANTE o onboarding (meta + prazo + valor), antes
+ * de a bet ser criada de fato (no fim do onboarding, após o vídeo de baseline).
+ */
+export interface BetDraft {
+  targetWeightKg: number;
+  weeks: number;
+  stakeAmount: number;
+}
+
 /** Check-in informal de peso (MFP) — não é pesagem oficial, não vai pra revisão. */
 export interface CheckIn {
   at: number; // epoch ms

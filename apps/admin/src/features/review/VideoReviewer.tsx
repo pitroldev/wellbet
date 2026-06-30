@@ -151,32 +151,28 @@ export function VideoReviewer({
     >
       {expectedCode ? (
         <div
-          className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 rounded-md border border-[var(--color-border)] bg-[var(--color-muted)] px-3 py-1.5"
+          className="flex flex-wrap items-center gap-x-2.5 gap-y-1 rounded-md border border-[var(--color-border)] bg-[var(--color-muted)] px-3 py-2"
           title="Confira no vídeo: a pessoa diz a palavra, mostra o número e faz o gesto."
         >
-          <span className="inline-flex shrink-0 items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-[var(--color-muted-foreground)]">
+          <span className="inline-flex shrink-0 items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide leading-none text-[var(--color-muted-foreground)]">
             <KeyRound className="size-3.5" aria-hidden />
             Código esperado
           </span>
-          <p className="min-w-0 font-mono text-sm leading-tight text-[var(--color-foreground)]">
+          <p className="flex min-w-0 items-center gap-1.5 font-mono text-sm leading-none text-[var(--color-foreground)]">
             <span className="font-semibold">{expectedCode.word}</span>
-            <span className="mx-1.5 font-normal text-[var(--color-muted-foreground)]" aria-hidden>
+            <span className="font-normal text-[var(--color-muted-foreground)]" aria-hidden>
               ·
             </span>
             <span className="text-lg font-bold tabular-nums text-[var(--color-primary)]">
               {expectedCode.number}
             </span>
-            <span className="mx-1.5 font-normal text-[var(--color-muted-foreground)]" aria-hidden>
+            <span className="font-normal text-[var(--color-muted-foreground)]" aria-hidden>
               ·
             </span>
             <span className="font-semibold">{expectedCode.gesture}</span>
           </p>
         </div>
-      ) : (
-        <div className="rounded-md border border-dashed border-[var(--color-border)] px-3 py-1.5 text-xs text-[var(--color-muted-foreground)]">
-          Sem código dinâmico para esta captura.
-        </div>
-      )}
+      ) : null}
 
       {/* Seletor de MODO (abas com ícone). Comparações só com 2+ capturas. */}
       <Segmented

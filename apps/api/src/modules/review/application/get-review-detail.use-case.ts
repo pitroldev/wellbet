@@ -55,7 +55,6 @@ export interface ReviewDetail {
    * `appliesWhen` de cada critério para um destes flags e filtra o checklist.
    */
   readonly context: {
-    readonly hasCode: boolean;
     readonly hasComparison: boolean;
     readonly hasPreviousWeight: boolean;
   };
@@ -152,7 +151,6 @@ export class GetReviewDetailUseCase {
       failedChecks: r?.failedChecks ?? null,
       checklist: r?.checklist ?? null,
       context: {
-        hasCode: expectedCode != null,
         hasComparison: captureCount >= 2,
         hasPreviousWeight: previousWeightKg != null,
       },

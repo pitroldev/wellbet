@@ -2,7 +2,9 @@
 export const profile = {
   pt: {
     title: "Seu perfil",
+    account: "Sua conta",
     body: "CPF/CNPJ e chave Pix são necessários para apostar e receber o prêmio.",
+    section: { payout: "Recebimento" },
     field: {
       taxId: "CPF/CNPJ",
       taxIdPlaceholder: "000.000.000-00",
@@ -16,7 +18,9 @@ export const profile = {
   },
   en: {
     title: "Your profile",
+    account: "Your account",
     body: "CPF/CNPJ and a Pix key are required to bet and receive your prize.",
+    section: { payout: "Payout" },
     field: {
       taxId: "CPF/CNPJ",
       taxIdPlaceholder: "000.000.000-00",

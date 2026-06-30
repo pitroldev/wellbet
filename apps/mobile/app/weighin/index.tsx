@@ -10,12 +10,14 @@
  * é validado no backend (SubmitWeighInDto); o vídeo é referenciado pela objectKey
  * devolvida no start.
  */
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { View } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Button, Input, Screen, Text } from "@/shared/ui";
+import { arena, arenaAlpha } from "@/theme/tokens";
 import { apiErrorMessage } from "@/shared/lib/http";
 import {
   useActiveWeighInTarget,
@@ -26,6 +28,48 @@ import {
 import { CameraCapture } from "@/features/weighin/camera/CameraCapture";
 import { useWeighInStore } from "@/features/weighin/model/store";
 import type { RecordedVideo } from "@/features/weighin/model/types";
+
+type FeatherName = keyof typeof Feather.glyphMap;
+
+/** Tela de estado (sem-aposta / concluído / erro) no padrão Midnight Aurora:
+ * tile de ícone de vidro + título + corpo + ação. (A captura/câmera segue sóbria.) */
+function StateView({
+  icon,
+  tone = "magenta",
+  title,
+  body,
+  children,
+}: {
+  icon: FeatherName;
+  tone?: "magenta" | "green";
+  title: string;
+  body?: string;
+  children: ReactNode;
+}) {
+  const color = tone === "green" ? arena.green : arena.magenta;
+  const wash = tone === "green" ? arenaAlpha.greenWash : arenaAlpha.magentaWash;
+  return (
+    <Screen>
+      <View className="flex-1 items-center justify-center gap-5">
+        <View
+          style={{ backgroundColor: wash }}
+          className="h-24 w-24 items-center justify-center rounded-3xl border border-arena-hairline-strong"
+        >
+          <Feather name={icon} size={42} color={color} />
+        </View>
+        <Text variant="title" className="text-center">
+          {title}
+        </Text>
+        {body != null ? (
+          <Text variant="body" className="text-center text-muted">
+            {body}
+          </Text>
+        ) : null}
+        <View className="w-full pt-2">{children}</View>
+      </View>
+    </Screen>
+  );
+}
 
 export default function WeighInCaptureScreen() {
   const { t } = useTranslation();
@@ -110,54 +154,28 @@ export default function WeighInCaptureScreen() {
   }
   if (target.status === "no-bet") {
     return (
-      <Screen>
-        <View className="flex-1 items-center justify-center gap-4 px-6">
-          <Text variant="heading" className="text-center">
-            {t("weighin.noBet.title")}
-          </Text>
-          <Text variant="caption" className="text-center text-muted">
-            {t("weighin.noBet.body")}
-          </Text>
-          <Link href="/bet/new" asChild>
-            <Button label={t("weighin.noBet.cta")} />
-          </Link>
-        </View>
-      </Screen>
+      <StateView icon="flag" title={t("weighin.noBet.title")} body={t("weighin.noBet.body")}>
+        <Link href="/bet/new" asChild>
+          <Button label={t("weighin.noBet.cta")} icon="zap" />
+        </Link>
+      </StateView>
     );
   }
   if (target.status === "done") {
     return (
-      <Screen>
-        <View className="flex-1 items-center justify-center gap-4 px-6">
-          <Text variant="heading" className="text-center">
-            {t("weighin.done.title")}
-          </Text>
-          <Text variant="caption" className="text-center text-muted">
-            {t("weighin.done.body")}
-          </Text>
-          <Link href="/" asChild>
-            <Button label={t("common.backHome")} />
-          </Link>
-        </View>
-      </Screen>
+      <StateView icon="check-circle" tone="green" title={t("weighin.done.title")} body={t("weighin.done.body")}>
+        <Link href="/" asChild>
+          <Button label={t("common.backHome")} />
+        </Link>
+      </StateView>
     );
   }
 
   if (phase === "error") {
     return (
-      <Screen>
-        <View className="flex-1 items-center justify-center gap-4 px-6">
-          <Text variant="heading" className="text-center">
-            {t("weighin.error.title")}
-          </Text>
-          {errorMsg != null ? (
-            <Text variant="caption" className="text-center text-muted">
-              {errorMsg}
-            </Text>
-          ) : null}
-          <Button label={t("weighin.error.retry")} onPress={() => router.replace("/weighin")} />
-        </View>
-      </Screen>
+      <StateView icon="alert-triangle" title={t("weighin.error.title")} body={errorMsg ?? undefined}>
+        <Button label={t("weighin.error.retry")} icon="refresh-cw" onPress={() => router.replace("/weighin")} />
+      </StateView>
     );
   }
 

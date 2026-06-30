@@ -1,12 +1,16 @@
 /**
  * Leitor da lição do dia (NOOM) — psicologia da mudança na voz do treinador.
- * `?id=<lessonId>`. Marca como vista ao concluir.
+ * `?id=<lessonId>`. Cabeçalho com tile de ícone + tag, corpo com ritmo de leitura
+ * confortável. Marca como vista (com retorno tátil) ao concluir.
  */
 import { ScrollView, View } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Button, Screen, Tag, Text } from "@/shared/ui";
+import { hapticDone } from "@/shared/motion";
+import { arena, arenaAlpha } from "@/theme/tokens";
 import { lessonById, nextLesson, useJourney } from "@/features/journey";
 
 export default function LessonScreen() {
@@ -19,23 +23,38 @@ export default function LessonScreen() {
 
   function done() {
     markLessonSeen(lesson.id);
+    hapticDone();
     router.back();
   }
 
   return (
     <Screen>
       <View className="flex-1 justify-between py-4">
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 16 }}>
-          <Tag label={t("journey.lesson.today")} tone="green" />
-          <Text variant="title">{lesson.title}</Text>
-          <Text className="font-mono text-xs text-muted">
-            {t("journey.lesson.minutes", { n: lesson.minutes })}
-          </Text>
-          <Text variant="body" className="leading-relaxed">
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 18, paddingBottom: 8 }}>
+          <View className="gap-4">
+            <View
+              style={{ backgroundColor: arenaAlpha.greenWash }}
+              className="h-16 w-16 items-center justify-center rounded-3xl border border-arena-hairline-strong"
+            >
+              <Feather name="book-open" size={30} color={arena.green} />
+            </View>
+            <Tag label={t("journey.lesson.today")} tone="green" />
+            <Text variant="title">{lesson.title}</Text>
+            <View className="flex-row items-center gap-1.5">
+              <Feather name="clock" size={13} color={arena.fogMute} />
+              <Text className="font-mono text-xs text-muted-foreground">
+                {t("journey.lesson.minutes", { n: lesson.minutes })}
+              </Text>
+            </View>
+          </View>
+
+          <View className="h-px bg-arena-hairline" />
+
+          <Text variant="body" className="text-[17px] leading-[1.7]">
             {lesson.body}
           </Text>
         </ScrollView>
-        <Button label={t("journey.lesson.cta")} onPress={done} className="mt-4" />
+        <Button label={t("journey.lesson.cta")} icon="check" onPress={done} className="mt-4" />
       </View>
     </Screen>
   );

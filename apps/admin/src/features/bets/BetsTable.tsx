@@ -14,7 +14,16 @@ import { type AdminBetRowDto } from "@charya/contracts";
 import { RotateCw } from "lucide-react";
 import { useAllBets } from "@/features/bets/api/useAllBets";
 import { relativeAge } from "@/shared/lib/relative-age";
-import { Badge, Button, Select, Skeleton } from "@/shared/ui";
+import {
+  Badge,
+  Button,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Skeleton,
+} from "@/shared/ui";
 import { cn } from "@/lib/utils";
 
 type BetStatus = AdminBetRowDto["status"];
@@ -30,6 +39,12 @@ const STATUS: Record<BetStatus, { label: string; variant?: "approved" | "pending
   };
 
 const STATUS_ORDER: BetStatus[] = ["pending_payment", "open", "settling", "won", "lost", "voided"];
+
+// Mapa value→label para o SelectValue exibir o rótulo do filtro selecionado.
+const STATUS_ITEMS: Record<string, string> = {
+  all: "Todos os status",
+  ...Object.fromEntries(STATUS_ORDER.map((s) => [s, STATUS[s].label])),
+};
 
 // Colunas numéricas/monetárias → alinhadas à direita com tabular-nums.
 const NUMERIC = new Set(["targetWeightKg", "stakeAmount", "payoutAmount"]);
@@ -113,17 +128,21 @@ export function BetsTable(): React.JSX.Element {
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
         <Select
-          value={status ?? ""}
-          onChange={(e) => setStatus((e.target.value || undefined) as BetStatus | undefined)}
-          aria-label="Filtrar apostas por status"
-          className="max-w-xs"
+          value={status ?? "all"}
+          onValueChange={(v) => setStatus(v === "all" ? undefined : (v as BetStatus))}
+          items={STATUS_ITEMS}
         >
-          <option value="">Todos os status</option>
-          {STATUS_ORDER.map((s) => (
-            <option key={s} value={s}>
-              {STATUS[s].label}
-            </option>
-          ))}
+          <SelectTrigger className="w-48" aria-label="Filtrar apostas por status">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os status</SelectItem>
+            {STATUS_ORDER.map((s) => (
+              <SelectItem key={s} value={s}>
+                {STATUS[s].label}
+              </SelectItem>
+            ))}
+          </SelectContent>
         </Select>
         <p className="text-sm text-[var(--color-muted-foreground)]" aria-live="polite">
           <span className="font-semibold tabular-nums text-[var(--color-foreground)]">{total}</span>{" "}

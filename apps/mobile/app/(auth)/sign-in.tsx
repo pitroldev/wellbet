@@ -4,11 +4,11 @@
  * (`createAccount`), destravando o fluxo. Alterna entre sign in e sign up.
  */
 import { useState } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { Button, Input, PressableScale, Screen, Tag, Text } from "@/shared/ui";
+import { BrandBolt, Button, Input, PressableScale, Screen, Tag, Text } from "@/shared/ui";
 import { AuthError, signIn, signUp } from "@/features/auth";
 import { useJourney } from "@/features/journey";
 
@@ -38,8 +38,12 @@ export default function AuthScreen() {
       if (c.includes("EXIST")) return t("journey.auth.errTaken");
       if (c.includes("PASSWORD") && c.includes("SHORT")) return t("journey.auth.errWeak");
       if (e.status === 401 || c.includes("INVALID")) return t("journey.auth.errInvalid");
+      // Servidor respondeu um erro sem mapeamento → mostra a mensagem real (debug).
+      if (e.message && e.message !== "auth_failed") return e.message;
+      return t("journey.auth.errGeneric");
     }
-    return t("journey.auth.errGeneric");
+    // Não é AuthError → falha de rede / servidor inacessível.
+    return t("journey.auth.errNetwork");
   }
 
   async function submit() {
@@ -53,6 +57,7 @@ export default function AuthScreen() {
       createAccount(user.name ?? name.trim());
       router.replace("/");
     } catch (e) {
+      if (__DEV__) console.warn("[auth] falha em sign-in/up:", e);
       setError(friendly(e));
     } finally {
       setLoading(false);
@@ -72,7 +77,10 @@ export default function AuthScreen() {
         contentContainerStyle={{ gap: 20, paddingVertical: 16 }}
         keyboardShouldPersistTaps="handled"
       >
-        <Tag label="WellBet" />
+        <View className="items-center gap-3 pb-1 pt-2">
+          <BrandBolt size={72} />
+          <Tag label="WellBet" align="center" />
+        </View>
         <Text variant="title">
           {isSignup ? t("journey.auth.signUpTitle") : t("journey.auth.signInTitle")}
         </Text>
@@ -121,9 +129,11 @@ export default function AuthScreen() {
         )}
 
         <Button
-          label={loading ? "…" : isSignup ? t("journey.auth.signUp") : t("journey.auth.signIn")}
+          label={isSignup ? t("journey.auth.signUp") : t("journey.auth.signIn")}
           onPress={submit}
           disabled={!valid}
+          loading={loading}
+          icon="arrow-right"
           className="mt-2"
         />
         <PressableScale onPress={toggle} className="items-center">

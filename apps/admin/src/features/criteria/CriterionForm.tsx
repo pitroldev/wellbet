@@ -4,7 +4,16 @@ import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button, Input, Select, Textarea } from "@/shared/ui";
+import {
+  Button,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Textarea,
+} from "@/shared/ui";
 
 /**
  * Formulário de critério (criar/editar). A `key` (slug do dataset) só é editável
@@ -21,17 +30,21 @@ const criterionFormSchema = z.object({
   failHint: z.string().trim().max(2000),
   sortOrder: z.number().int().min(0).max(10_000),
   // Condição de aparição (substitui o N/A): o critério só aparece quando vale.
-  appliesWhen: z.enum(["always", "has_code", "has_comparison", "has_previous_weight"]),
+  appliesWhen: z.enum(["always", "has_comparison", "has_previous_weight"]),
 });
 
 export type CriterionFormValues = z.infer<typeof criterionFormSchema>;
 
 const APPLIES_OPTIONS: { value: CriterionFormValues["appliesWhen"]; label: string }[] = [
   { value: "always", label: "Sempre" },
-  { value: "has_code", label: "Quando há código dinâmico (anti-replay)" },
   { value: "has_comparison", label: "Quando há 2+ capturas (comparar identidade)" },
   { value: "has_previous_weight", label: "Quando há peso anterior (plausibilidade)" },
 ];
+
+/** Mapa value→label para o SelectValue exibir o rótulo escolhido. */
+const APPLIES_ITEMS: Record<string, string> = Object.fromEntries(
+  APPLIES_OPTIONS.map((o) => [o.value, o.label]),
+);
 
 export interface CriterionFormProps {
   mode: "create" | "edit";
@@ -196,17 +209,17 @@ export function CriterionForm({
             name="appliesWhen"
             control={control}
             render={({ field }) => (
-              <Select
-                id="crit-applies"
-                value={field.value}
-                onChange={field.onChange}
-                onBlur={field.onBlur}
-              >
-                {APPLIES_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
+              <Select value={field.value} onValueChange={field.onChange} items={APPLIES_ITEMS}>
+                <SelectTrigger id="crit-applies" onBlur={field.onBlur}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {APPLIES_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             )}
           />

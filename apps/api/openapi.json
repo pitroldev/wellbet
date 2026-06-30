@@ -578,6 +578,254 @@
           "bet"
         ]
       }
+    },
+    "/api/admin/users": {
+      "get": {
+        "operationId": "AdminUserController_list",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "role",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "user",
+                "reviewer",
+                "admin"
+              ]
+            }
+          },
+          {
+            "name": "emailVerified",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 9007199254740991,
+              "default": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListUsersResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Busca/lista usuários (suporte).",
+        "tags": [
+          "admin-users"
+        ]
+      }
+    },
+    "/api/admin/users/{authUserId}": {
+      "get": {
+        "operationId": "AdminUserController_detail",
+        "parameters": [
+          {
+            "name": "authUserId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "360 do usuário (identidade + perfil + histórico + sinais + payout).",
+        "tags": [
+          "admin-users"
+        ]
+      },
+      "patch": {
+        "operationId": "AdminUserController_update",
+        "parameters": [
+          {
+            "name": "authUserId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Edita name/role/emailVerified/taxId/pixKey.",
+        "tags": [
+          "admin-users"
+        ]
+      }
+    },
+    "/api/admin/users/{authUserId}/reset-password": {
+      "post": {
+        "operationId": "AdminUserController_resetPassword",
+        "parameters": [
+          {
+            "name": "authUserId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetPasswordResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Dispara o link de redefinição de senha (Better Auth).",
+        "tags": [
+          "admin-users"
+        ]
+      }
+    },
+    "/api/admin/users/{authUserId}/ban": {
+      "post": {
+        "operationId": "AdminUserController_ban",
+        "parameters": [
+          {
+            "name": "authUserId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BanUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Bane a conta (revoga sessões; bloqueia todo acesso).",
+        "tags": [
+          "admin-users"
+        ]
+      }
+    },
+    "/api/admin/users/{authUserId}/unban": {
+      "post": {
+        "operationId": "AdminUserController_unban",
+        "parameters": [
+          {
+            "name": "authUserId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Remove o ban da conta.",
+        "tags": [
+          "admin-users"
+        ]
+      }
     }
   },
   "info": {
@@ -1101,9 +1349,6 @@
           "context": {
             "type": "object",
             "properties": {
-              "hasCode": {
-                "type": "boolean"
-              },
               "hasComparison": {
                 "type": "boolean"
               },
@@ -1112,7 +1357,6 @@
               }
             },
             "required": [
-              "hasCode",
               "hasComparison",
               "hasPreviousWeight"
             ]
@@ -1247,7 +1491,6 @@
             "type": "string",
             "enum": [
               "always",
-              "has_code",
               "has_comparison",
               "has_previous_weight"
             ]
@@ -1312,7 +1555,6 @@
             "type": "string",
             "enum": [
               "always",
-              "has_code",
               "has_comparison",
               "has_previous_weight"
             ]
@@ -1353,7 +1595,6 @@
             "type": "string",
             "enum": [
               "always",
-              "has_code",
               "has_comparison",
               "has_previous_weight"
             ]
@@ -1592,6 +1833,432 @@
           "brcode",
           "chargeExpiresAt"
         ]
+      },
+      "ListUsersResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "authUserId": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "reviewer",
+                    "admin"
+                  ]
+                },
+                "emailVerified": {
+                  "type": "boolean"
+                },
+                "banned": {
+                  "type": "boolean"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                },
+                "domainUserId": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "hasTaxId": {
+                  "type": "boolean"
+                },
+                "hasPixKey": {
+                  "type": "boolean"
+                },
+                "betsCount": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "weighinsCount": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "authUserId",
+                "email",
+                "name",
+                "role",
+                "emailVerified",
+                "banned",
+                "createdAt",
+                "domainUserId",
+                "hasTaxId",
+                "hasPixKey",
+                "betsCount",
+                "weighinsCount"
+              ]
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ]
+      },
+      "UserDetailDto": {
+        "type": "object",
+        "properties": {
+          "identity": {
+            "type": "object",
+            "properties": {
+              "authUserId": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "emailVerified": {
+                "type": "boolean"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "user",
+                  "reviewer",
+                  "admin"
+                ]
+              },
+              "image": {
+                "type": "string",
+                "nullable": true
+              },
+              "banned": {
+                "type": "boolean"
+              },
+              "banReason": {
+                "type": "string",
+                "nullable": true
+              },
+              "bannedAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+                "nullable": true
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+              }
+            },
+            "required": [
+              "authUserId",
+              "email",
+              "name",
+              "emailVerified",
+              "role",
+              "image",
+              "banned",
+              "banReason",
+              "bannedAt",
+              "createdAt",
+              "updatedAt"
+            ]
+          },
+          "domain": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "taxId": {
+                "type": "string",
+                "nullable": true
+              },
+              "pixKey": {
+                "type": "string",
+                "nullable": true
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+              }
+            },
+            "required": [
+              "userId",
+              "name",
+              "taxId",
+              "pixKey",
+              "createdAt"
+            ],
+            "nullable": true
+          },
+          "signals": {
+            "type": "object",
+            "properties": {
+              "newAccount": {
+                "type": "boolean"
+              },
+              "rejectionsCount": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "payoutPending": {
+                "type": "boolean"
+              },
+              "noFinancialProfile": {
+                "type": "boolean"
+              },
+              "emailUnverified": {
+                "type": "boolean"
+              },
+              "orphan": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "newAccount",
+              "rejectionsCount",
+              "payoutPending",
+              "noFinancialProfile",
+              "emailUnverified",
+              "orphan"
+            ]
+          },
+          "payout": {
+            "type": "object",
+            "properties": {
+              "verdict": {
+                "type": "string",
+                "enum": [
+                  "pago",
+                  "a_liquidar",
+                  "bloqueado_sem_pix",
+                  "bloqueado_pesagem_final",
+                  "sem_payout"
+                ]
+              },
+              "payoutTransferId": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": [
+              "verdict",
+              "payoutTransferId"
+            ]
+          },
+          "bets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "betId": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pending_payment",
+                    "open",
+                    "settling",
+                    "won",
+                    "lost",
+                    "voided"
+                  ]
+                },
+                "targetWeightKg": {
+                  "type": "number"
+                },
+                "stakeAmount": {
+                  "type": "string"
+                },
+                "payoutAmount": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "payoutTransferId": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                },
+                "settledAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+                  "nullable": true
+                }
+              },
+              "required": [
+                "betId",
+                "status",
+                "targetWeightKg",
+                "stakeAmount",
+                "payoutAmount",
+                "currency",
+                "payoutTransferId",
+                "createdAt",
+                "settledAt"
+              ]
+            }
+          },
+          "weighins": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "baseline",
+                    "mid",
+                    "final"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "blocked",
+                    "in_review",
+                    "approved",
+                    "rejected",
+                    "recapture"
+                  ]
+                },
+                "weightKg": {
+                  "type": "number"
+                },
+                "lossPerWeekKg": {
+                  "type": "number",
+                  "nullable": true
+                },
+                "capturedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                },
+                "verdict": {
+                  "type": "string",
+                  "enum": [
+                    "approved",
+                    "pending",
+                    "rejected",
+                    null
+                  ],
+                  "nullable": true
+                }
+              },
+              "required": [
+                "id",
+                "kind",
+                "status",
+                "weightKg",
+                "lossPerWeekKg",
+                "capturedAt",
+                "verdict"
+              ]
+            }
+          }
+        },
+        "required": [
+          "identity",
+          "domain",
+          "signals",
+          "payout",
+          "bets",
+          "weighins"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "reviewer",
+              "admin"
+            ]
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "taxId": {
+            "type": "string",
+            "maxLength": 32,
+            "nullable": true
+          },
+          "pixKey": {
+            "type": "string",
+            "maxLength": 140,
+            "nullable": true
+          }
+        }
+      },
+      "ResetPasswordResponseDto": {
+        "type": "object",
+        "properties": {
+          "sent": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "sent"
+        ]
+      },
+      "BanUserDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "maxLength": 500
+          }
+        }
       }
     }
   }

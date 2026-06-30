@@ -13,6 +13,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Button, Card, Input, Screen, Tag, Text } from "@/shared/ui";
+import { hapticDone } from "@/shared/motion";
 import { useJourney } from "@/features/journey";
 import { CameraCapture } from "@/features/weighin/camera/CameraCapture";
 import { localChallenge } from "@/features/weighin/model/localChallenge";
@@ -37,6 +38,7 @@ export default function Weigh() {
   function registerBaseline() {
     if (!valid) return;
     s.setBaseline(kg);
+    hapticDone();
     router.replace("/");
   }
 
@@ -50,6 +52,7 @@ export default function Weigh() {
   function handleRecorded() {
     useWeighInStore.getState().reset();
     s.submitFinal(kg);
+    hapticDone();
     router.replace("/");
   }
   function handleError(message: string) {

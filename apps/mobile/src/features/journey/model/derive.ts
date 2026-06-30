@@ -68,3 +68,29 @@ export function onPace(bet: JourneyBet, currentKg: number, now = Date.now()): bo
       : 1;
   return progress(bet, currentKg).pct >= elapsed - 0.05;
 }
+
+/** IMC (kg/m²). 0 se altura inválida. */
+export function bmi(weightKg: number, heightCm: number): number {
+  if (heightCm <= 0) return 0;
+  const m = heightCm / 100;
+  return weightKg / (m * m);
+}
+
+export interface ChallengePace {
+  /** % do peso a perder por semana (intensidade do desafio). */
+  weeklyPct: number;
+  /** desafio agressivo? (> 1,5%/semana — possível, mas exige disciplina). */
+  aggressive: boolean;
+}
+
+/**
+ * Ritmo/dificuldade do desafio — quão agressiva é a meta (% do peso por semana).
+ * Quanto mais alto, maior a fatia do bolo (dito EM PALAVRAS na UI, NUNCA como
+ * cotação/multiplicador — Manual §5.4: sem número de payout inventado). Aqui só a
+ * dificuldade; o prêmio de verdade sai do bolo de quem desiste, no acerto.
+ */
+export function challengePace(startKg: number, targetKg: number, weeks: number): ChallengePace {
+  const lossKg = Math.max(0, startKg - targetKg);
+  const weeklyPct = startKg > 0 && weeks > 0 ? ((lossKg / startKg) / weeks) * 100 : 0;
+  return { weeklyPct, aggressive: weeklyPct > 1.5 };
+}

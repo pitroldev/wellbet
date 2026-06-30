@@ -1,13 +1,16 @@
 /**
- * Perfil — CPF/CNPJ + chave Pix. Pré-requisito para apostar e receber o prêmio
- * (a api exige `taxId`/`pixKey`). Lê e grava via @charya/contracts.
+ * Perfil — identidade + CPF/CNPJ + chave Pix + idioma. CPF/Pix são pré-requisito
+ * para apostar e receber o prêmio (a api exige `taxId`/`pixKey`). Lê e grava via
+ * @charya/contracts. Cabeçalho de identidade + seções com ícone (Midnight Aurora).
  */
 import { useState } from "react";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { Button, Input, PressableScale, Screen, Text } from "@/shared/ui";
+import { Button, Chip, Input, Screen, Text } from "@/shared/ui";
+import { arena, arenaAlpha } from "@/theme/tokens";
 import { apiErrorMessage } from "@/shared/lib/http";
 import { useLocale } from "@/shared/i18n/useLocale";
 import { useMe } from "@/features/profile/api/useMe";
@@ -20,12 +23,22 @@ const LANGUAGE_LABEL = {
   en: "common.languageEn",
 } as const;
 
+function SectionLabel({ icon, label }: { icon: keyof typeof Feather.glyphMap; label: string }) {
+  return (
+    <View className="flex-row items-center gap-2">
+      <Feather name={icon} size={14} color={arena.fogMute} />
+      <Text variant="label">{label}</Text>
+    </View>
+  );
+}
+
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const { language, languages, setLanguage } = useLocale();
   const { data: me, isLoading } = useMe();
   const update = useUpdateProfile();
   const setHasAccount = useJourney((s) => s.setHasAccount);
+  const name = useJourney((s) => s.name);
 
   const [taxId, setTaxId] = useState("");
   const [pixKey, setPixKey] = useState("");
@@ -39,6 +52,8 @@ export default function ProfileScreen() {
     setTaxId(me.taxId ?? "");
     setPixKey(me.pixKey ?? "");
   }
+
+  const initial = (name ?? "").trim().charAt(0).toUpperCase();
 
   async function onSignOut(): Promise<void> {
     await signOut();
@@ -64,76 +79,97 @@ export default function ProfileScreen() {
 
   return (
     <Screen>
-      <View className="flex-1 gap-8 py-6">
-        <View className="gap-2">
-          <Text variant="label" className="text-arena-magenta">
-            WellBet
-          </Text>
-          <Text variant="title">{t("profile.title")}</Text>
-          <Text variant="body" className="text-muted">
-            {t("profile.body")}
-          </Text>
-        </View>
-
-        <View className="gap-2">
-          <Text variant="label">{t("common.language")}</Text>
-          <View className="flex-row gap-2">
-            {languages.map((lang) => {
-              const active = lang === language;
-              return (
-                <PressableScale
-                  key={lang}
-                  onPress={() => setLanguage(lang)}
-                  className={
-                    active
-                      ? "bg-arena-magenta px-4 py-2"
-                      : "border-2 border-border bg-arena-navy-soft px-4 py-2"
-                  }
-                >
-                  <Text variant="label" className={active ? "text-on-primary" : "text-muted"}>
-                    {t(LANGUAGE_LABEL[lang])}
-                  </Text>
-                </PressableScale>
-              );
-            })}
+      <View className="flex-1 py-4">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ gap: 24, paddingBottom: 8 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Identidade */}
+          <View className="items-center gap-3 pt-2">
+            <View
+              style={{ backgroundColor: arenaAlpha.magentaWash }}
+              className="h-20 w-20 items-center justify-center rounded-full border border-arena-hairline-strong"
+            >
+              {initial.length > 0 ? (
+                <Text variant="display" className="text-3xl text-arena-magenta">
+                  {initial}
+                </Text>
+              ) : (
+                <Feather name="user" size={32} color={arena.magenta} />
+              )}
+            </View>
+            <View className="items-center gap-0.5">
+              <Text variant="heading" className="text-xl">
+                {name?.trim() ? name : t("profile.account")}
+              </Text>
+              {name?.trim() ? (
+                <Text variant="label" className="text-muted-foreground">
+                  {t("profile.account")}
+                </Text>
+              ) : null}
+            </View>
           </View>
-        </View>
 
-        <View className="gap-4">
-          <Input
-            label={t("profile.field.taxId")}
-            value={taxId}
-            onChangeText={setTaxId}
-            placeholder={t("profile.field.taxIdPlaceholder")}
-            keyboardType="numbers-and-punctuation"
-            autoCapitalize="none"
-            editable={!isLoading}
-          />
-          <Input
-            label={t("profile.field.pix")}
-            value={pixKey}
-            onChangeText={setPixKey}
-            placeholder={t("profile.field.pixPlaceholder")}
-            autoCapitalize="none"
-            editable={!isLoading}
-          />
-          {error != null ? (
-            <Text variant="caption" className="text-danger">
-              {error}
+          {/* Recebimento (CPF/Pix) */}
+          <View className="gap-3">
+            <SectionLabel icon="credit-card" label={t("profile.section.payout")} />
+            <Text variant="caption" className="text-muted">
+              {t("profile.body")}
             </Text>
-          ) : null}
-        </View>
+            <Input
+              label={t("profile.field.taxId")}
+              value={taxId}
+              onChangeText={setTaxId}
+              placeholder={t("profile.field.taxIdPlaceholder")}
+              keyboardType="numbers-and-punctuation"
+              autoCapitalize="none"
+              editable={!isLoading}
+            />
+            <Input
+              label={t("profile.field.pix")}
+              value={pixKey}
+              onChangeText={setPixKey}
+              placeholder={t("profile.field.pixPlaceholder")}
+              autoCapitalize="none"
+              editable={!isLoading}
+            />
+            {error != null ? (
+              <Text variant="caption" className="text-danger">
+                {error}
+              </Text>
+            ) : null}
+          </View>
 
-        <View className="mt-auto gap-3">
+          {/* Idioma */}
+          <View className="gap-3">
+            <SectionLabel icon="globe" label={t("common.language")} />
+            <View className="flex-row gap-2.5">
+              {languages.map((lang) => (
+                <Chip
+                  key={lang}
+                  label={t(LANGUAGE_LABEL[lang])}
+                  selected={lang === language}
+                  onPress={() => setLanguage(lang)}
+                />
+              ))}
+            </View>
+          </View>
+        </ScrollView>
+
+        <View className="gap-3 pt-3">
           <Button
             label={update.isPending ? t("common.saving") : t("common.save")}
+            icon="check"
             onPress={() => void onSave()}
             disabled={update.isPending || isLoading}
+            loading={update.isPending}
           />
           <Button label={t("common.cancel")} tone="ghost" onPress={() => router.back()} />
           <Button
             label={t("journey.auth.signOut")}
             tone="secondary"
+            icon="log-out"
             onPress={() => void onSignOut()}
           />
         </View>

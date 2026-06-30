@@ -75,6 +75,14 @@ export function buildAuth(opts: BuildAuthOptions) {
           input: false,
           defaultValue: "user",
         },
+        // Banimento: entra na sessão para o AuthGuard rejeitar sem round-trip
+        // extra. `input: false` impede que o cliente se auto-banido/desbanido.
+        banned: {
+          type: "boolean",
+          required: false,
+          input: false,
+          defaultValue: false,
+        },
       },
     },
     session: {

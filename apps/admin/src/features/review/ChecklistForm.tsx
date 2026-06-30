@@ -32,8 +32,6 @@ const DOT: Record<"unset" | Choice, string> = {
 /** Critério aparece? Mapeia `appliesWhen` para os fatos do contexto da revisão. */
 function applies(appliesWhen: string, ctx: ReviewContext): boolean {
   switch (appliesWhen) {
-    case "has_code":
-      return ctx.hasCode;
     case "has_comparison":
       return ctx.hasComparison;
     case "has_previous_weight":

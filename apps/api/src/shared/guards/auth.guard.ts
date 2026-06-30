@@ -1,6 +1,7 @@
 import {
   type CanActivate,
   type ExecutionContext,
+  ForbiddenException,
   Injectable,
   SetMetadata,
   UnauthorizedException,
@@ -13,6 +14,8 @@ export interface AuthenticatedUser {
   readonly id: string;
   readonly email: string;
   readonly role: "user" | "reviewer" | "admin";
+  /** Conta banida pelo suporte — o AuthGuard bloqueia todo acesso. */
+  readonly banned: boolean;
 }
 
 export interface AuthenticatedRequest extends Request {
@@ -52,6 +55,9 @@ export class AuthGuard implements CanActivate {
     const req = context.switchToHttp().getRequest<AuthenticatedRequest>();
     if (!req.user) {
       throw new UnauthorizedException("Sessão ausente ou inválida.");
+    }
+    if (req.user.banned) {
+      throw new ForbiddenException("Conta banida. Fale com o suporte.");
     }
     return true;
   }
