@@ -14,8 +14,8 @@ const SCEN: Record<
     pct: 10,
     label: "Na força de vontade",
     line: "Só 1 em cada 10 chega lá sozinho.",
-    accent: "text-[color:var(--color-magenta-deep)]",
-    fill: "bg-[color:var(--color-magenta-deep)]",
+    accent: "text-[color:var(--color-violet)]",
+    fill: "bg-[color:var(--color-violet)]",
   },
   bet: {
     pct: 50,
@@ -27,7 +27,7 @@ const SCEN: Record<
 };
 
 /**
- * Placar de ciência INTERATIVO — alterne os dois braços do mesmo estudo (BMJ) e
+ * Painel de ciência INTERATIVO — alterne os dois braços do mesmo estudo (BMJ) e
  * a barra salta de 10% a 50% (5×) com o número rolando. Dopamina honesta: é a
  * comparação real, controlada pelo usuário (sem inventar nada).
  */
@@ -41,16 +41,16 @@ export function StatsBoard(): JSX.Element {
   return (
     <div ref={ref} className="mt-12 sm:mt-14">
       {/* toggle */}
-      <div className="inline-flex border-2 border-ink font-[family-name:var(--font-geist-mono)] text-[11px] font-bold uppercase tracking-[0.12em]">
-        {(["solo", "bet"] as const).map((m, i) => (
+      <div className="inline-flex rounded-full bg-ink/[0.06] p-1 font-[family-name:var(--font-geist-mono)] text-[11px] font-bold uppercase tracking-[0.12em]">
+        {(["solo", "bet"] as const).map((m) => (
           <button
             key={m}
             type="button"
             onClick={() => setMode(m)}
             aria-pressed={mode === m}
-            className={`px-4 py-2.5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-magenta ${
-              i === 1 ? "border-l-2 border-ink" : ""
-            } ${mode === m ? "bg-ink text-paper" : "text-ink hover:bg-ink/[0.06]"}`}
+            className={`min-h-11 rounded-full px-4 py-2.5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet ${
+              mode === m ? "bg-ink text-paper" : "text-ink hover:bg-ink/[0.1]"
+            }`}
           >
             {SCEN[m].label}
           </button>
@@ -67,14 +67,14 @@ export function StatsBoard(): JSX.Element {
         <AnimatedNumber value={shown} suffix="%" />
       </p>
 
-      <div className="mt-4 h-10 w-full border-2 border-ink p-1">
+      <div className="mt-4 h-10 w-full rounded-full bg-ink/[0.06] p-1">
         <div
-          className={`h-full transition-[width] duration-700 ease-out ${scen.fill}`}
+          className={`h-full rounded-full transition-[width] duration-700 ease-out ${scen.fill}`}
           style={{ width: `${shown}%` }}
         />
       </div>
 
-      <p className="mt-3 font-[family-name:var(--font-archivo)] text-xl uppercase leading-none tracking-tight text-ink">
+      <p className="mt-3 font-[family-name:var(--font-archivo)] text-xl font-extrabold leading-[1.1] tracking-[-0.02em] text-ink">
         {scen.line}
       </p>
 

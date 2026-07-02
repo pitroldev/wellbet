@@ -16,8 +16,8 @@ export function HeroProof(): JSX.Element {
   return (
     <ul className="flex flex-wrap items-center gap-x-6 gap-y-2.5">
       {SINAIS.map(({ Icon, label }) => (
-        <li key={label} className="inline-flex items-center gap-2 text-ink">
-          <Icon className="size-4 text-indigo" strokeWidth={2.4} aria-hidden />
+        <li key={label} className="inline-flex items-center gap-2 text-white">
+          <Icon className="size-4 text-violet-soft" strokeWidth={2.4} aria-hidden />
           <span className="font-[family-name:var(--font-geist-mono)] text-xs font-bold uppercase tracking-[0.12em]">
             {label}
           </span>

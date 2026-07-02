@@ -2,17 +2,24 @@
 
 import type { JSX } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Eyebrow, Slab, CTA } from "@/ui";
+import { GradText, CTA } from "@/ui";
 import { RevealText, EASE, Magnetic } from "@/motion";
-import { appUrl, ctaLabel } from "@/config";
+import { BRL } from "@/lib/formatters";
+import { useAposta, useApostaHref } from "@/state/aposta";
 import { HeroProof } from "./HeroProof";
 
+const brl = (n: number) => new Intl.NumberFormat("pt-BR", BRL).format(n);
+
 /**
- * Coluna de texto do hero. Ênfase via Slab (bloco magenta + ink) — em papel,
- * magenta-texto reprovaria contraste; o bloco é o grifo legível e mais brutal.
+ * Coluna de texto do hero — sem urgência inventada (o relógio "ao vivo"
+ * morreu): eyebrow com a frase-assinatura da marca, a pergunta com ênfase em
+ * ciano (superfície escura: Slab é de papel) e CTAs alimentados pelo bilhete
+ * que a própria pessoa monta ao lado (useAposta — um estado só na página).
  */
 export function HeroCopy(): JSX.Element {
   const reduce = useReducedMotion();
+  const { stake } = useAposta();
+  const href = useApostaHref();
   const rise = (delay: number) =>
     reduce
       ? {}
@@ -24,11 +31,14 @@ export function HeroCopy(): JSX.Element {
 
   return (
     <div>
+      {/* eyebrow-pílula — só a frase-assinatura, nada de LED nem relógio */}
       <motion.div {...rise(0.1)}>
-        <Eyebrow tone="indigo">A bet que você torce pra ganhar</Eyebrow>
+        <span className="inline-flex items-center rounded-full border border-white/15 bg-white/[0.04] px-3.5 py-1.5 font-[family-name:var(--font-geist-mono)] text-[11px] font-bold uppercase tracking-[0.18em] text-white">
+          A bet que você torce pra ganhar
+        </span>
       </motion.div>
 
-      <h1 className="mt-5 font-[family-name:var(--font-archivo)] text-hero uppercase leading-[1.2] tracking-[-0.01em] text-ink">
+      <h1 className="mt-5 font-[family-name:var(--font-archivo)] text-hero font-black leading-[1.08] tracking-[-0.02em] text-white">
         <RevealText immediate delay={0.1}>
           Quanto você
         </RevealText>
@@ -36,26 +46,22 @@ export function HeroCopy(): JSX.Element {
           apostaria
         </RevealText>
         <RevealText immediate delay={0.3}>
-          <Slab>em você?</Slab>
+          <GradText tone="cyan">em você?</GradText>
         </RevealText>
       </h1>
 
-      <motion.p
-        {...rise(0.5)}
-        className="mt-7 max-w-xl text-lg leading-relaxed text-[color:var(--color-paper-mute)] sm:text-xl"
-      >
-        Coloque dinheiro real na sua meta de peso. Bateu no prazo?{" "}
-        <strong className="font-bold text-ink">
-          Deu <span className="text-[color:var(--color-green-text)]">green</span>
-        </strong>{" "}
-        — recebe de volta com recompensa. Aqui você joga contra a sua própria desistência.
+      <motion.p {...rise(0.5)} className="mt-7 max-w-xl text-lg leading-relaxed text-fog sm:text-xl">
+        Dinheiro real, via Pix, na sua meta de peso. Bateu no prazo: recebe de volta + sua fatia do
+        bolo de quem desistiu. Não bateu: perde o valor. É por isso que funciona.
       </motion.p>
 
       <motion.div {...rise(0.62)} className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
         <Magnetic>
-          <CTA href={appUrl}>{ctaLabel}</CTA>
+          <CTA href={href} onDark>
+            {`Apostar ${brl(stake)} em mim`}
+          </CTA>
         </Magnetic>
-        <CTA href="#como-funciona" variant="secondary">
+        <CTA href="#como-funciona" variant="secondary" onDark>
           Como funciona
         </CTA>
       </motion.div>

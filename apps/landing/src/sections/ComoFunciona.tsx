@@ -1,145 +1,185 @@
 "use client";
 
-import type { JSX } from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import { Target, Wallet, Camera, Trophy, type LucideIcon } from "lucide-react";
-import { Secao, SectionHeader, Eyebrow, GradText, CardBrutal, IconTile } from "@/ui";
+import { useRef, type JSX } from "react";
+import { motion, useReducedMotion, useScroll, type Variants } from "framer-motion";
+import { ArrowRight, Check, X } from "lucide-react";
+import { Secao, SectionHeader, Eyebrow, GradText, Card } from "@/ui";
 import { Reveal, EASE } from "@/motion";
-import { fireGreen } from "@/fx";
-import { cn } from "@/lib/utils";
 
 interface Passo {
-  readonly numero: string;
   readonly titulo: string;
   readonly descricao: string;
-  readonly Icon: LucideIcon;
-  /** O passo do green nomeia o DOWNSIDE (objeção nº1) e é tocável (comemora). */
-  readonly destaque?: boolean;
 }
 
+/** Os 4 passos do produto — começo, meio e fim declarados antes de qualquer Pix. */
 const PASSOS: readonly Passo[] = [
   {
-    numero: "01",
-    Icon: Target,
-    titulo: "Defina sua meta",
+    titulo: "Monte seu bilhete",
     descricao:
-      "Escolha quanto quer perder e em quanto tempo. Uma meta realista, do seu tamanho — nada de promessa milagrosa.",
+      "Meta, prazo e quanto você põe em jogo. Meta do seu tamanho, nada de milagre.",
   },
   {
-    numero: "02",
-    Icon: Wallet,
-    titulo: "Ponha algo em jogo",
-    descricao:
-      "Coloque um valor real na sua própria meta. É esse dinheiro em risco que vira compromisso de verdade — não mais uma promessa de ano-novo.",
+    titulo: "Prove o ponto de partida",
+    descricao: "Pesagem em vídeo contínuo, revisada por gente.",
   },
   {
-    numero: "03",
-    Icon: Camera,
-    titulo: "Cumpra e comprove",
-    descricao:
-      "Registre cada pesagem em vídeo contínuo, revisada por gente. Sem trapaça, sem atalho — e se não comprovar, conta como não bateu.",
+    titulo: "Cumpra o período",
+    descricao: "O jogo corre todo dia: check-ins, streak, o placar sempre à vista.",
   },
   {
-    numero: "04",
-    Icon: Trophy,
-    titulo: "Deu green",
-    destaque: true,
-    descricao:
-      "Bateu no prazo? Recebe o dinheiro de volta + recompensa, no Pix. Não bateu? Seu valor vai pro bolo de quem conseguiu — é o que faz a coisa funcionar.",
+    titulo: "Pesagem final + revisão humana",
+    descricao: "A janela é sorteada perto do prazo. Mesma prova, mesmo rigor.",
   },
 ];
 
+/*
+ * Trava de ordem do veredito: o container orquestra os dois desfechos com
+ * stagger — a PERDA sempre entra primeiro no tempo (e no DOM, para leitura),
+ * e o green só carimba depois que ela já está na mesa.
+ */
+const DESFECHOS_VAR: Variants = {
+  fora: {},
+  visivel: { transition: { delayChildren: 0.15, staggerChildren: 0.6 } },
+};
+
+const PERDA_VAR: Variants = {
+  fora: { opacity: 0, y: 24 },
+  visivel: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } },
+};
+
+const GREEN_VAR: Variants = {
+  fora: { opacity: 0, scale: 1.14 },
+  visivel: {
+    opacity: 1,
+    scale: 1,
+    transition: { type: "spring", stiffness: 420, damping: 24 },
+  },
+};
+
+/** Produção idêntica nos dois desfechos — a perda nunca é letra miúda. */
+const CARTAO_DESFECHO =
+  "relative flex h-full flex-col rounded-2xl border bg-surface p-6 shadow-panel";
+const CARIMBO_DESFECHO =
+  "inline-flex w-fit -rotate-3 items-center gap-2 rounded-lg px-3 py-1.5 font-[family-name:var(--font-archivo)] text-xl font-black uppercase leading-none";
+
 /**
- * Seção "Como funciona" — 4 passos com vida: a régua de progressão SE DESENHA ao
- * entrar na tela, os cards reagem ao hover e o passo do green é TOCÁVEL (confete
- * honesto, é o conceito "deu green"). O downside continua nomeado, 100% PT-BR.
+ * Dobra COMO FUNCIONA — os 4 passos do produto, numerados e diretos, com a
+ * honestidade estrutural do fork. A LINHA (gradient-brand) se desenha com o
+ * progresso de scroll scoped à seção (sem pin, sem scroll-jacking) ligando os
+ * 4 nós-passo; no fim a revisão humana bifurca em dois desfechos de MESMA
+ * produção, com a perda entrando primeiro. Reduced-motion: tudo estático,
+ * linha já desenhada.
  */
 export function ComoFunciona(): JSX.Element {
   const reduce = useReducedMotion();
-
-  const onGreen = (_e: unknown, info: { point: { x: number; y: number } }) => {
-    void fireGreen({
-      x: info.point.x / window.innerWidth,
-      y: info.point.y / window.innerHeight,
-    });
-  };
+  const trilhaRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: trilhaRef,
+    offset: ["start 0.82", "end 0.55"],
+  });
 
   return (
-    <Secao id="como-funciona" surface="navy">
+    <Secao id="como-funciona" surface="ink">
       <Reveal>
         <SectionHeader
-          kicker={<Eyebrow tone="magenta">Como funciona</Eyebrow>}
+          kicker={<Eyebrow>Como funciona</Eyebrow>}
           title={
             <>
-              Quatro passos. Um <GradText>compromisso.</GradText>
+              Da meta ao green. <GradText>Sem letra miúda.</GradText>
             </>
           }
-          lede="Da meta ao green — e o que acontece se você não bater. Tudo na mesa, sem letra miúda."
         />
       </Reveal>
 
-      <div className="relative mt-12 sm:mt-14">
-        {/* régua da progressão (lg) — se DESENHA da esquerda pra direita */}
+      <div ref={trilhaRef} className="relative mt-12 max-w-3xl sm:mt-14">
+        {/* trilho apagado + LINHA que se desenha conforme você desce */}
+        <span
+          aria-hidden
+          className="absolute bottom-4 left-[11px] top-4 w-0.5 rounded-full bg-white/10"
+        />
         <motion.span
           aria-hidden
-          className="pointer-events-none absolute left-0 right-0 top-[3.6rem] hidden h-0.5 origin-left bg-magenta lg:block"
-          initial={reduce ? false : { scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
+          className="absolute bottom-4 left-[11px] top-4 w-0.5 origin-top rounded-full"
+          style={{ background: "var(--gradient-brand)", scaleY: reduce ? 1 : scrollYProgress }}
         />
 
-        <div className="relative grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {PASSOS.map(({ numero, titulo, descricao, Icon, destaque }, i) => {
-            const card = (
-              <CardBrutal surface="ink" accent={destaque ? "green" : "magenta"} interactive>
-                <div className="flex items-center justify-between">
-                  <IconTile tone={destaque ? "green" : "magenta"}>
-                    <Icon className="size-5" strokeWidth={2.4} aria-hidden />
-                  </IconTile>
-                  <span
-                    className={cn(
-                      "font-[family-name:var(--font-geist-mono)] text-5xl font-bold leading-none tabular-nums",
-                      destaque ? "text-green" : "text-magenta",
-                    )}
-                  >
-                    {numero}
-                  </span>
-                </div>
-                <h3
-                  className={cn(
-                    "mt-5 font-[family-name:var(--font-archivo)] text-xl uppercase leading-[0.95] tracking-tight",
-                    destaque ? "text-green" : "text-white",
-                  )}
-                >
-                  {titulo}
-                </h3>
-                <p className="mt-2.5 text-[15px] leading-relaxed text-fog">{descricao}</p>
-                {destaque ? (
-                  <span className="mt-4 inline-flex items-center gap-1.5 font-[family-name:var(--font-geist-mono)] text-[10px] font-bold uppercase tracking-[0.14em] text-green">
-                    ▸ toque pra comemorar
-                  </span>
-                ) : null}
-              </CardBrutal>
-            );
+        <ol className="space-y-5 sm:space-y-6">
+          {PASSOS.map(({ titulo, descricao }, i) => (
+            <li key={titulo} className="relative pl-10 sm:pl-14">
+              {/* nó do passo sobre a linha */}
+              <span
+                aria-hidden
+                className="absolute left-0 top-8 grid size-6 place-items-center"
+              >
+                <span className="size-3 rounded-full border-2 border-cyan bg-ink" />
+              </span>
 
-            return (
-              <Reveal key={numero} delay={0.05 * i}>
-                {destaque ? (
-                  <motion.div
-                    onTap={onGreen}
-                    whileTap={reduce ? undefined : { scale: 0.98 }}
-                    className="h-full cursor-pointer"
-                  >
-                    {card}
-                  </motion.div>
-                ) : (
-                  card
-                )}
+              <Reveal delay={0.06 * i}>
+                <Card surface="ink" accent="violet" interactive>
+                  <h3 className="font-[family-name:var(--font-archivo)] text-lg font-extrabold uppercase leading-[1.1] tracking-[-0.01em] text-white sm:text-xl">
+                    {/* numeral visível "1 ·"; leitores de tela ouvem "Passo 1:" */}
+                    <span aria-hidden className="text-violet-soft">
+                      {i + 1} ·{" "}
+                    </span>
+                    <span className="sr-only">Passo {i + 1}: </span>
+                    {titulo}
+                  </h3>
+                  <p className="mt-2.5 text-[15px] leading-relaxed text-fog">{descricao}</p>
+                </Card>
               </Reveal>
-            );
-          })}
-        </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      {/* FORK — a revisão humana bifurca o caminho em dois desfechos */}
+      <div className="mt-14 max-w-3xl sm:mt-16">
+        <Reveal>
+          <p className="flex items-center gap-2.5 font-[family-name:var(--font-geist-mono)] text-xs font-bold uppercase tracking-[0.22em] text-cyan">
+            Revisão humana
+            <span className="sr-only">vira</span>
+            <ArrowRight className="size-3.5 shrink-0" aria-hidden />
+            Veredito
+          </p>
+        </Reveal>
+
+        <motion.div
+          className="mt-6 grid gap-5 sm:grid-cols-2"
+          variants={DESFECHOS_VAR}
+          initial={reduce ? false : "fora"}
+          whileInView="visivel"
+          viewport={{ once: true, margin: "-80px" }}
+        >
+          {/* a perda vem PRIMEIRO — quem lê o veredito encara o downside antes da festa */}
+          <motion.article variants={PERDA_VAR} className={`${CARTAO_DESFECHO} border-white/10`}>
+            <span className={`${CARIMBO_DESFECHO} bg-white/10 text-fog`}>
+              <X className="size-5 shrink-0" strokeWidth={3} aria-hidden />
+              Não bateu
+            </span>
+            <p className="mt-5 text-[15px] leading-relaxed text-fog">
+              Seu valor vai pro bolo de quem bateu. Por isso dói.
+            </p>
+          </motion.article>
+
+          {/* o green só carimba depois — é o desfecho condicional de vitória */}
+          <motion.article variants={GREEN_VAR} className={`${CARTAO_DESFECHO} border-green/40`}>
+            <span
+              className={`${CARIMBO_DESFECHO} bg-green text-green-ink shadow-[0_16px_40px_-12px_rgba(65,255,202,0.4)]`}
+            >
+              <Check className="size-5 shrink-0" strokeWidth={3} aria-hidden />
+              Deu green
+            </span>
+            <p className="mt-5 text-[15px] leading-relaxed text-fog">
+              Seu valor de volta + sua fatia do bolo, no Pix.
+            </p>
+          </motion.article>
+        </motion.div>
+
+        <Reveal delay={0.2}>
+          <p className="mt-8 max-w-xl text-[15px] leading-relaxed text-fog-mute">
+            Você acabou de ler o caminho da derrota. Agora escolhe não passar por ele.
+          </p>
+        </Reveal>
       </div>
     </Secao>
   );

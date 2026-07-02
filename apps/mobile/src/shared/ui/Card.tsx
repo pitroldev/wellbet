@@ -1,21 +1,21 @@
 /**
- * Card FROSTED — a casca padrão do Midnight Aurora. Vidro translúcido sobre a
- * aurora, canto generoso (rounded-3xl), sheen de luz no topo e hairline que capta
+ * Card FROSTED — a casca padrão do app. Vidro translúcido sobre a aurora,
+ * canto generoso (rounded-3xl), sheen de luz no topo e hairline que capta
  * o brilho. Profundidade vem de vidro + sheen + aurora (NUNCA sombra RN colorida,
  * que vira cinza no Android).
  *
- *  - `surface="glass"` (padrão) = vidro translúcido; `"solid"` = navy elevado;
+ *  - `surface="glass"` (padrão) = vidro translúcido; `"solid"` = surface opaca;
  *    `"paper"` = bloco claro (ritmo claro/escuro).
- *  - `accent`  = barra de gradiente no topo (magenta ou verde).
+ *  - `accent`  = barra de gradiente no topo (violeta, ciano p/ hábito, verde SÓ vitória).
  *  - `glow`    = borda HAIRLINE em gradiente (card de herói, luminoso).
  */
 import { View, type ViewProps } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-import { gradients, radius } from "@/theme/tokens";
+import { arena, gradients, radius } from "@/theme/tokens";
 
 type Surface = "glass" | "solid" | "paper";
-type Accent = "none" | "magenta" | "green";
+type Accent = "none" | "violet" | "cyan" | "green";
 
 export interface CardProps extends ViewProps {
   surface?: Surface;
@@ -27,13 +27,14 @@ export interface CardProps extends ViewProps {
 
 const surfaceClass: Record<Surface, string> = {
   glass: "bg-arena-glass",
-  solid: "bg-arena-navy-soft",
+  solid: "bg-arena-surface",
   paper: "bg-paper",
 };
 
 const accentColors: Record<Exclude<Accent, "none">, readonly [string, string]> = {
-  magenta: [gradients.gymbet[0], gradients.gymbetSoft[1]],
-  green: [gradients.victory[0], "#7BFFDC"],
+  violet: [gradients.brand[0], gradients.brand[1]],
+  cyan: [arena.blue, arena.cyan],
+  green: [gradients.victory[0], arena.mint],
 };
 
 export function Card({
@@ -81,7 +82,7 @@ export function Card({
 
   if (!glow) return inner;
 
-  // Card de herói: borda hairline em gradiente (índigo→magenta→verde).
+  // Card de herói: borda hairline em gradiente (violeta→azul→verde).
   return (
     <LinearGradient
       colors={gradients.hairline}

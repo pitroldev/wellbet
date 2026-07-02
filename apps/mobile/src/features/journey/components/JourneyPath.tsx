@@ -38,13 +38,13 @@ export function JourneyPath({
       <View className="h-5 flex-row items-center">
         <View style={{ backgroundColor: arena.green }} className="h-3.5 w-3.5 rounded-full" />
         <View className="mx-2 flex-1">
-          <AnimatedBar progress={progress} height={6} colors={gradients.gymbet} />
+          <AnimatedBar progress={progress} height={6} colors={gradients.brand} />
         </View>
         <Animated.View
           style={[
             windowOpen
-              ? { backgroundColor: arena.magenta }
-              : { backgroundColor: arenaAlpha.magentaWash, borderColor: arena.magenta },
+              ? { backgroundColor: arena.violet }
+              : { backgroundColor: arenaAlpha.violetWash, borderColor: arena.violet },
             windowOpen && pulseDur > 0 ? pulse(pulseDur) : undefined,
           ]}
           className={

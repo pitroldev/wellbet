@@ -1,6 +1,6 @@
 /**
  * Chip selecionável — pílula de escolha (duração da aposta, idioma, opção). Vidro
- * quando ocioso; wash magenta + borda viva + texto magenta quando selecionado.
+ * quando ocioso; wash violeta + borda viva + texto violeta-claro quando selecionado.
  * Compõe PressableScale (afundar + háptico). Ícone Feather opcional.
  */
 import { View } from "react-native";
@@ -26,16 +26,16 @@ export function Chip({ label, selected = false, onPress, icon, className }: Chip
     <PressableScale onPress={onPress} className={className}>
       <View
         style={{
-          backgroundColor: selected ? arenaAlpha.magentaWash : arenaAlpha.glass,
-          borderColor: selected ? arena.magenta : arena.navyLine,
+          backgroundColor: selected ? arenaAlpha.violetWash : arenaAlpha.glass,
+          borderColor: selected ? arena.violet : arena.line,
         }}
         className="flex-row items-center gap-2 rounded-full border px-4 py-2.5"
       >
         {icon != null ? (
-          <Feather name={icon} size={16} color={selected ? arena.magenta : arena.fogMute} />
+          <Feather name={icon} size={16} color={selected ? arena.violetSoft : arena.fogMute} />
         ) : null}
         <Text
-          className={`font-sans-bold text-sm ${selected ? "text-arena-magenta" : "text-muted"}`}
+          className={`font-sans-bold text-sm ${selected ? "text-arena-violet-soft" : "text-muted"}`}
         >
           {label}
         </Text>

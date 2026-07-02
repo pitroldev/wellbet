@@ -76,9 +76,10 @@ export default function Weigh() {
     <Screen>
       <View className="flex-1 justify-between py-4">
         <View className="gap-5 pt-6">
+          {/* Final é PROVA, não festa — green fica pro settlement; aqui o tom é sóbrio. */}
           <Tag
             label={isFinal ? t("journey.home.windowTitle") : t("journey.baseline.eyebrow")}
-            tone={isFinal ? "green" : "magenta"}
+            tone={isFinal ? "ink" : "violet"}
           />
           <Text variant="title">
             {isFinal ? t("journey.home.windowTitle") : t("journey.baseline.title")}
@@ -97,8 +98,8 @@ export default function Weigh() {
           />
 
           {isFinal ? (
-            <Card accent="green">
-              <Text variant="label" className="text-arena-green">
+            <Card accent="violet">
+              <Text variant="label" className="text-arena-violet-soft">
                 A prova
               </Text>
               <Text variant="body" className="mt-1">

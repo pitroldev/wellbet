@@ -5,8 +5,11 @@ export interface SecaoProps {
   id?: string;
   children: ReactNode;
   className?: string;
-  /** Superfície — ritmo CLARO/ESCURO (ink/navy escuras, papel/magenta claras). */
-  surface?: "ink" | "navy" | "paper" | "magenta";
+  /**
+   * Superfície — ritmo CLARO/ESCURO (ink/surface escuras, paper clara; violet =
+   * bloco de marca com texto branco).
+   */
+  surface?: "ink" | "surface" | "paper" | "violet";
   /** Escala de respiro vertical. base = padrão; tight = compacto (painel/footer). */
   size?: "tight" | "base";
 }
@@ -14,9 +17,9 @@ export interface SecaoProps {
 /** Cada superfície já carrega o fundo E a cor de texto base (claro ↔ escuro). */
 const surfaceClasses: Record<NonNullable<SecaoProps["surface"]>, string> = {
   ink: "bg-ink text-white",
-  navy: "bg-navy text-white",
+  surface: "bg-surface text-white",
   paper: "bg-paper text-[color:var(--color-paper-ink)]",
-  magenta: "bg-magenta text-ink",
+  violet: "bg-violet text-white",
 };
 
 /** Tiers de espaçamento — fonte única (mata overrides soltos de className). */

@@ -3,19 +3,22 @@ import { Secao, SectionHeader, Tag, Slab } from "@/ui";
 import { StatsBoard } from "./StatsBoard";
 
 /**
- * Seção "A ciência por trás" — por que o mecanismo funciona (commitment device).
- * Server Component; só o placar (StatsBoard) é ilha client (count-up). Numerais
- * em ink (contraste); acento de cor só no sufixo.
+ * Dobra "A CIÊNCIA" — a evidência de que apostar em si funciona (commitment
+ * device com dado real, BMJ + Kahneman), dita sem frame de metáfora: um
+ * visitante frio entende em 3 segundos. Server Component; só o painel
+ * (StatsBoard) é ilha client (count-up). Numerais em ink (contraste); acento de
+ * cor só no sufixo.
  */
 export function Stats(): JSX.Element {
   return (
-    <Secao id="ciencia" surface="paper">
+    // hairline no topo — delimita o painel dentro do bloco claro (dinheiro → ciência)
+    <Secao id="ciencia" surface="paper" className="border-t border-paper-line">
       <SectionHeader
         tone="light"
-        kicker={<Tag tone="green">A ciência por trás</Tag>}
+        kicker={<Tag>A ciência</Tag>}
         title={
           <>
-            Apostar em você <Slab>funciona</Slab>.
+            Apostar em você <Slab>funciona.</Slab>
           </>
         }
         lede={

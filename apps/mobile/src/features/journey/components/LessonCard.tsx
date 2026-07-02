@@ -1,7 +1,7 @@
 /**
  * Cartão da lição do dia — mecânica do NOOM (a tarefa/lição de hoje), na voz do
- * treinador. Card frosted, acento verde, tile de ícone + chevron. Toque leva ao
- * leitor da lição.
+ * treinador. Card frosted, acento ciano (hábito — o verde é só da vitória),
+ * tile de ícone + chevron. Toque leva ao leitor da lição.
  */
 import { View } from "react-native";
 import { Feather } from "@expo/vector-icons";
@@ -21,15 +21,15 @@ export function LessonCard({ title, minutes, onPress }: LessonCardProps) {
 
   return (
     <PressableScale onPress={onPress}>
-      <Card accent="green" className="flex-row items-center gap-4">
+      <Card accent="cyan" className="flex-row items-center gap-4">
         <View
-          style={{ backgroundColor: arenaAlpha.greenWash }}
+          style={{ backgroundColor: arenaAlpha.blueWash }}
           className="h-12 w-12 items-center justify-center rounded-2xl border border-arena-hairline"
         >
-          <Feather name="book-open" size={22} color={arena.green} />
+          <Feather name="book-open" size={22} color={arena.cyan} />
         </View>
         <View className="flex-1 gap-0.5">
-          <Text variant="label" className="text-arena-mint">
+          <Text variant="label" className="text-arena-cyan">
             {t("journey.lesson.today")}
           </Text>
           <Text variant="heading" className="text-lg">

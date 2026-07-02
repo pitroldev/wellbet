@@ -8,7 +8,7 @@ import { useState } from "react";
 import { View, type LayoutChangeEvent } from "react-native";
 import { Blur, Canvas, Circle, Group, LinearGradient, Path, vec } from "@shopify/react-native-skia";
 
-import { arena, gradients } from "@/theme/tokens";
+import { arena, arenaAlpha, gradients } from "@/theme/tokens";
 
 export interface SparklineProps {
   /** série de pesos, do mais antigo ao mais novo (ex.: [baseline, ...check-ins]). */
@@ -48,7 +48,7 @@ export function Sparkline({ points, target, height = 72 }: SparklineProps) {
             <LinearGradient
               start={vec(0, 0)}
               end={vec(0, height)}
-              colors={["rgba(255,43,214,0.28)", "rgba(255,43,214,0.0)"]}
+              colors={[arenaAlpha.violetWash, "rgba(80,50,252,0.0)"]}
             />
           </Path>
           {/* meta (tracejado verde) */}
@@ -67,11 +67,11 @@ export function Sparkline({ points, target, height = 72 }: SparklineProps) {
           </Path>
           {/* ponto de luz no último valor */}
           <Group>
-            <Circle cx={lastX} cy={lastY} r={7} color={arena.magenta} opacity={0.5}>
+            <Circle cx={lastX} cy={lastY} r={7} color={arena.violet} opacity={0.5}>
               <Blur blur={6} />
             </Circle>
             <Circle cx={lastX} cy={lastY} r={4} color={arena.white} />
-            <Circle cx={lastX} cy={lastY} r={4} color={arena.magenta} opacity={0.6} />
+            <Circle cx={lastX} cy={lastY} r={4} color={arena.violet} opacity={0.6} />
           </Group>
         </Canvas>
       ) : null}

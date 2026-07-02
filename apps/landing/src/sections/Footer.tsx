@@ -9,7 +9,7 @@ import { appUrl } from "@/config";
  */
 export function Footer(): JSX.Element {
   return (
-    <footer className="border-t-2 border-magenta bg-ink px-6 py-12">
+    <footer className="border-t-2 border-violet bg-ink px-6 py-12">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <Wordmark size={28} />
@@ -20,8 +20,11 @@ export function Footer(): JSX.Element {
             <a href="#como-funciona" className="text-fog transition-colors hover:text-white">
               Como funciona
             </a>
-            <a href="#confianca" className="text-fog transition-colors hover:text-white">
-              Por que confiar
+            <a href="#prova" className="text-fog transition-colors hover:text-white">
+              A prova
+            </a>
+            <a href="#faq" className="text-fog transition-colors hover:text-white">
+              Perguntas
             </a>
             <a href={appUrl} className="text-fog transition-colors hover:text-white">
               Entrar
@@ -29,14 +32,17 @@ export function Footer(): JSX.Element {
           </nav>
         </div>
 
-        {/* disclaimer de jogo responsável — contraste em fog (não fog-mute) */}
-        <p className="mt-10 max-w-3xl text-sm leading-relaxed text-fog">
+        {/* assinatura da marca + disclaimer de jogo responsável — contraste em fog */}
+        <p className="mt-10 max-w-3xl text-sm font-semibold leading-relaxed text-white">
+          A WellBet vende saúde e compromisso — não promessa de dinheiro fácil.
+        </p>
+        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-fog">
           A WellBet é um instrumento de compromisso para saúde e bem-estar — não uma casa de
           apostas. O resultado depende de você cumprir a sua meta, não da sorte. Comprometa-se com
           responsabilidade.
         </p>
 
-        <div className="mt-8 border-t border-navy-line pt-6">
+        <div className="mt-8 border-t border-white/10 pt-6">
           <div className="flex flex-col gap-3 font-[family-name:var(--font-geist-mono)] text-xs uppercase tracking-[0.06em] text-fog sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <p className="text-fog-mute">
               © {new Date().getFullYear()} WellBet Saúde e Bem-Estar LTDA

@@ -63,11 +63,13 @@ Dois fatos do produto determinam quase tudo que escrevemos:
   prêmio, dizemos a verdade: _"o prêmio vem de quem desistiu."_
 
 > **Nota de coerência (cor/tipografia):** o deck original desenhava a WellBet em
-> azul+verde e Fraunces+Jakarta. O produto evoluiu, por decisão do fundador, para a
-> direção **"Sportsbook Brutal"**: magenta `#FF00FF`, ground escuro, **Anton**
-> (manchete condensada) + **Space Mono** (números), canto vivo, blocos chapados.
-> **Este manual reflete a direção atual (magenta brutal).** Voz e vocabulário valem
-> independentemente da paleta — se um dia a cor mudar, só o capítulo 8/9 muda.
+> azul+verde e Fraunces+Jakarta; depois veio a fase provisória "Sportsbook Brutal"
+> (magenta `#FF00FF`, Anton, canto vivo). Em jul/2026 entrou a **identidade
+> oficial "Chama Violeta"** (brandbook em `docs/design-branding/`): símbolo
+> punho+chama, violeta `#5032FC`, ink `#08161E`, offwhite `#FAFBFC`, wordmark
+> bold arredondado. **Este manual reflete a direção atual (violeta).** Voz e
+> vocabulário valem independentemente da paleta — quando a cor muda, só os
+> capítulos 8/9 mudam (como agora). Spec completa: `docs/WellBet_Design_System.md`.
 
 ---
 
@@ -142,7 +144,7 @@ promessa milagrosa" é a mesma informação **com personalidade**.
 - **Segunda pessoa, direto.** Falamos com **você**, não sobre "os usuários".
 - **Imperativo > descritivo.** "Aposte em você" > "Você pode apostar em você".
 - **Curto bate mais forte.** Corte adjetivo, corte advérbio, corte "que". A
-  manchete da marca é condensada (Anton) por isso — a voz acompanha o tipo.
+  manchete da marca é pesada (Outfit 800/900) por isso — a voz acompanha o tipo.
 - **Verbo forte, concreto.** apostar, bater, cumprir, gravar, receber, perder.
   Evite: maximizar, otimizar, potencializar, alavancar.
 - **Caixa-alta = ênfase de placar, não grito.** Use em manchetes e na palavra-herói
@@ -342,36 +344,41 @@ CTA responde à pergunta da manchete com o número da pessoa.
 
 A voz e o tipo são a mesma decisão. Não escreva contra o tipo.
 
-- **Anton (display, caixa-alta, condensada):** a voz de **placar/cartaz**. Manchetes,
-  a palavra-herói, "DEU GREEN". Curta e pesada — frase longa em Anton vira ruído.
-- **Space Mono (números/labels):** a voz de **bilhete/terminal**. Todo número, código,
-  eyebrow curto, tag. Dá o ar de "comprovante" honesto.
+- **Outfit 800/900 (display, bold arredondada):** a voz de **placar/cartaz**.
+  Manchetes em sentence case com a palavra-chave em destaque; caixa-alta vira
+  recurso pontual (eyebrow, a palavra-herói "DEU GREEN"). Curta e pesada —
+  frase longa em display vira ruído.
+- **Geist Mono (números/labels):** a voz de **bilhete/terminal**. Todo número,
+  código, eyebrow curto, tag. Dá o ar de "comprovante" honesto.
 - **Plus Jakarta (corpo):** a voz **de gente**. Parágrafos, explicações, FAQ.
-- **Sem itálico.** Itálico amolece; a marca é dura/reta.
+- **Sem itálico.** Itálico amolece; a marca é firme/reta.
 
-Implicação prática: se a manchete não cabe condensada em 1–2 linhas, **corte texto**,
-não troque o tipo. O limite do Anton é um limite editorial saudável.
+Implicação prática: se a manchete não cabe em 1–2 linhas, **corte texto**,
+não troque o tipo. O limite do display é um limite editorial saudável.
 
 ---
 
 ## 9. Identidade visual (resumo de uma página)
 
-> Fonte de verdade no código (`globals.css` / `arena.ts`) e no deck
-> (`apps/playground/BRAND.md`). Aqui só o essencial pra não escrever copy que brigue
-> com a tela.
+> Fonte de verdade: `docs/WellBet_Design_System.md` (spec), assets em
+> `docs/design-branding/`, código em `globals.css` / `arena.ts`. Aqui só o
+> essencial pra não escrever copy que brigue com a tela.
 
-- **Magenta `#FF00FF`** — primária, em **blocos chapados** (não gradiente, não glow).
-  Sobre magenta, texto em **ink** (`#0A0D16`).
+- **Violeta `#5032FC`** — primária, em blocos e CTAs-pílula. Sobre violeta,
+  texto **branco**. Sobre o escuro, violeta puro nunca é texto (usa-se
+  `#9D8FFF`/azul/ciano); sobre o offwhite, violeta pode ser texto.
 - **Verde menta `#41FFCA`** — só vitória ("deu green").
-- **Ground escuro** `#0A0D16`; superfície de card `#1C1A2C`; papel claro `#F1EFE9`
+- **Ground escuro** ink `#08161E`; papel claro offwhite `#FAFBFC`
   (ritmo claro/escuro).
-- **Canto vivo** (sem arredondamento), **blocos chapados**, motivo **raio-seta ⚡** +
-  estilhaço diagonal. Estética: cartaz de boxe / placar de estádio / bilhete de aposta.
-- **Logo:** o raio-seta (`BoltMark`), recolorível, nunca distorcido. Wordmark
-  "WellBet" em Anton caixa-alta.
+- **Cantos generosamente arredondados**, grão fino, glow violeta/ciano com
+  parcimônia, assets 3D táteis (moeda, estrela, streak) em momentos-chave.
+  Estética: placar premium de esporte / bilhete honesto — não neon de cassino.
+- **Logo:** o símbolo **punho dentro da chama** (`FlameMark`/`BrandFlame`),
+  recolorível, nunca distorcido. Wordmark "WELLBET" bold arredondado — sempre
+  os arquivos oficiais, nunca redesenhado em fonte.
 
-A copy deve sentir o mesmo: **dura, chapada, de canto vivo**. Texto fofo numa tela
-brutal é dissonância.
+A copy deve sentir o mesmo: **firme, direta, de peito aberto**. Texto fofo numa
+tela de placar é dissonância.
 
 ---
 

@@ -38,12 +38,12 @@ export function FinalReview() {
   return (
     <View className="flex-1 items-center justify-center gap-7">
       <Animated.View
-        style={[{ backgroundColor: arenaAlpha.magentaWash }, pulseDur > 0 ? pulse(pulseDur) : undefined]}
+        style={[{ backgroundColor: arenaAlpha.violetWash }, pulseDur > 0 ? pulse(pulseDur) : undefined]}
         className="h-28 w-28 items-center justify-center rounded-full border border-arena-hairline-strong"
       >
-        <Feather name="eye" size={40} color={arena.magenta} />
+        <Feather name="eye" size={40} color={arena.violetSoft} />
       </Animated.View>
-      <Tag label="Em revisão" tone="magenta" />
+      <Tag label="Em revisão" tone="violet" />
       <View className="gap-3 px-4">
         <Text variant="title" className="text-center">
           {t("journey.home.reviewTitle")}

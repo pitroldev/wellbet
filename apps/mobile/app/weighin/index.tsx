@@ -35,19 +35,19 @@ type FeatherName = keyof typeof Feather.glyphMap;
  * tile de ícone de vidro + título + corpo + ação. (A captura/câmera segue sóbria.) */
 function StateView({
   icon,
-  tone = "magenta",
+  tone = "violet",
   title,
   body,
   children,
 }: {
   icon: FeatherName;
-  tone?: "magenta" | "green";
+  tone?: "violet" | "green";
   title: string;
   body?: string;
   children: ReactNode;
 }) {
-  const color = tone === "green" ? arena.green : arena.magenta;
-  const wash = tone === "green" ? arenaAlpha.greenWash : arenaAlpha.magentaWash;
+  const color = tone === "green" ? arena.green : arena.violetSoft;
+  const wash = tone === "green" ? arenaAlpha.greenWash : arenaAlpha.violetWash;
   return (
     <Screen>
       <View className="flex-1 items-center justify-center gap-5">

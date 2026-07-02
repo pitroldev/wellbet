@@ -21,7 +21,9 @@ import { arena } from "@/theme/tokens";
 
 const DURATION_MS = 1800;
 const COUNT = 22;
-const COLORS = [arena.magenta, arena.pink, arena.green, arena.white, arena.orchid, arena.indigo];
+// Green na frente (e no fallback): o confete é festa de VITÓRIA — green domina,
+// a marca (violeta/azul) acompanha.
+const COLORS = [arena.green, arena.violet, arena.green, arena.blue, arena.white, arena.green];
 
 /** PRNG determinística por índice — estável entre renders e PURA (sem Math.random). */
 function rand(i: number, salt: number): number {
@@ -54,7 +56,7 @@ export function Confetti({ onFinish }: ConfettiProps) {
       Array.from({ length: COUNT }, (_, i) => ({
         x: rand(i, 1) * width,
         size: 8 + rand(i, 2) * 8,
-        color: COLORS[i % COLORS.length] ?? arena.magenta,
+        color: COLORS[i % COLORS.length] ?? arena.green,
         drift: (rand(i, 3) - 0.5) * width * 0.4,
         fallFactor: 0.7 + rand(i, 4) * 0.5,
         rot: (rand(i, 5) - 0.5) * 8,

@@ -9,7 +9,7 @@
  *  - `caption` → Plus Jakarta, secundário (fog).
  *  - `label`   → eyebrow: Geist Mono, CAIXA-ALTA, tracking largo, terciário.
  *  - `mono`    → Geist Mono (códigos/labels/Pix).
- *  - `numeric` → Geist Mono grande em magenta (peso/streak/prêmio/stake).
+ *  - `numeric` → Geist Mono grande em violeta-claro (peso/streak/prêmio/stake).
  *
  * Line-heights folgados de propósito: acento da 2ª linha (á, ç, ã) NUNCA bate na
  * linha de cima. Cada peso é uma família própria; escolhemos a família explícita
@@ -27,10 +27,10 @@ const variantClass: Record<Variant, string> = {
   caption: "font-sans text-sm leading-relaxed text-muted",
   label: "font-mono-medium text-[11px] uppercase tracking-[0.16em] text-muted-foreground",
   mono: "font-mono text-base text-foreground",
-  numeric: "font-mono-bold text-3xl tabular-nums text-arena-magenta",
+  numeric: "font-mono-bold text-3xl tabular-nums text-arena-violet-soft",
 };
 // Aliases de cor (background/surface/foreground/muted/border/on-primary), a
-// escala `primary-*` e as cores `arena-*` vêm do tailwind.config (Midnight Aurora).
+// escala `primary-*` e as cores `arena-*` vêm do tailwind.config (Chama Violeta).
 
 export interface TextProps extends RNTextProps {
   variant?: Variant;

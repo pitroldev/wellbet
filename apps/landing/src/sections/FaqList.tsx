@@ -1,15 +1,17 @@
 import type { JSX } from "react";
+import { Secao, Display, Slab } from "@/ui";
+import { Reveal } from "@/motion";
 
 interface Faq {
   readonly q: string;
   readonly a: string;
 }
 
-/** As objeções reais de dar Pix contra si mesmo — encaradas de frente. */
+/** As objeções reais de dar Pix contra si mesmo — encaradas de frente, a pior primeiro. */
 const FAQS: readonly Faq[] = [
   {
-    q: "E se eu não bater a meta?",
-    a: "Você perde o valor que pôs — ele vai pro bolo de quem bateu. É exatamente esse risco que te impede de desistir no primeiro perrengue. Sendo honesto: dá pra perder, e é por isso que funciona.",
+    q: "E se eu não bater?",
+    a: "Você perde o valor que pôs. Vai pro bolo de quem bateu. É exatamente esse risco que te impede de desistir.",
   },
   {
     q: "Isso é jogo de azar?",
@@ -26,28 +28,40 @@ const FAQS: readonly Faq[] = [
 ];
 
 /**
- * Acordeão de objeções — `<details>` nativo (acessível, zero JS). Pergunta em
- * Anton, resposta em sans. Mora dentro de Confiança (papel).
+ * Dobra "Pergunta na lata" — acordeão de objeções em `<details>` nativo
+ * (acessível, zero JS), com a objeção nº1 ("e se eu não bater?") em primeiro.
+ * O padding vertical mora no <summary> para o alvo de toque inteiro (≥44px)
+ * abrir/fechar. Superfície papel.
  */
 export function FaqList(): JSX.Element {
   return (
-    <div className="divide-y-2 divide-ink border-2 border-ink">
-      {FAQS.map(({ q, a }) => (
-        <details key={q} className="group px-5 py-4 sm:px-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-[family-name:var(--font-archivo)] text-lg uppercase leading-tight tracking-tight text-ink [&::-webkit-details-marker]:hidden">
-            {q}
-            <span
-              aria-hidden
-              className="font-[family-name:var(--font-geist-mono)] text-2xl leading-none text-[color:var(--color-magenta-deep)] transition-transform duration-200 group-open:rotate-45"
-            >
-              +
-            </span>
-          </summary>
-          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-[color:var(--color-paper-mute)]">
-            {a}
-          </p>
-        </details>
-      ))}
-    </div>
+    <Secao id="faq" surface="paper">
+      <Reveal>
+        <Display level={2} size="section" className="text-ink">
+          Ainda com o pé atrás? <Slab>Pergunta na lata.</Slab>
+        </Display>
+      </Reveal>
+
+      <Reveal className="mt-8 sm:mt-10" delay={0.05}>
+        <div className="divide-y divide-paper-line overflow-hidden rounded-2xl border border-paper-line bg-paper shadow-panel">
+          {FAQS.map(({ q, a }) => (
+            <details key={q} className="group px-5 sm:px-6">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-[family-name:var(--font-archivo)] text-lg font-extrabold leading-tight tracking-[-0.02em] text-ink [&::-webkit-details-marker]:hidden">
+                {q}
+                <span
+                  aria-hidden
+                  className="font-[family-name:var(--font-geist-mono)] text-2xl leading-none text-violet transition-transform duration-200 group-open:rotate-45"
+                >
+                  +
+                </span>
+              </summary>
+              <p className="max-w-2xl pb-4 text-[15px] leading-relaxed text-[color:var(--color-paper-mute)]">
+                {a}
+              </p>
+            </details>
+          ))}
+        </div>
+      </Reveal>
+    </Secao>
   );
 }

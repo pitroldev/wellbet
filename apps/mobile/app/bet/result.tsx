@@ -59,7 +59,13 @@ export default function BetResult() {
       <Screen animateIn={false}>
         <View className="flex-1 justify-between py-4">
           <View className="flex-1 items-center justify-center gap-3">
-            <RewardBadge label={t("journey.settlement.wonTitle")} size={190} />
+            {/* estrela 3D da marca dentro do badge — glow verde: momento de green real */}
+            <RewardBadge
+              label={t("journey.settlement.wonTitle")}
+              size={190}
+              tone="green"
+              image={require("../../assets/brand/3d-star-azul.png")}
+            />
             <Text variant="label" className="text-arena-green">
               você recebe
             </Text>

@@ -1,10 +1,10 @@
 /**
- * Botão de ação — Midnight Aurora. Pílula de canto redondo, com POP de bet.
+ * Botão de ação — pílula de canto redondo, com POP de bet.
  *
- * - `primary`   → pílula com GRADIENTE magenta→roxo→índigo + sheen de vidro no
+ * - `primary`   → pílula com GRADIENTE violeta→azul→ciano + sheen de vidro no
  *   topo. A assinatura da marca, energética. Entrada em `pop`.
  * - `secondary` → pílula de VIDRO (glass + hairline). Sólida, discreta.
- * - `ghost`     → transparente, rótulo magenta.
+ * - `ghost`     → transparente, rótulo violeta-claro (violetSoft, AA no escuro).
  *
  * Sem sombra RN (vira cinza no Android) — a profundidade vem do gradiente + sheen
  * + movimento. Rótulo em Plus Jakarta ExtraBold. Compõe PressableScale (afundar +
@@ -52,7 +52,7 @@ export function Button({
   const content = (
     <View className="flex-row items-center justify-center gap-2.5">
       {loading ? (
-        <ActivityIndicator color={tone === "primary" ? arena.white : arena.magenta} />
+        <ActivityIndicator color={tone === "primary" ? arena.white : arena.violetSoft} />
       ) : (
         <>
           <Text
@@ -61,7 +61,7 @@ export function Button({
                 ? "text-white"
                 : tone === "secondary"
                   ? "text-foreground"
-                  : "text-arena-magenta"
+                  : "text-arena-violet-soft"
             }`}
           >
             {label}
@@ -70,7 +70,7 @@ export function Button({
             <Feather
               name={icon}
               size={19}
-              color={tone === "ghost" ? arena.magenta : arena.white}
+              color={tone === "ghost" ? arena.violetSoft : arena.white}
             />
           ) : null}
         </>
@@ -83,7 +83,7 @@ export function Button({
       <Animated.View style={pop(popDuration)}>
         <PressableScale onPress={onPress} disabled={isDisabled} className={className}>
           <LinearGradient
-            colors={gradients.gymbet}
+            colors={gradients.brand}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{

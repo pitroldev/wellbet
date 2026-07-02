@@ -6,6 +6,7 @@
 import { useState } from "react";
 import { View } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { Redirect, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
@@ -44,10 +45,15 @@ export default function BetPay() {
 
           <Card glow className="gap-4">
             <View className="items-center gap-1">
+              {/* moeda 3D da marca — o dinheiro em jogo, presença discreta */}
+              <Image
+                source={require("../../assets/brand/3d-coin-simbolo-azul.png")}
+                style={{ width: 52, height: 52, marginBottom: 4 }}
+                contentFit="contain"
+              />
               <Text variant="label">{t("journey.status.inPlay")}</Text>
-              <Text variant="numeric" className="text-arena-green">
-                {formatMoney(s.bet.stakeAmount)}
-              </Text>
+              {/* dinheiro EM JOGO não é vitória — o verde fica pro green real */}
+              <Text variant="numeric">{formatMoney(s.bet.stakeAmount)}</Text>
             </View>
 
             <View className="gap-2">
@@ -57,10 +63,11 @@ export default function BetPay() {
                   {s.bet.brcode ?? DEMO_BRCODE}
                 </Text>
               </View>
-              <PressableScale onPress={() => setCopied(true)} className="self-start pt-1">
-                <View className="flex-row items-center gap-2">
-                  <Feather name={copied ? "check" : "copy"} size={15} color={arena.magenta} />
-                  <Text variant="label" className="text-arena-magenta">
+              <PressableScale onPress={() => setCopied(true)} className="self-start">
+                {/* py compensado com margem negativa: alvo de toque ≥44px sem deslocar o layout */}
+                <View className="-my-2 flex-row items-center gap-2 py-3">
+                  <Feather name={copied ? "check" : "copy"} size={15} color={arena.violetSoft} />
+                  <Text variant="label" className="text-arena-violet-soft">
                     {copied ? t("journey.pix.copied") : t("journey.pix.copy")}
                   </Text>
                 </View>

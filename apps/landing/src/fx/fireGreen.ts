@@ -17,7 +17,7 @@ export async function fireGreen(origin?: { x: number; y: number }): Promise<void
     scalar: 0.9,
     decay: 0.92,
     origin: at,
-    colors: ["#ff00ff", "#41ffca", "#ff80e1", "#ffffff"],
+    colors: ["#41FFCA", "#5032FC", "#4A96FF", "#FFFFFF"],
     disableForReducedMotion: true,
   });
 }

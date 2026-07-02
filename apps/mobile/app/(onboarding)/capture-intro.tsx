@@ -26,10 +26,10 @@ export default function CaptureIntro() {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 18, paddingTop: 8 }}>
           <Animated.View entering={FadeIn.duration(500)} className="items-center">
             <View
-              style={{ backgroundColor: arenaAlpha.magentaWash }}
+              style={{ backgroundColor: arenaAlpha.violetWash }}
               className="h-20 w-20 items-center justify-center rounded-3xl border border-arena-hairline-strong"
             >
-              <Feather name="video" size={34} color={arena.magenta} />
+              <Feather name="video" size={34} color={arena.violetSoft} />
             </View>
           </Animated.View>
           <View className="items-center gap-2">
@@ -43,11 +43,12 @@ export default function CaptureIntro() {
           </View>
 
           <View className="gap-2.5">
+            {/* Stagger SÓBRIO (timing seco, sem spring) — captura é prova, não dopamina. */}
             {STEP_KEYS.map((k, i) => (
-              <Animated.View key={k} entering={FadeInDown.delay(120 + i * 60).springify()}>
+              <Animated.View key={k} entering={FadeInDown.delay(80 + i * 55).duration(320)}>
                 <Card className="flex-row items-center gap-3">
                   <View className="h-10 w-10 items-center justify-center rounded-2xl border border-arena-hairline bg-arena-glass">
-                    <Feather name={STEP_ICONS[i] ?? "circle"} size={18} color={arena.magenta} />
+                    <Feather name={STEP_ICONS[i] ?? "circle"} size={18} color={arena.violetSoft} />
                   </View>
                   <Text variant="body" className="flex-1 text-sm">
                     {t(`onboarding.guide.steps.${k}`)}

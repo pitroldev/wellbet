@@ -22,8 +22,8 @@ export interface AnimatedBarProps {
 export function AnimatedBar({
   progress,
   height = 12,
-  colors = gradients.gymbet,
-  trackColor = arena.ink,
+  colors = gradients.brand,
+  trackColor = arena.void,
 }: AnimatedBarProps) {
   const p = Math.max(0, Math.min(1, progress));
   const sv = useSharedValue(0);

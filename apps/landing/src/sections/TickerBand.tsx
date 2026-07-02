@@ -1,34 +1,45 @@
 import type { JSX } from "react";
 import { Marquee } from "@/motion";
-import { BoltMark } from "@/ui";
+import { FlameMark } from "@/ui";
+
+interface Fato {
+  texto: string;
+  /** "Deu green" é a única entrada em verde — palavra de vitória, nunca decoração. */
+  green?: boolean;
+}
 
 /**
- * Faixa de LED de estádio. Vocabulário REAL do produto (meta, pesagem, vídeo,
- * Pix, prazo) — não jargão de casa de apostas (free bet, cash out, cotação),
- * que daria o tom errado (parece site de bet) e traz risco regulatório.
+ * Os FATOS do produto, direto — o que um visitante frio precisa saber em 3
+ * segundos, sem rótulo pra decodificar. Vocabulário REAL (pesagem em vídeo,
+ * revisão humana, Pix), fechando no green.
  */
-const PALAVRAS = [
-  "Meta",
-  "Em jogo",
-  "Pesagem",
-  "Vídeo",
-  "Prazo",
-  "Pix",
-  "Compromisso",
-  "Deu green",
+const FATOS: readonly Fato[] = [
+  { texto: "Pesagem em vídeo" },
+  { texto: "Revisão humana" },
+  { texto: "Meta do seu tamanho" },
+  { texto: "Pix na hora" },
+  { texto: "Sem mensalidade" },
+  { texto: "Deu green", green: true },
 ];
 
+/**
+ * Faixa de fatos — a gramática de LED de estádio fica, o jargão sai. O
+ * movimento pausa no hover e vira faixa estática em reduced-motion (Marquee);
+ * como o marquee é decorativo (aria-hidden), a sequência existe também em
+ * texto puro para leitores de tela.
+ */
 export function TickerBand(): JSX.Element {
   return (
-    <div className="relative z-10 border-y-2 border-magenta bg-ink py-4">
-      <Marquee durationSec={32}>
-        {PALAVRAS.map((w) => (
+    <div className="relative z-10 border-y border-violet bg-ink py-4">
+      <p className="sr-only">{FATOS.map(({ texto }) => `${texto}.`).join(" ")}</p>
+      <Marquee durationSec={44}>
+        {FATOS.map(({ texto, green }) => (
           <span
-            key={w}
-            className="mx-6 inline-flex items-center gap-6 font-[family-name:var(--font-archivo)] text-2xl uppercase tracking-tight sm:text-3xl"
+            key={texto}
+            className="mx-6 inline-flex items-center gap-6 font-[family-name:var(--font-archivo)] text-xl font-bold uppercase tracking-tight sm:text-2xl"
           >
-            <span className={w === "Deu green" ? "text-green" : "text-white"}>{w}</span>
-            <BoltMark className="h-4 w-auto text-magenta" />
+            <span className={green ? "text-green" : "text-white"}>{texto}</span>
+            <FlameMark className="h-4 w-auto text-violet-soft" />
           </span>
         ))}
       </Marquee>

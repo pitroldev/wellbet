@@ -7,6 +7,7 @@
  * está no projeto; por ora mostramos o resumo da gravação + checklist do roteiro.)
  */
 import { ScrollView, View } from "react-native";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { Redirect, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -42,7 +43,8 @@ export default function CaptureReview() {
       <View className="flex-1 justify-between py-4">
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 18, paddingTop: 8 }}>
           <View className="gap-2">
-            <Tag label={t("onboarding.review.eyebrow")} tone="green" />
+            {/* Sem tom green: verde é SÓ vitória — revisar a prova ainda não é vitória. */}
+            <Tag label={t("onboarding.review.eyebrow")} />
             <Text variant="title">{t("onboarding.review.title")}</Text>
             <Text variant="body" className="text-muted">
               {t("onboarding.review.body")}
@@ -52,14 +54,15 @@ export default function CaptureReview() {
           {/* "player" — resumo da gravação */}
           <Card glow className="items-center justify-center gap-3 py-10">
             <View
-              style={{ backgroundColor: arenaAlpha.magentaWash }}
+              style={{ backgroundColor: arenaAlpha.violetWash }}
               className="h-16 w-16 items-center justify-center rounded-full border border-arena-hairline-strong"
             >
               <Feather name="play" size={26} color={arena.white} />
             </View>
             <Text variant="label">{t("onboarding.review.recorded", { seconds })}</Text>
             {weightKg != null ? (
-              <Text variant="body" className="text-arena-mint">
+              // Realce informacional em cyan (mint é família do verde — só vitória).
+              <Text variant="body" className="text-arena-cyan">
                 {t("onboarding.review.declared", { kg: formatKg(weightKg) })}
               </Text>
             ) : null}
@@ -67,13 +70,20 @@ export default function CaptureReview() {
 
           <View className="gap-2.5">
             <Text variant="label">{t("onboarding.review.checklist")}</Text>
-            {STEP_KEYS.map((k) => (
-              <View key={k} className="flex-row items-center gap-2.5">
-                <Feather name="check-circle" size={16} color={arena.green} />
+            {/* Carimbos do roteiro em stagger SÓBRIO (FadeIn seco; reduce-motion pula a
+                entrada e o conteúdo só aparece). violetSoft casa com os ícones do guia —
+                nada de verde antes da vitória. */}
+            {STEP_KEYS.map((k, i) => (
+              <Animated.View
+                key={k}
+                entering={FadeIn.delay(120 + i * 55).duration(260)}
+                className="flex-row items-center gap-2.5"
+              >
+                <Feather name="check-circle" size={16} color={arena.violetSoft} />
                 <Text variant="caption" className="flex-1">
                   {t(`onboarding.guide.steps.${k}`)}
                 </Text>
-              </View>
+              </Animated.View>
             ))}
           </View>
         </ScrollView>

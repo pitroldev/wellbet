@@ -1,8 +1,8 @@
 /**
- * Campo de texto — Midnight Aurora. TextInput sobre poço de vidro, canto redondo,
- * hairline de 1px; foco acende a borda em magenta (com leve wash), erro em
- * vermelho. Rótulo em Geist Mono (variant label). Base para formulários (perfil,
- * nova aposta, gate, auth).
+ * Campo de texto — TextInput sobre poço escuro, canto redondo, hairline de 1px;
+ * foco acende a borda em violeta (com leve wash), erro em vermelho. Rótulo em
+ * Geist Mono (variant label). Base para formulários (perfil, nova aposta, gate,
+ * auth).
  */
 import { useState } from "react";
 import { TextInput, View, type TextInputProps } from "react-native";
@@ -19,19 +19,19 @@ export interface InputProps extends TextInputProps {
 export function Input({ label, error, className, onFocus, onBlur, style, ...props }: InputProps) {
   const [focused, setFocused] = useState(false);
   const errored = error != null;
-  const borderColor = errored ? arena.danger : focused ? arena.magenta : arena.navyLine;
+  const borderColor = errored ? arena.danger : focused ? arena.violet : arena.line;
   const backgroundColor = errored
     ? arenaAlpha.dangerWash
     : focused
-      ? arenaAlpha.magentaWash
-      : arena.ink;
+      ? arenaAlpha.violetWash
+      : arena.void;
 
   return (
     <View className="gap-2">
       {label != null ? <Text variant="label">{label}</Text> : null}
       <TextInput
         placeholderTextColor={arena.fogMute}
-        selectionColor={arena.magenta}
+        selectionColor={arena.violet}
         onFocus={(e) => {
           setFocused(true);
           onFocus?.(e);

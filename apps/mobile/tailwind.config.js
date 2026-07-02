@@ -1,7 +1,7 @@
 /**
- * Tailwind config (TW3, exigido pelo NativeWind v4) — TEMA MIDNIGHT AURORA.
+ * Tailwind config (TW3, exigido pelo NativeWind v4) — TEMA CHAMA VIOLETA.
  *
- * Premium escuro com glow: grounds em índigo profundo, superfícies de VIDRO
+ * Premium escuro com glow: grounds em ink-petróleo, superfícies de VIDRO
  * translúcido, CANTOS GENEROSOS (radius 14→34), Outfit nas manchetes e Geist Mono
  * nos números. Em vez de reescrever `className` em toda tela, OVERRIDAMOS aqui os
  * aliases semânticos que as telas já usam (`bg-background`, `text-foreground`,
@@ -23,33 +23,30 @@ const { charyaPreset } = require("@charya/ui-tokens/tailwind");
 
 // Paleta espelhada de src/theme/arena.ts (mantenha os dois em sincronia).
 const A = {
-  void: "#080612",
-  ink: "#0C0A1C",
-  navy: "#0E0B20",
-  navySoft: "#181434",
-  navyLine: "#2B2552",
-  elevate: "#221C46",
-  paper: "#F4F1FB",
-  paperInk: "#0E0B20",
-  paperMute: "#5B5476",
-  magenta: "#FF2BD6",
-  magentaDeep: "#C026D3",
-  orchid: "#B765FF",
-  purple: "#7A1BD6",
-  purpleDeep: "#5A12A0",
-  indigo: "#3D1F9E",
+  void: "#050D13",
+  ink: "#08161E",
+  surface: "#0E202B",
+  surfaceElevated: "#132836",
+  line: "#1B3A4D",
+  paper: "#FAFBFC",
+  paperInk: "#08161E",
+  paperMute: "#53626E",
+  paperLine: "#E2E7EB",
+  violet: "#5032FC",
+  violetDeep: "#3D22D6",
+  violetSoft: "#9D8FFF",
+  blue: "#4A96FF",
+  cyan: "#3EC0FF",
   green: "#41FFCA",
   greenDeep: "#10B981",
   mint: "#7BFFDC",
   greenText: "#047857",
-  greenInk: "#04231A",
-  pink: "#FF80E1",
-  pinkPale: "#FDC0FF",
+  greenInk: "#0A2920",
   danger: "#FF4D6D",
   dangerDeep: "#E23A57",
   white: "#FFFFFF",
-  fog: "#B7B0DC",
-  fogMute: "#8A83B2",
+  fog: "#B0C4D4",
+  fogMute: "#7D93A4",
   // Translúcidos (frosted).
   glass: "rgba(255,255,255,0.045)",
   glassStrong: "rgba(255,255,255,0.07)",
@@ -57,34 +54,35 @@ const A = {
   hairlineStrong: "rgba(255,255,255,0.18)",
 };
 
-// Escala magenta (alias `primary`) — para `bg-primary-600`, `text-primary-400`.
-const magenta = {
-  50: "#FFE9FF",
-  100: "#FFD1FF",
-  200: "#FFA8F4",
-  300: "#FF7BEA",
-  400: "#FF4DDF",
-  500: "#FF2BD6",
-  600: "#E600C0",
-  700: "#C200A2",
-  800: "#990081",
-  900: "#6E0080",
-  950: "#3D0048",
+// Escala violeta (alias `primary`) — para `bg-primary-600`, `text-primary-400`.
+// 300 = violetSoft · 500 = violet · 600 = violetDeep.
+const violet = {
+  50: "#EEEBFF",
+  100: "#DFD9FF",
+  200: "#C5B8FF",
+  300: "#9D8FFF",
+  400: "#7A62FF",
+  500: "#5032FC",
+  600: "#3D22D6",
+  700: "#311BAE",
+  800: "#271689",
+  900: "#1E1166",
+  950: "#120A40",
 };
 
-// Escala rosa (alias `accent`).
-const pink = {
-  50: "#FFF0FC",
-  100: "#FFDFF8",
-  200: "#FFC0F2",
-  300: "#FF9FEA",
-  400: "#FF80E1",
-  500: "#F45CD2",
-  600: "#D63BB6",
-  700: "#AC2A91",
-  800: "#822470",
-  900: "#5E1A52",
-  950: "#360B30",
+// Escala azul/ciano (alias `accent`) — família dos assets 3D. 400 = cyan · 500 = blue.
+const blue = {
+  50: "#EBF7FF",
+  100: "#D6EFFF",
+  200: "#ADE0FF",
+  300: "#6ECCFB",
+  400: "#3EC0FF",
+  500: "#4A96FF",
+  600: "#2F79E6",
+  700: "#2560BE",
+  800: "#1F4C94",
+  900: "#1B3D73",
+  950: "#102540",
 };
 
 module.exports = {
@@ -93,16 +91,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Aliases semânticos (mobile) — apontam para o tema Midnight Aurora.
-        background: A.navy,
-        surface: A.navySoft,
-        "surface-elevated": A.elevate,
+        // Aliases semânticos (mobile) — apontam para o tema Chama Violeta.
+        background: A.ink,
+        surface: A.surface,
+        "surface-elevated": A.surfaceElevated,
         foreground: A.white,
         muted: A.fog,
         "muted-foreground": A.fogMute,
-        border: A.navyLine,
-        // Texto sobre o bloco PRIMÁRIO (magenta chapado) = void escuro.
-        "on-primary": A.void,
+        border: A.line,
+        // Texto sobre o bloco PRIMÁRIO (violeta chapado) = branco (nunca ink).
+        "on-primary": A.white,
         danger: A.danger,
 
         // Superfície CLARA ocasional (ritmo claro/escuro).
@@ -111,34 +109,31 @@ module.exports = {
         "paper-mute": A.paperMute,
 
         // Primária/acento da marca (escalas completas para `-50…-950`).
-        primary: magenta,
-        accent: pink,
+        primary: violet,
+        accent: blue,
 
         // Cores nomeadas — para realces explícitos
-        // (`bg-arena-magenta`, `text-arena-green`, `bg-arena-glass`, …).
+        // (`bg-arena-violet`, `text-arena-green`, `bg-arena-glass`, …).
         arena: {
           void: A.void,
           ink: A.ink,
-          navy: A.navy,
-          "navy-soft": A.navySoft,
-          "navy-line": A.navyLine,
-          elevate: A.elevate,
+          surface: A.surface,
+          "surface-elevated": A.surfaceElevated,
+          line: A.line,
           paper: A.paper,
           "paper-ink": A.paperInk,
           "paper-mute": A.paperMute,
-          magenta: A.magenta,
-          "magenta-deep": A.magentaDeep,
-          orchid: A.orchid,
-          purple: A.purple,
-          "purple-deep": A.purpleDeep,
-          indigo: A.indigo,
+          "paper-line": A.paperLine,
+          violet: A.violet,
+          "violet-deep": A.violetDeep,
+          "violet-soft": A.violetSoft,
+          blue: A.blue,
+          cyan: A.cyan,
           green: A.green,
           "green-deep": A.greenDeep,
           mint: A.mint,
           "green-text": A.greenText,
           "green-ink": A.greenInk,
-          pink: A.pink,
-          "pink-pale": A.pinkPale,
           danger: A.danger,
           "danger-deep": A.dangerDeep,
           white: A.white,
@@ -165,7 +160,7 @@ module.exports = {
         "mono-medium": ["GeistMono_500Medium"],
         "mono-bold": ["GeistMono_700Bold"],
       },
-      // CANTOS GENEROSOS — Midnight Aurora é macio. `rounded-2xl`=28, `-3xl`=34.
+      // CANTOS GENEROSOS — a forma é macia. `rounded-2xl`=28, `-3xl`=34.
       borderRadius: {
         none: "0px",
         sm: "10px",

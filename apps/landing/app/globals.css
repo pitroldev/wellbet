@@ -1,11 +1,10 @@
 /*
- * Tailwind v4 (CSS-first) — tema da LANDING: direção SPORTSBOOK BRUTAL nas cores
- * oficiais do GYMBET (deck CHARYA-IDs / wellbet & Co.). Placar / cartaz de boxe /
- * bilhete de aposta: CANTO VIVO (radius ~0), blocos CHAPADOS de magenta (não
- * glow), ritmo CLARO/ESCURO (papel ↔ ink), tipo condensado pesadíssimo (Anton)
- * e mono em todo número (Space Mono). Magenta #FF00FF = energia; verde menta =
- * vitória ("deu green"). Os NOMES de token são herdados p/ não tocar componente
- * a componente; só os VALORES mudam.
+ * Tailwind v4 (CSS-first) — tema da LANDING: identidade WELLBET "Chama Violeta"
+ * (punho dentro da chama: luta com disciplina). Violeta elétrico #5032FC sobre
+ * ink petróleo, ritmo CLARO/ESCURO (paper offwhite ↔ ink/surface), cantos
+ * generosamente arredondados, tipografia bold arredondada (Outfit) e mono em
+ * todo número (Geist Mono). Verde menta = SÓ vitória ("deu green") — regra
+ * sagrada. Sombras suaves e escuras; glow violeta/ciano com parcimônia.
  */
 @import "tailwindcss";
 
@@ -13,117 +12,72 @@
 @source "../app";
 
 @theme {
-  /* Grounds escuros (ink navy do GymBet) */
-  --color-ink: #0a0d16;
-  --color-ink-soft: #6b6488;
-  --color-navy: #14131f;
-  --color-navy-soft: #1c1a2c;
-  --color-navy-line: #2c2548;
+  /* Grounds escuros (família ink petróleo) */
+  --color-ink: #08161e;
+  --color-void: #050d13;
+  --color-surface: #0e202b;
+  --color-surface-elevated: #132836;
+  /* aliases de migração da família escura antiga (papéis equivalentes, valores novos) */
+  --color-navy: #0e202b;
+  --color-navy-soft: #132836;
+  --color-navy-line: rgba(255, 255, 255, 0.1);
 
-  /* "blue" reaproveitado p/ roxo (GymBet não tem ciano) */
-  --color-blue: #9d4edd;
-  --color-blue-deep: #7a1bd6;
-  --color-blue-soft: #c084fc;
-  --color-blue-wash: #1c1a2c;
+  /* Núcleo da marca — violeta elétrico + família azul dos assets 3D */
+  --color-violet: #5032fc;
+  --color-violet-deep: #3d22d6;
+  /* violet-soft = violeta legível como TEXTO sobre escuro (#5032FC reprova AA no ink) */
+  --color-violet-soft: #9d8fff;
+  --color-blue: #4a96ff;
+  --color-cyan: #3ec0ff;
 
   /* Verde menta — só vitória / "deu green". green-text = verde legível sobre PAPEL */
   --color-green: #41ffca;
   --color-green-deep: #10b981;
   --color-green-text: #047857;
-  --color-green-ink: #04231a;
+  --color-green-ink: #0a2920;
 
-  /* Roxo + magenta + pink (núcleo da marca GymBet) */
-  --color-indigo: #7a1bd6;
-  --color-indigo-soft: #9d4edd;
-  --color-periwinkle: #c9a6ff;
-  --color-magenta: #ff00ff;
-  /* magenta-deep = magenta legível quando vira TEXTO sobre papel (#ff00ff reprova AA) */
-  --color-magenta-deep: #c026d3;
-  --color-pink: #ff80e1;
-
-  /* Texto sobre escuro (fog-mute clareado p/ passar AA: 3.5:1 -> 5.5:1) */
-  --color-fog: #aaa2c8;
-  --color-fog-mute: #8b84a6;
+  /* Texto sobre escuro */
+  --color-fog: #b0c4d4;
+  --color-fog-mute: #7d93a4;
   --color-white: #ffffff;
 
-  /* Papel — superfície CLARA do ritmo claro/escuro (cartaz impresso, leve osso) */
-  --color-paper: #f1efe9;
-  --color-paper-ink: #0a0d16;
-  --color-paper-mute: #565163;
-  --color-paper-line: #15131c;
+  --color-danger: #ff4d6d;
+
+  /* Papel — superfície CLARA do ritmo claro/escuro (offwhite oficial) */
+  --color-paper: #fafbfc;
+  --color-paper-ink: #08161e;
+  --color-paper-mute: #53626e;
+  --color-paper-line: #e2e7eb;
 
   /* Semânticos (dark default) */
-  --color-background: #0a0d16;
-  --color-foreground: #f1efe9;
+  --color-background: #08161e;
+  --color-foreground: #fafbfc;
 
-  /* Escala de manchete (Anton condensada — presença sem gritar) */
-  --text-hero: clamp(2.4rem, 6.4vw, 5rem);
+  /* Escala de manchete (Outfit é mais larga que condensada — clamp contido) */
+  --text-hero: clamp(2.2rem, 5.6vw, 4.25rem);
   --text-display: clamp(1.9rem, 4.8vw, 3.4rem);
 
-  /* CANTO VIVO — radius praticamente zero (mata todo rounded-xl/2xl/3xl de uma vez) */
-  --radius-xl: 0px;
-  --radius-2xl: 0px;
-  --radius-3xl: 1px;
+  /* Cantos generosos — a forma arredondada da marca */
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.75rem;
+
+  /* Sombra de painel — suave e escura, nunca colorida dura (gera `shadow-panel`) */
+  --shadow-panel:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 24px 60px -28px rgba(5, 13, 19, 0.7);
 }
 
-/* FOIL iridescente do GymBet (magenta→pink→roxo→indigo) + gradientes/glows —
- * via var() em style/arbitrary. Os nomes "gymbet" persistem como interface. */
+/* Gradientes e glows da marca — via var() em style/arbitrary. */
 :root {
-  --foil: linear-gradient(
-    115deg,
-    #ff00ff 0%,
-    #ff80e1 16%,
-    #c026d3 36%,
-    #7a1bd6 56%,
-    #5b2be0 72%,
-    #c026d3 88%,
-    #ff00ff 100%
-  );
-  --foil-conic: conic-gradient(
-    from 0deg,
-    #ff00ff,
-    #ff80e1,
-    #c026d3,
-    #7a1bd6,
-    #5b2be0,
-    #c026d3,
-    #ff00ff
-  );
+  --gradient-brand: linear-gradient(115deg, #5032fc 0%, #4a96ff 55%, #3ec0ff 100%);
+  --gradient-victory: linear-gradient(135deg, #41ffca 0%, #10b981 100%);
 
-  --gradient-gymbet: var(--foil);
-  --gradient-gymbet-bright: var(--foil);
-  --gradient-jackpot: linear-gradient(115deg, #ff00ff 0%, #7a1bd6 55%, #5b2be0 100%);
-  --gradient-muma: linear-gradient(120deg, #9d4edd 0%, #5b21b6 100%);
-  --gradient-voltage: linear-gradient(135deg, #2be8b0 0%, #41ffca 100%);
-  --gradient-iris: var(--foil);
+  /* cores de glow (usar DENTRO de box-shadow/drop-shadow, com parcimônia) */
+  --glow-violet: rgba(80, 50, 252, 0.45);
+  --glow-cyan: rgba(62, 192, 255, 0.4);
 
-  --glow-magenta: 0 22px 60px -24px rgba(255, 0, 255, 0.5);
-  --glow-pink: 0 22px 60px -26px rgba(255, 128, 225, 0.45);
-  --glow-green: 0 22px 60px -26px rgba(65, 255, 202, 0.5);
-  --glow-blue: 0 22px 60px -26px rgba(122, 27, 214, 0.55);
-
-  /* sombra "carimbo" — offset duro (sem blur), cartaz/brutalist. Canto vivo. */
-  --stamp-ink: 7px 7px 0 0 #0a0d16;
-  --stamp-magenta: 7px 7px 0 0 #ff00ff;
-  --stamp-green: 7px 7px 0 0 #41ffca;
-
-  /* estilhaço diagonal (MOTIVO repetido) — corte de bilhete / cartaz rasgado */
-  --shard: polygon(0 0, 100% 0, 100% 78%, 0 100%);
-  --shard-up: polygon(0 22%, 100% 0, 100% 100%, 0 100%);
-  /* canto cortado de bilhete (stub) — para botões/cards (top-right chanfrado) */
-  --stub: polygon(0 0, calc(100% - 0.85rem) 0, 100% 0.85rem, 100% 100%, 0 100%);
-  /* canto cortado duplo (top-right + bottom-left) — ticket de aposta */
-  --ticket: polygon(
-    0 0,
-    calc(100% - 0.9rem) 0,
-    100% 0.9rem,
-    100% 100%,
-    0.9rem 100%,
-    0 calc(100% - 0.9rem)
-  );
-
-  /* halftone — pontos de cartaz impresso (textura, via background-image) */
-  --halftone: radial-gradient(currentColor 1px, transparent 1.4px);
+  /* alias da sombra de painel p/ uso em style={{ boxShadow: "var(--panel)" }} */
+  --panel: var(--shadow-panel);
 }
 
 @keyframes float {
@@ -153,19 +107,6 @@
   100% {
     opacity: 0;
     transform: scale(1.5);
-  }
-}
-
-/* Foil deslizando — iridescência viva em texto/superfícies. */
-@keyframes foilshift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
   }
 }
 
@@ -209,8 +150,16 @@ body {
 
 /* Foco visível — fallback global (WCAG 2.4.7). CTA/botões sobrescrevem a cor. */
 :focus-visible {
-  outline: 2px solid var(--color-magenta);
+  outline: 2px solid var(--color-violet);
   outline-offset: 2px;
+}
+
+/* Sobre superfícies escuras o violeta some (2.8:1) — o foco vira ciano (8.9:1). */
+.bg-ink :focus-visible,
+.bg-surface :focus-visible,
+.bg-surface-elevated :focus-visible,
+.bg-void :focus-visible {
+  outline-color: var(--color-cyan);
 }
 
 @media (prefers-reduced-motion: reduce) {

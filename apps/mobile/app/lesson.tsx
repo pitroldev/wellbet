@@ -33,12 +33,12 @@ export default function LessonScreen() {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 18, paddingBottom: 8 }}>
           <View className="gap-4">
             <View
-              style={{ backgroundColor: arenaAlpha.greenWash }}
+              style={{ backgroundColor: arenaAlpha.blueWash }}
               className="h-16 w-16 items-center justify-center rounded-3xl border border-arena-hairline-strong"
             >
-              <Feather name="book-open" size={30} color={arena.green} />
+              <Feather name="book-open" size={30} color={arena.cyan} />
             </View>
-            <Tag label={t("journey.lesson.today")} tone="green" />
+            <Tag label={t("journey.lesson.today")} tone="cyan" />
             <Text variant="title">{lesson.title}</Text>
             <View className="flex-row items-center gap-1.5">
               <Feather name="clock" size={13} color={arena.fogMute} />

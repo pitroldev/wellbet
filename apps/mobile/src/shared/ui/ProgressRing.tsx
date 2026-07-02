@@ -1,6 +1,6 @@
 /**
- * Anel de progresso — o elemento-assinatura do Midnight Aurora (à la Oura/Whoop).
- * Trilho de vidro + arco em gradiente (sweep magenta→orquídea→verde) que ENCHE
+ * Anel de progresso — o elemento-assinatura do app (à la Oura/Whoop).
+ * Trilho de vidro + arco em gradiente (sweep violeta→azul→verde) que ENCHE
  * animado, começando no topo, com um PONTO DE LUZ na cabeça do arco que acompanha
  * o preenchimento. Skia (GPU, UI thread) + Reanimated. Conteúdo central livre.
  * Respeita reduce-motion (preenche na hora).
@@ -18,7 +18,7 @@ export interface ProgressRingProps {
   progress: number;
   size?: number;
   strokeWidth?: number;
-  /** cores do sweep (default: magenta→orquídea→verde). */
+  /** cores do sweep (default: violeta→azul→verde). */
   colors?: readonly string[];
   trackColor?: string;
   children?: ReactNode;
@@ -29,7 +29,7 @@ export function ProgressRing({
   size = 200,
   strokeWidth = 16,
   colors = gradients.ring,
-  trackColor = arena.navyLine,
+  trackColor = arena.line,
   children,
 }: ProgressRingProps) {
   const reduced = useReducedMotion();
@@ -54,9 +54,9 @@ export function ProgressRing({
   const end = useDerivedValue(() => sv.value);
 
   // Fecha a costura do sweep repetindo a 1ª cor no fim (evita emenda dura a 100%).
-  const first = colors[0] ?? arena.magenta;
+  const first = colors[0] ?? arena.violet;
   const sweepColors = useMemo(() => [...colors, first], [colors, first]);
-  const headColor = colors[colors.length - 1] ?? arena.magenta;
+  const headColor = colors[colors.length - 1] ?? arena.violet;
 
   // Ponto de luz na cabeça do arco (segue o ângulo do preenchimento).
   const headTransform = useDerivedValue(() => {

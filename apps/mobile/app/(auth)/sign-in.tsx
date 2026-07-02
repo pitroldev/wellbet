@@ -5,10 +5,11 @@
  */
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { BrandBolt, Button, Input, PressableScale, Screen, Tag, Text } from "@/shared/ui";
+import { BrandFlame, Button, Input, PressableScale, Screen, Text } from "@/shared/ui";
 import { AuthError, signIn, signUp } from "@/features/auth";
 import { useJourney } from "@/features/journey";
 
@@ -78,8 +79,15 @@ export default function AuthScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View className="items-center gap-3 pb-1 pt-2">
-          <BrandBolt size={72} />
-          <Tag label="WellBet" align="center" />
+          <BrandFlame size={72} />
+          {/* Wordmark oficial (nunca em fonte) — símbolo violeta + texto offwhite. */}
+          <Image
+            source={require("../../assets/brand/wordmark-wellbet-dark.png")}
+            style={{ width: 113, height: 22 }}
+            contentFit="contain"
+            accessible
+            accessibilityLabel="WellBet"
+          />
         </View>
         <Text variant="title">
           {isSignup ? t("journey.auth.signUpTitle") : t("journey.auth.signInTitle")}
@@ -118,7 +126,7 @@ export default function AuthScreen() {
 
         {!isSignup ? (
           <PressableScale onPress={() => router.push("/(auth)/forgot")} className="self-start">
-            <Text variant="label" className="text-arena-magenta">
+            <Text variant="label" className="text-arena-violet-soft">
               {t("journey.auth.forgot")}
             </Text>
           </PressableScale>

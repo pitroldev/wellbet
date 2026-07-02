@@ -88,15 +88,15 @@ export default function ProfileScreen() {
           {/* Identidade */}
           <View className="items-center gap-3 pt-2">
             <View
-              style={{ backgroundColor: arenaAlpha.magentaWash }}
+              style={{ backgroundColor: arenaAlpha.violetWash }}
               className="h-20 w-20 items-center justify-center rounded-full border border-arena-hairline-strong"
             >
               {initial.length > 0 ? (
-                <Text variant="display" className="text-3xl text-arena-magenta">
+                <Text variant="display" className="text-3xl text-arena-violet-soft">
                   {initial}
                 </Text>
               ) : (
-                <Feather name="user" size={32} color={arena.magenta} />
+                <Feather name="user" size={32} color={arena.violetSoft} />
               )}
             </View>
             <View className="items-center gap-0.5">

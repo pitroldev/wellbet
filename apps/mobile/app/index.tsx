@@ -8,17 +8,18 @@
  *
  * Liga no journey store (a espinha) e troca de cara por estágio — nunca um vazio
  * mudo, nunca duas decisões ambíguas. Cada estágio de transição é um HERÓI com
- * ícone/raio, entrando em cascata — e a tela ativa herda o mesmo vocabulário.
+ * ícone/chama, entrando em cascata — e a tela ativa herda o mesmo vocabulário.
  */
 import { type ReactNode } from "react";
 import { ScrollView, View } from "react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { Redirect, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import {
-  BrandBolt,
+  BrandFlame,
   Button,
   Card,
   PressableScale,
@@ -47,15 +48,22 @@ import {
 
 type FeatherName = keyof typeof Feather.glyphMap;
 
+// Wordmark oficial (símbolo + lettering embutidos) — proporção 1837:356, nunca distorcer.
+const WORDMARK_DARK = require("../assets/brand/wordmark-wellbet-dark.png");
+const WORDMARK_RATIO = 1837 / 356;
+// Streak 3D da marca — ícone da pílula de sequência na StatusBar.
+const STREAK_3D = require("../assets/brand/3d-streak-violeta.png");
+
 function Header({ onProfile }: { onProfile: () => void }) {
   return (
     <View className="mb-5 flex-row items-center justify-between">
-      <View className="flex-row items-center gap-2">
-        <BrandBolt size={30} />
-        <Text variant="heading" className="text-xl">
-          WellBet
-        </Text>
-      </View>
+      <Image
+        source={WORDMARK_DARK}
+        accessible
+        accessibilityLabel="WellBet"
+        contentFit="contain"
+        style={{ height: 22, width: 22 * WORDMARK_RATIO }}
+      />
       <PressableScale onPress={onProfile}>
         <View className="h-11 w-11 items-center justify-center rounded-full border border-arena-hairline bg-arena-glass">
           <Feather name="user" size={19} color={arena.fog} />
@@ -66,9 +74,9 @@ function Header({ onProfile }: { onProfile: () => void }) {
 }
 
 /** Hero icon tile — ícone em tile de vidro com wash da cor. */
-function IconHero({ icon, tone = "magenta" }: { icon: FeatherName; tone?: "magenta" | "green" }) {
-  const color = tone === "green" ? arena.green : arena.magenta;
-  const wash = tone === "green" ? arenaAlpha.greenWash : arenaAlpha.magentaWash;
+function IconHero({ icon, tone = "violet" }: { icon: FeatherName; tone?: "violet" | "green" }) {
+  const color = tone === "green" ? arena.green : arena.violetSoft;
+  const wash = tone === "green" ? arenaAlpha.greenWash : arenaAlpha.violetWash;
   return (
     <Animated.View entering={FadeIn.duration(500)} className="items-center">
       <View
@@ -85,7 +93,7 @@ function IconHero({ icon, tone = "magenta" }: { icon: FeatherName; tone?: "magen
 function Focus({
   hero,
   eyebrow,
-  tone = "magenta",
+  tone = "violet",
   title,
   body,
   ctaLabel,
@@ -95,7 +103,7 @@ function Focus({
 }: {
   hero: ReactNode;
   eyebrow: string;
-  tone?: "magenta" | "green" | "ink";
+  tone?: "violet" | "green" | "ink";
   title: string;
   body: string;
   ctaLabel: string;
@@ -148,7 +156,7 @@ export default function Home() {
           <Focus
             hero={
               <Animated.View entering={FadeIn.duration(600)} className="items-center">
-                <BrandBolt size={120} />
+                <BrandFlame size={132} />
               </Animated.View>
             }
             eyebrow={t("journey.home.startEyebrow")}
@@ -218,7 +226,7 @@ export default function Home() {
       case "lost":
         return (
           <Focus
-            hero={<IconHero icon={stage === "won" ? "award" : "refresh-cw"} tone={stage === "won" ? "green" : "magenta"} />}
+            hero={<IconHero icon={stage === "won" ? "award" : "refresh-cw"} tone={stage === "won" ? "green" : "violet"} />}
             eyebrow={stage === "won" ? t("journey.settlement.wonEyebrow") : t("journey.settlement.lostEyebrow")}
             tone={stage === "won" ? "green" : "ink"}
             title={stage === "won" ? t("journey.settlement.wonTitle") : t("journey.settlement.lostTitle")}
@@ -251,7 +259,7 @@ export default function Home() {
                 stats={[
                   { value: bet.stakeAmount, label: t("journey.status.inPlay"), prefix: "R$ ", accent: true },
                   { value: days, label: t("journey.status.days") },
-                  { value: streak, label: t("journey.status.streak") },
+                  { value: streak, label: t("journey.status.streak"), icon: STREAK_3D },
                 ]}
               />
             </Animated.View>
@@ -259,15 +267,12 @@ export default function Home() {
             {/* Anel de herói — o placar. */}
             <Animated.View entering={FadeInDown.delay(100).springify()}>
               <Card glow className="items-center gap-4 py-7">
+                {/* Janela aberta é urgência de rotina, não vitória — o green fica pro won. */}
                 <Tag
                   label={windowOpen ? t("journey.home.windowTitle") : t("journey.meta.label")}
-                  tone={windowOpen ? "green" : "magenta"}
+                  tone={windowOpen ? "cyan" : "violet"}
                 />
-                <ProgressRing
-                  progress={prog.pct}
-                  size={200}
-                  colors={windowOpen ? [arena.green, arena.mint, arena.green] : undefined}
-                >
+                <ProgressRing progress={prog.pct} size={200}>
                   <View className="items-center">
                     <View className="flex-row items-end justify-center">
                       <AnimatedNumber

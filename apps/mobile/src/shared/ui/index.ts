@@ -1,6 +1,6 @@
 export * from "./AuroraBackground";
 export * from "./Avatar";
-export * from "./BrandBolt";
+export * from "./BrandFlame";
 export * from "./Button";
 export * from "./Card";
 export * from "./Chip";

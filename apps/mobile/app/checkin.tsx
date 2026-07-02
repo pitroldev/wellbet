@@ -34,12 +34,12 @@ export default function CheckIn() {
       <View className="flex-1 justify-between py-4">
         <View className="gap-5 pt-2">
           <View
-            style={{ backgroundColor: arenaAlpha.greenWash }}
+            style={{ backgroundColor: arenaAlpha.blueWash }}
             className="h-14 w-14 items-center justify-center rounded-2xl border border-arena-hairline"
           >
-            <Feather name="trending-down" size={26} color={arena.green} />
+            <Feather name="trending-down" size={26} color={arena.cyan} />
           </View>
-          <Tag label={t("journey.checkin.eyebrow")} tone="green" />
+          <Tag label={t("journey.checkin.eyebrow")} tone="cyan" />
           <Text variant="title">{t("journey.checkin.title")}</Text>
           <Text variant="body" className="text-muted">
             {t("journey.checkin.body")}

@@ -1,29 +1,29 @@
 import type { Metadata, Viewport } from "next";
 import type { JSX, ReactNode } from "react";
-import { Anton, Archivo, Space_Mono } from "next/font/google";
+import { Geist_Mono, Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 /**
- * Fontes da direção SPORTSBOOK BRUTAL (placar / cartaz de boxe / bilhete de
- * aposta). Mantemos os MESMOS nomes de CSS var do tema antigo
- * (--font-archivo / --font-jakarta / --font-geist-mono) para re-fontar todos os
- * componentes sem tocar cada um:
- *  - Anton → manchetes condensadas pesadíssimas em caixa-alta (era "archivo").
- *  - Archivo → corpo / UI, grotesca de trabalho (era "jakarta").
- *  - Space Mono → odds, stake, payout, labels, contadores — DNA de bilhete (era "geist-mono").
+ * Fontes da identidade WELLBET "Chama Violeta". Mantemos os MESMOS nomes de
+ * CSS var do tema antigo (--font-archivo / --font-jakarta / --font-geist-mono)
+ * para re-fontar todos os componentes sem tocar cada um:
+ *  - Outfit → manchetes bold arredondadas, DNA do wordmark (era "archivo").
+ *  - Plus Jakarta Sans → corpo / UI, a voz "de gente" (era "jakarta").
+ *  - Geist Mono → stake, resumo do bilhete, labels, números — DNA de bilhete.
  */
-const jakarta = Archivo({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-jakarta",
   display: "swap",
 });
-const archivo = Anton({
+const archivo = Outfit({
   subsets: ["latin"],
-  weight: "400",
+  weight: ["700", "800", "900"],
   variable: "--font-archivo",
   display: "swap",
 });
-const geistMono = Space_Mono({
+const geistMono = Geist_Mono({
   subsets: ["latin"],
   weight: ["400", "700"],
   variable: "--font-geist-mono",
@@ -78,7 +78,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F1EFE9",
+  themeColor: "#FAFBFC",
   width: "device-width",
   initialScale: 1,
 };

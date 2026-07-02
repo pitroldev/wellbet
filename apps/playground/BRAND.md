@@ -1,5 +1,13 @@
 # wellbet & Co. — Identidade oficial (SSoT do playground)
 
+> ⚠️ **SUPERSEDED (jul/2026):** a identidade de PRODUÇÃO mudou. A fonte de
+> verdade atual é `docs/WellBet_Design_System.md` + os assets oficiais em
+> `docs/design-branding/` (símbolo punho+chama, wordmark bold arredondado,
+> violeta `#5032FC`, ink `#08161E`, offwhite `#FAFBFC`; o raio/BoltMark e o
+> magenta primário estão aposentados no app e na landing). Este deck continua
+> valendo APENAS como registro histórico e para experimentos antigos do
+> playground que ainda o referenciam.
+>
 > Fonte: deck da agência `CHARYA-IDs.pdf` (27 pranchas). Este arquivo é a **única
 > fonte de verdade** de cor/tipografia/logo/voz para TODOS os systems do playground.
 > Agentes: **leiam, não editem.** Importem tokens de `@/lib/brand` e o logo de

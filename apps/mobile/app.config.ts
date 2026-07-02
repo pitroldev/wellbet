@@ -21,6 +21,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   version: "0.0.0",
   orientation: "portrait",
   userInterfaceStyle: "automatic",
+  icon: "./assets/brand/icon.png",
+  // Splash: o SDK 56 só configura splash via plugin `expo-splash-screen`, que não
+  // está instalado (o campo clássico `expo.splash` saiu do ExpoConfig). A splash
+  // real vive nos recursos nativos: android/.../values/colors.xml
+  // (`splashscreen_background` ink #08161E) + splashscreen_logo.png por densidade.
+  // Se o plugin entrar um dia: image ./assets/brand/splash-icon.png,
+  // backgroundColor "#08161E", resizeMode contain, imageWidth 200.
   // New Architecture (Fabric/JSI/Hermes) é a ÚNICA arquitetura no SDK 56 / RN
   // 0.82+ — `newArchEnabled` foi removida do ExpoConfig (já é implícito).
   ios: {
@@ -39,6 +46,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     package: "com.charya.app",
     permissions: ["CAMERA", "RECORD_AUDIO"],
+    adaptiveIcon: {
+      foregroundImage: "./assets/brand/adaptive-icon.png",
+      backgroundColor: "#5032FC",
+    },
   },
   plugins: [
     "expo-router",

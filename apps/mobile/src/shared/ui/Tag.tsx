@@ -1,7 +1,7 @@
 /**
  * Tag/eyebrow — pílula de VIDRO com um ponto de luz da cor do tom. Substitui o
  * bloco chapado brutal por algo premium e arredondado. Texto Geist Mono caixa-alta.
- *  - `magenta` (padrão) · `green` · `ink` (neutro).
+ *  - `violet` (padrão) · `cyan` (hábito/rotina) · `green` (SÓ vitória) · `ink` (neutro).
  */
 import { View } from "react-native";
 
@@ -9,22 +9,25 @@ import { arena, arenaAlpha } from "@/theme/tokens";
 
 import { Text } from "./Text";
 
-type Tone = "magenta" | "green" | "ink";
+type Tone = "violet" | "cyan" | "green" | "ink";
 
 const toneBg: Record<Tone, string> = {
-  magenta: arenaAlpha.orchidWash,
+  violet: arenaAlpha.violetWash,
+  cyan: arenaAlpha.blueWash,
   green: arenaAlpha.greenWash,
   ink: arenaAlpha.glass,
 };
 
 const toneDot: Record<Tone, string> = {
-  magenta: arena.magenta,
+  violet: arena.violet,
+  cyan: arena.cyan,
   green: arena.green,
   ink: arena.fog,
 };
 
 const toneText: Record<Tone, string> = {
-  magenta: "text-arena-magenta",
+  violet: "text-arena-violet-soft",
+  cyan: "text-arena-cyan",
   green: "text-arena-mint",
   ink: "text-muted",
 };
@@ -37,7 +40,7 @@ export interface TagProps {
   className?: string;
 }
 
-export function Tag({ label, tone = "magenta", align = "start", className }: TagProps) {
+export function Tag({ label, tone = "violet", align = "start", className }: TagProps) {
   return (
     <View
       style={{ backgroundColor: toneBg[tone] }}

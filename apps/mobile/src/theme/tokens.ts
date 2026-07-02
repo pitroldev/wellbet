@@ -31,17 +31,17 @@ export const durations = {
 
 /**
  * Cores semânticas cruas (hex) para uso imperativo em Skia/Reanimated/props
- * nativas — agora na direção GYMBET ARENA (ver src/theme/arena.ts). Os semânticos
+ * nativas — direção CHAMA VIOLETA (ver src/theme/arena.ts). Os semânticos
  * de veredito (success/danger) seguem das escalas de `@charya/ui-tokens`.
  */
 export const palette = {
-  primary: arena.magenta,
-  primaryDeep: arena.magentaDeep,
-  accent: arena.pink,
+  primary: arena.violet,
+  primaryDeep: arena.violetDeep,
+  accent: arena.blue,
   success: arena.green,
   danger: colors.danger[500],
-  surface: arena.navySoft,
-  background: arena.navy,
+  surface: arena.surface,
+  background: arena.ink,
   foreground: arena.white,
 } as const;
 
